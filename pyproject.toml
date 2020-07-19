@@ -1,0 +1,34 @@
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+name = "prometheus-ecs-discoverer"
+version = "0.1.0"
+description = "Discover services in AWS ECS for Prometheus"
+authors = ["Tim Schwenke <tim.schwenke+github@protonmail.ch>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/trallnag/prometheus-ecs-discoverer"
+keywords = ["prometheus", "discovery", "aws", "ecs", "metrics"]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Developers',
+    'Topic :: System :: Monitoring',
+    'Topic :: System :: Logging',
+]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+boto3 = "^1.14.23"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+flake8 = "^3.8"
+black = "^19.10b0"
+requests = "^2.24.0"
+pytest-cov = "^2.10.0"
+moto = "^1.3.14"
+
+[tool.black]
+line-length = 90
