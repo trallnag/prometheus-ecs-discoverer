@@ -81,5 +81,3 @@ def test_manipulate_cache():
     result.update({"something": "else"})
     assert result == {"these": DUMMY, "are": DUMMY, "something": "else"}
     assert cache.current != {"these": DUMMY, "are": DUMMY}
-
-test_manipulate_cache()
