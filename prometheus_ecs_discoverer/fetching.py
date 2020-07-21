@@ -1,0 +1,243 @@
+from typing import Dict, List
+import logging
+
+from prometheus_ecs_discoverer import telemetry
+from prometheus_ecs_discoverer import toolbox
+from prometheus_ecs_discoverer.caching import SlidingCache
+
+
+logger = logging.getLogger(__name__)
+
+CLUSTERS = telemetry.gauge("clusters", "Number of ECS clusters.")
+TASKS = telemetry.gauge("tasks", "Number of ECS tasks.", ("cluster_arn", "launch_type",))
+
+REQUESTS = telemetry.counter(
+    "api_requests", "Number of requests made to the AWS API.", ("client", "method",)
+)
+
+
+class CachedFetcher:
+    """Works with the AWS API and leverages a sliding cache.
+
+    Reduces the amount of request made to the AWS API helping to stay below the 
+    request limits. Only implements necessary methods. So not a generic class.
+    """
+
+    def __init__(self, ecs_client, ec2_client):
+        self.ecs = ecs_client
+        self.ec2 = ec2_client
+        self.task_cache = SlidingCache(name="task_cache")
+        self.task_definition_cache = SlidingCache(name="task_definition_cache")
+        self.container_instance_cache = SlidingCache(name="container_instance_cache")
+        self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
+
+    def get_cluster_arns(self) -> List[str]:
+        """Get all cluster ARNs.
+
+        :return: List of cluster ARNs or empty list.
+        
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_clusters)
+        """
+
+        logger.info("Fetch all cluster ARNs.")
+
+        arns = []
+
+        for page in self.ecs.get_paginator("list_clusters").paginate():
+            REQUESTS.labels(client="ecs", method="list_clusters").inc()
+            arns += page.get("clusterArns", [])
+        CLUSTERS.set(len(arns))
+        return arns
+
+    def get_task_arns(self, cluster_arn: str, launch_type: str) -> List[str]:
+        """Get all task ARNs for given cluster ARN and launch type.
+
+        :param launch_type: (EC2|FARGATE).
+        
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_tasks)
+        """
+
+        arns = []
+        for page in self.ecs.get_paginator("list_tasks").paginate(
+            cluster=cluster_arn, launchType=launch_type, desiredStatus="RUNNING"
+        ):
+            REQUESTS.labels("ecs", "list_tasks").inc()
+            arns += page["taskArns"]
+        TASKS.labels(cluster_arn, launch_type).set(len(arns))
+        return arns
+
+    def get_task_descriptions(
+        self, cluster_arn: str, task_arns: List[str] = None
+    ) -> Dict[str, dict]:
+        """Get task descriptions.
+
+        :param task_arns: Defaults to `None`. This will trigger this method to 
+            fetch the task ARNs for the given cluster.
+        :return: Dictionary. Every entry represents a task.
+        
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks)
+        """
+
+        def uncached_fetch(task_arns: List[str]) -> Dict[str, dict]:
+            tasks = []
+            chunked_task_arns = toolbox.chunk_list(task_arns, 5)
+
+            for task_arns_chunk in chunked_task_arns:
+                tasks += self.ecs.describe_tasks(
+                    cluster=cluster_arn, tasks=task_arns_chunk
+                )["tasks"]
+                REQUESTS.labels("ecs", "describe_tasks").inc()
+
+            return toolbox.list_to_dict(tasks, "taskArn")
+
+        if task_arns is None:
+            task_arns = []
+            task_arns += self.get_task_arns(cluster_arn, "FARGATE")
+            task_arns += self.get_task_arns(cluster_arn, "EC2")
+
+        return self.task_cache.get_and_slide(
+            allowed_keys=task_arns, fetch_missing_data=uncached_fetch
+        )
+
+    def get_task_definition_arns(self, status: str = "ACTIVE") -> List[str]:
+        """Get task definition ARNs.
+
+        :param status: (ACTIVE|INACTIVE). Defaults to "ACTIVE".
+        
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_task_definitionss)
+        """
+
+        arns = []
+        for page in self.ecs.get_paginator("list_task_definitions").paginate(
+            status=status
+        ):
+            REQUESTS.labels("ecs", "list_task_definitions").inc()
+            arns += page["taskDefinitionArns"]
+        return arns
+
+    def get_task_definition_descriptions(
+        self, task_definition_arns: List[str] = None
+    ) -> Dict[str, dict]:
+        """Get task definition descriptions.
+        
+        :param task_definition_arns: ARNs of task definitions to retrieve. 
+            Defaults to `None`. In this case, both `ACTIVE` and `INACTIVE` 
+            task definitions will be returned.
+        :return: Dictionary wher every entry represents a task definition 
+            description. Keys are the respective ARNs.
+
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
+        """
+
+        def uncached_fetch(task_definition_arns: List[str],) -> Dict[str, dict]:
+            descriptions = {}
+            for arn in task_definition_arns:
+                response = self.ecs.describe_task_definition(taskDefinition=arn)
+                REQUESTS.labels("ecs", "describe_task_definition").inc()
+                response_arn = response["taskDefinition"]["taskDefinitionArn"]
+                descriptions[response_arn] = response["taskDefinition"]
+
+            return descriptions
+
+        if task_definition_arns is None:
+            task_definition_arns = []
+            task_definition_arns += self.get_task_definition_arns("ACTIVE")
+            task_definition_arns += self.get_task_definition_arns("INACTIVE")
+
+        return self.task_definition_cache.get_and_slide(
+            allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
+        )
+
+    def get_container_instance_descriptions(
+        self, cluster_arn: str, container_instance_arns: List[str]
+    ) -> Dict[str, dict]:
+        """Get container instance descriptions.
+
+        :param cluster_arn: ARN of the instances' cluster.
+        :param container_instance_arns: List of container instance ARNs.
+        :return: Dictionary wher every entry represents a container instance 
+            definition description. Keys are the respective ARNs.
+
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_container_instances)
+        """
+
+        def uncached_fetch(container_instance_arns: List[str]) -> Dict[str, dict]:
+            lst = []
+            arns_chunks = toolbox.chunk_list(container_instance_arns, 100)
+
+            for arns_chunk in arns_chunks:
+                lst += self.ecs.describe_container_instances(
+                    cluster=cluster_arn, containerInstances=arns_chunk
+                )["containerInstances"]
+                REQUESTS.labels("ecs", "describe_container_instances").inc()
+
+            return toolbox.list_to_dict(lst, "containerInstanceArn")
+
+        return self.container_instance_cache.get_and_slide(
+            allowed_keys=container_instance_arns, fetch_missing_data=uncached_fetch,
+        )
+
+    def get_ec2_instance_descriptions(self, instance_ids: List[str]) -> Dict[str, dict]:
+        """Get EC2 instance descriptions.
+
+        :param instance_ids: Instance IDs to describe.
+        :return: Dictionary wher every entry represents an EC2 instance 
+            description. Keys are the respective instance IDs.
+
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.describe_instances)
+        """
+
+        def uncached_fetch(instance_ids: List[str]) -> Dict[str, dict]:
+            instances_list = []
+            ids_chunks = toolbox.chunk_list(instance_ids, 100)
+
+            for ids_chunk in ids_chunks:
+                instances_list += self.ec2.describe_instances(
+                    cluster=cluster_arn, containerInstances=arns_chunk
+                )["Reservations"]["Instances"]
+                REQUESTS.labels("ec2", "describe_instances").inc()
+
+            return toolbox.list_to_dict(instances_list, "InstanceId")
+
+        return self.ec2_instance_cache.get_and_slide(
+            allowed_keys=instance_ids, fetch_missing_data=uncached_fetch,
+        )
+
+
+# import boto3
+# from pprint import pprint
+
+# session = boto3.Session()
+# ecs = session.client("ecs")
+# fetcher = CachedFetcher(ecs)
+
+# cluster_arns = fetcher.get_cluster_arns()
+# pprint(cluster_arns)
+
+# task_arns = []
+# for cluster_arn in cluster_arns:
+#     task_arns += fetcher.get_task_arns(cluster_arn, "EC2")
+#     task_arns += fetcher.get_task_arns(cluster_arn, "FARGATE")
+#     print(f"\nXXXXXXXXXXXX {cluster_arn} XXXXXXXXXXXXX\n")
+#     task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
+#     print("BUIFEBUIFBEUIFEBUIFBUIEFBUIEFBUI")
+#     task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
+
+# def_arns = fetcher.get_task_definition_arns(status="ACTIVE")
+# defs = fetcher.get_task_definition_descriptions(def_arns)
+# print(len(defs))
+
+# cluster_arns = fetcher.get_cluster_arns()
+# pprint(cluster_arns)
+# pprint(fetcher.get_container_instance_arns(cluster_arns[0]))
+
+# ====
+
+# cluster_arn = fetcher.get_cluster_arns()[0]
+# task_arns = fetcher.get_task_arns(cluster_arn, "EC2")
+# task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
+
+# container_instance_arns = toolbox.extract_set(task_descriptions, "containerInstanceArn")
+# pprint(container_instance_arns)
+
+# pprint(fetcher.get_container_instance_descriptions(cluster_arn, list(container_instance_arns)))
