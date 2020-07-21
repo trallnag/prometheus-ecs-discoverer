@@ -66,9 +66,7 @@ class CachedFetcher:
         TASKS.labels(cluster_arn, launch_type).set(len(arns))
         return arns
 
-    def get_task_descriptions(
-        self, cluster_arn: str, task_arns: List[str] = None
-    ) -> Dict[str, dict]:
+    def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
         """Get task descriptions.
 
         :param task_arns: Defaults to `None`. This will trigger this method to 
@@ -95,7 +93,7 @@ class CachedFetcher:
             task_arns += self.get_task_arns(cluster_arn, "FARGATE")
             task_arns += self.get_task_arns(cluster_arn, "EC2")
 
-        return self.task_cache.get_and_slide(
+        return self.task_cache.cached(
             allowed_keys=task_arns, fetch_missing_data=uncached_fetch
         )
 
@@ -115,7 +113,7 @@ class CachedFetcher:
             arns += page["taskDefinitionArns"]
         return arns
 
-    def get_task_definition_descriptions(
+    def get_task_definitions(
         self, task_definition_arns: List[str] = None
     ) -> Dict[str, dict]:
         """Get task definition descriptions.
@@ -144,11 +142,11 @@ class CachedFetcher:
             task_definition_arns += self.get_task_definition_arns("ACTIVE")
             task_definition_arns += self.get_task_definition_arns("INACTIVE")
 
-        return self.task_definition_cache.get_and_slide(
+        return self.task_definition_cache.cached(
             allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
         )
 
-    def get_container_instance_descriptions(
+    def get_container_instances(
         self, cluster_arn: str, container_instance_arns: List[str]
     ) -> Dict[str, dict]:
         """Get container instance descriptions.
@@ -173,11 +171,11 @@ class CachedFetcher:
 
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
-        return self.container_instance_cache.get_and_slide(
+        return self.container_instance_cache.cached(
             allowed_keys=container_instance_arns, fetch_missing_data=uncached_fetch,
         )
 
-    def get_ec2_instance_descriptions(self, instance_ids: List[str]) -> Dict[str, dict]:
+    def get_ec2_instances(self, instance_ids: List[str]) -> Dict[str, dict]:
         """Get EC2 instance descriptions.
 
         :param instance_ids: Instance IDs to describe.
@@ -199,45 +197,6 @@ class CachedFetcher:
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
-        return self.ec2_instance_cache.get_and_slide(
+        return self.ec2_instance_cache.cached(
             allowed_keys=instance_ids, fetch_missing_data=uncached_fetch,
         )
-
-
-# import boto3
-# from pprint import pprint
-
-# session = boto3.Session()
-# ecs = session.client("ecs")
-# fetcher = CachedFetcher(ecs)
-
-# cluster_arns = fetcher.get_cluster_arns()
-# pprint(cluster_arns)
-
-# task_arns = []
-# for cluster_arn in cluster_arns:
-#     task_arns += fetcher.get_task_arns(cluster_arn, "EC2")
-#     task_arns += fetcher.get_task_arns(cluster_arn, "FARGATE")
-#     print(f"\nXXXXXXXXXXXX {cluster_arn} XXXXXXXXXXXXX\n")
-#     task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
-#     print("BUIFEBUIFBEUIFEBUIFBUIEFBUIEFBUI")
-#     task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
-
-# def_arns = fetcher.get_task_definition_arns(status="ACTIVE")
-# defs = fetcher.get_task_definition_descriptions(def_arns)
-# print(len(defs))
-
-# cluster_arns = fetcher.get_cluster_arns()
-# pprint(cluster_arns)
-# pprint(fetcher.get_container_instance_arns(cluster_arns[0]))
-
-# ====
-
-# cluster_arn = fetcher.get_cluster_arns()[0]
-# task_arns = fetcher.get_task_arns(cluster_arn, "EC2")
-# task_descriptions = fetcher.get_task_descriptions(cluster_arn, task_arns)
-
-# container_instance_arns = toolbox.extract_set(task_descriptions, "containerInstanceArn")
-# pprint(container_instance_arns)
-
-# pprint(fetcher.get_container_instance_descriptions(cluster_arn, list(container_instance_arns)))
