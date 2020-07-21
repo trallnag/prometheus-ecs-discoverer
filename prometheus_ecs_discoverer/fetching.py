@@ -190,9 +190,9 @@ class CachedFetcher:
             ids_chunks = toolbox.chunk_list(instance_ids, 100)
 
             for ids_chunk in ids_chunks:
-                instances_list += self.ec2.describe_instances(
-                    cluster=cluster_arn, containerInstances=arns_chunk
-                )["Reservations"]["Instances"]
+                response = self.ec2.describe_instances(InstanceIds=ids_chunk)
+                for reservation in response["Reservations"]:
+                    instances_list += reservation["Instances"]
                 REQUESTS.labels("ec2", "describe_instances").inc()
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
