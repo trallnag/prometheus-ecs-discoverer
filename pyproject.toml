@@ -21,6 +21,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.6"
 boto3 = "^1.14.23"
+prometheus-client = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
