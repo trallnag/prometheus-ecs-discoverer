@@ -4,6 +4,7 @@ from prometheus_ecs_discoverer import toolbox
 # ==============================================================================
 # Misc tests
 
+
 def test_chunk_list_with_even_size():
     big_list = list(range(100))
     chunks = toolbox.chunk_list(big_list, 10)
@@ -26,22 +27,13 @@ def test_chunk_list_with_uneven_size():
 
 def test_extract_set():
     dct = {
-        "descr1": {
-            "att1": "fefefe",
-            "att2": "fefegtrafgrgr"
-        },
-        "descr2": {
-            "att1": "OGOGOGO",
-            "att2": "fefegtrafgrgr"
-        },
-        "descr3": {
-            "att1": "OGOGOGO",
-            "att2": "fefegtrafgrgr"
-        }
+        "descr1": {"att1": "fefefe", "att2": "fefegtrafgrgr"},
+        "descr2": {"att1": "OGOGOGO", "att2": "fefegtrafgrgr"},
+        "descr3": {"att1": "OGOGOGO", "att2": "fefegtrafgrgr"},
     }
 
     extract = toolbox.extract_set(dct, "att1")
-    
+
     assert len(extract) == 2
     assert extract == {"fefefe", "OGOGOGO"}
 
@@ -50,26 +42,11 @@ def test_extract_set():
 
 
 def test_list_to_dict():
-    lst = [
-        {
-            "key1": "hallo",
-            "key2": "my"
-        },
-        {
-            "key1": "old",
-            "key2": "friend"
-        }
-    ]
+    lst = [{"key1": "hallo", "key2": "my"}, {"key1": "old", "key2": "friend"}]
 
     dct = toolbox.list_to_dict(lst, "key1")
 
     assert dct == {
-        "hallo": {
-            "key1": "hallo",
-            "key2": "my"
-        },
-        "old": {
-            "key1": "old",
-            "key2": "friend"
-        }
+        "hallo": {"key1": "hallo", "key2": "my"},
+        "old": {"key1": "old", "key2": "friend"},
     }
