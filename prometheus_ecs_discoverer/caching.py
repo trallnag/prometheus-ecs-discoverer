@@ -17,28 +17,34 @@ MISSES = telemetry.gauge(
 class SlidingCache:
     """Cache consisting out of two slots with a sliding window.
 
-    Data is a nested dictionary. Main method is `cached()`. Works by taking a 
-    list of keys and first checking the cached dict for corresponding entries. 
-    Keys without matching entries are passed on to a fetch function. Other data 
-    is thrown away.
+    Data is a nested dictionary. Works by taking a list of keys and first 
+    checking the cached dict for corresponding entries. Keys without matching 
+    entries are passed on to a fetch function. Other data is thrown away.
 
     How to use:
 
     ```python
     cache = SlidingCache()
-    # Fetcher is used for all keys.
-    data = cache.cached(["my", "keys"], fetch_func)
-    # Fetcher is only used for "new_key".
-    data = cache.cached(["keys", "new_key"], fetch_func)
-    ```
-    
-    Public attributes:
 
-    :ivar current: Dictionary that represents the current slot. Defaults to `{}`.
-    :ivar next: Dictionary that becomes the `current` cache ever time `cached` 
-        is called. Defaults to `{}`.
-    :ivar last_hits: Number of hits occurred during the last `cached`.
-    :ivar last_misses: Number of misses occurred during the last `cached`.
+    # Fetcher is used for all keys.
+    data = cache.get(["my", "keys"], fetch_func)
+
+    # Fetcher is only used for "new_key".
+    # Cache now stores a total of three keys.
+    data = cache.get(["keys", "new_key"], fetch_func)
+
+    # Window is moved.
+    cache.flush()
+
+    # Cache is used.
+    data = cache.get(["my"], fetch_func)
+
+    # Window is moved.
+    cache.flush()
+
+    # Now the cache only holds the "my" key.
+    # Only stuff that has been cached after the last flush.
+    ```
     """
 
     def __init__(self, name: str = "generic"):
@@ -49,39 +55,36 @@ class SlidingCache:
 
         self.current = {}
         self.next = {}
-        self._hits = 0
-        self.last_misses = 0
+        self.total_hits = 0
+        self.total_misses = 0
         self.last_hits = 0
-        self._misses = 0
-        self._name = name
+        self.last_misses = 0
+        self.name = name
 
-        self._HITS = HITS.labels(self._name)
-        self._MISSES = MISSES.labels(self._name)
+        self._HITS = HITS.labels(self.name)
+        self._MISSES = MISSES.labels(self.name)
 
-    def cached(
+    def get(
         self,
         allowed_keys: List[str],
         fetch_missing_data: Callable[[List[str]], List[str]],
     ) -> Dict[str, dict]:
-        """Get entries, update missing and move window.
+        """Get entries from cache and update if missing.
 
-        Takes the given keys and checks retrieves matching entries from the 
-        `current` cache. Keys without found values are passed to the 
-        `fetch_missing_data` function. Returned data is combined with already 
-        retrieved data and made into the `next` cache, which is made into the 
-        `current` cache. Result is also returned, but can also retrieved by
-        accessing `current` directly.
+        Important: Don't forget the `flush()` method. Without using it the 
+        cache will never remove old data and eat up more and more memory.
 
-        :param allowed_keys: List of keys that represent the latest current set
-            of cache keys. Their values will be moved to the next slot and 
-            returned to the caller. All other entries will be deleted. List 
-            elements must be unique.
+        :param allowed_keys: Keys to retrieve from cache. Keys of missing 
+            entries are passed to `fetch_missing_data`. List elements must be 
+            unique.
         :param fetch_missing_data: Function that fetches and returns values for 
-            keys to keep but not found in the current slot.
-        :return: Dictionary where the keys match given keys. Important: This 
-            dict represents the `current` cache. If you need to modify the 
-            data deepcopy the data beforehand.
+            keys to keep but not found in the current cache slot.
+        :return: Dictionary where the keys match given keys. If you need to 
+            modify the data deepcopy the data beforehand.
         """
+
+        self.last_hits = 0
+        self.last_misses = 0
 
         missing = []
         result = {}
@@ -89,38 +92,45 @@ class SlidingCache:
         for key in allowed_keys:
             if key in self.current:
                 result[key] = self.current[key]
-                self._hits += 1
+                self.total_hits += 1
+                self.last_hits += 1
             else:
                 missing.append(key)
-                self._misses += 1
+                self.total_misses += 1
+                self.last_misses += 1
 
         missing = fetch_missing_data(missing)
         result.update(missing)
 
-        self.next = result
+        self.current.update(missing)
+        self.next.update(result)
 
-        self._move_window()
+        logger.info(
+            (
+                f"Retrieved keys={len(allowed_keys)} from cache name={self.name} "
+                f"with last_hits={self.last_hits}, last_misses={self.last_misses}."
+            )
+        )
 
-        return self.current
+        return result
 
-    def _move_window(self):
+    def flush(self):
         """Slides the window making the next slot the current one."""
 
         logger.info(
             (
-                f"Moving window of cache name='{self._name}' with "
-                f"hits='{self._hits}', misses='{self._misses}'."
+                f"Flush cache name='{self.name}' slot with "
+                f"hits='{self.total_hits}', misses='{self.total_misses}'."
             )
         )
 
-        self._HITS.set(self._hits)
-        self._MISSES.set(self._misses)
+        self._HITS.set(self.total_hits)
+        self._MISSES.set(self.total_misses)
 
         self.current = self.next
         self.next = {}
 
-        self.last_hits = self._hits
-        self.last_misses = self._misses
-
-        self._hits = 0
-        self._misses = 0
+        self.total_hits = 0
+        self.total_misses = 0
+        self.last_hits = 0
+        self.last_misses = 0

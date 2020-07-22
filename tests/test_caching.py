@@ -25,35 +25,56 @@ def test_cache_with_expected_keys():
     cache = caching.SlidingCache()
 
     # First run. Nothing is cached.
-    keys = ["these", "are", "keys"]
-    result = cache.cached(keys, fetch_missing)
+    keys = ["1", "2", "3"]
+    result = cache.get(keys, fetch_missing)
     assert len(result) == 3
-    assert result == {"these": DUMMY, "are": DUMMY, "keys": DUMMY}
+    assert result == {"1": DUMMY, "2": DUMMY, "3": DUMMY}
     assert cache.last_misses == 3
     assert cache.last_hits == 0
+    assert cache.total_misses == 3
+    assert cache.total_hits == 0
 
     # Second run. Everything is cached.
-    keys = ["these", "are", "keys"]
-    result = cache.cached(keys, fetch_missing)
-    assert len(result) == 3
-    assert result == {"these": DUMMY, "are": DUMMY, "keys": DUMMY}
-    assert cache.last_misses == 0
-    assert cache.last_hits == 3
-
-    # Third run. Cache reduced.
-    keys = ["these", "are"]
-    result = cache.cached(keys, fetch_missing)
+    keys = ["2", "3"]
+    result = cache.get(keys, fetch_missing)
     assert len(result) == 2
-    assert result == {"these": DUMMY, "are": DUMMY}
+    assert result == {"2": DUMMY, "3": DUMMY}
     assert cache.last_misses == 0
     assert cache.last_hits == 2
+    assert cache.total_misses == 3
+    assert cache.total_hits == 2
+    assert len(cache.current) == 3
+    assert len(cache.next) == 3
+
+    # Perform flush.
+    cache.flush()
+    assert cache.last_misses == 0
+    assert cache.last_hits == 0
+    assert cache.total_misses == 0
+    assert cache.total_hits == 0
+    assert cache.current == {"1": DUMMY, "2": DUMMY, "3": DUMMY}
+    assert cache.next == {}
+
+    # Third run. One old key and one new one.
+    keys = ["3", "4"]
+    result = cache.get(keys, fetch_missing)
+    assert len(result) == 2
+    assert cache.last_misses == 1
+    assert cache.last_hits == 1
+    assert len(cache.current) == 4
+    assert len(cache.next) == 2
+
+    # Perform flush.
+    cache.flush()
+    assert cache.current == {"3": DUMMY, "4": DUMMY}
+    assert cache.next == {}
 
 
 def test_cache_no_keys():
     cache = caching.SlidingCache()
 
     keys = []
-    result = cache.cached(keys, fetch_missing)
+    result = cache.get(keys, fetch_missing)
     assert result == {}
     assert cache.last_misses == 0
     assert cache.last_hits == 0
@@ -63,7 +84,7 @@ def test_cache_duplicated_keys():
     cache = caching.SlidingCache()
 
     keys = ["duplicate", "duplicate"]
-    result = cache.cached(keys, fetch_missing)
+    result = cache.get(keys, fetch_missing)
     assert len(result) == 1
     assert result == {"duplicate": DUMMY}
     assert cache.last_misses == 2
@@ -74,10 +95,9 @@ def test_manipulate_cache():
     cache = caching.SlidingCache()
 
     keys = ["these", "are"]
-    result = cache.cached(keys, fetch_missing)
+    result = cache.get(keys, fetch_missing)
     assert result == {"these": DUMMY, "are": DUMMY}
 
     # Manipulate result.
-    result.update({"something": "else"})
-    assert result == {"these": DUMMY, "are": DUMMY, "something": "else"}
-    assert cache.current != {"these": DUMMY, "are": DUMMY}
+    result.update({"these": "TEST"})
+    assert cache.current == {"these": DUMMY, "are": DUMMY}
