@@ -169,7 +169,7 @@ class CachedFetcher:
         return arns
 
     def get_container_instances(
-        self, cluster_arn: str, container_instance_arns: List[str]
+        self, cluster_arn: str, container_instance_arns: List[str] = None
     ) -> Dict[str, dict]:
         """Get container instance descriptions.
 
@@ -192,6 +192,9 @@ class CachedFetcher:
                 REQUESTS.labels("ecs", "describe_container_instances").inc()
 
             return toolbox.list_to_dict(lst, "containerInstanceArn")
+
+        if container_instance_arns is None:
+            container_instance_arns = self.get_container_instance_arns(cluster_arn)
 
         return self.container_instance_cache.get(
             allowed_keys=container_instance_arns, fetch_missing_data=uncached_fetch,
