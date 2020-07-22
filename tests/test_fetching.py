@@ -313,7 +313,9 @@ def test_get_container_instances(ecs_client, ec2_resource, fetcher: Type[CachedF
         )
 
 
-def test_get_container_instances_without_arns(ecs_client, ec2_resource, fetcher: Type[CachedFetcher]):
+def test_get_container_instances_without_arns(
+    ecs_client, ec2_resource, fetcher: Type[CachedFetcher]
+):
     expected = setup_ecs(ecs_client, ec2_resource)
     container_instances = fetcher.get_container_instances(expected["cluster_arn"])
     print_structure(container_instances, "container_instances")

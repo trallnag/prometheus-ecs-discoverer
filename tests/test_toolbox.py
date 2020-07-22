@@ -1,10 +1,6 @@
 from prometheus_ecs_discoverer import toolbox
 
 
-# ==============================================================================
-# Misc tests
-
-
 def test_chunk_list_with_even_size():
     big_list = list(range(100))
     chunks = toolbox.chunk_list(big_list, 10)
@@ -22,9 +18,6 @@ def test_chunk_list_with_uneven_size():
     assert len(chunks[-1]) == 3
 
 
-# ------------------------------------------------------------------------------
-
-
 def test_extract_set():
     dct = {
         "descr1": {"att1": "fefefe", "att2": "fefegtrafgrgr"},
@@ -38,9 +31,6 @@ def test_extract_set():
     assert extract == {"fefefe", "OGOGOGO"}
 
 
-# ------------------------------------------------------------------------------
-
-
 def test_list_to_dict():
     lst = [{"key1": "hallo", "key2": "my"}, {"key1": "old", "key2": "friend"}]
 
@@ -50,3 +40,9 @@ def test_list_to_dict():
         "hallo": {"key1": "hallo", "key2": "my"},
         "old": {"key1": "old", "key2": "friend"},
     }
+
+
+def test_print_structure():
+    lst = [{"key1": "hallo", "key2": "my"}, {"key1": "old", "key2": "friend"}]
+    toolbox.print_structure(lst)
+    assert True

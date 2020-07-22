@@ -1,4 +1,5 @@
 from typing import List
+import pprint
 
 
 def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
@@ -15,6 +16,13 @@ def extract_set(root: dict, nested_key_to_extract) -> set:
     for root_key in root:
         extract.add(root[root_key][nested_key_to_extract])
     return extract
+
+
+def print_structure(data, name: str = "generic"):
+    print("=" * 70)
+    print(name)
+    pprint.pprint(data)
+    print(" ")
 
 
 def list_to_dict(lst: List[dict], key) -> dict:
