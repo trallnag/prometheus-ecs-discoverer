@@ -62,3 +62,9 @@ def list_to_dict(lst: List[dict], key) -> dict:
     for item in lst:
         dct[item[key]] = item
     return dct
+
+
+def validate_min_len(min_len: int, collections: list) -> None:
+    for collection in collections:
+        if len(collection) < min_len:
+            raise ValueError(f"Collection must have min {min_len}.")

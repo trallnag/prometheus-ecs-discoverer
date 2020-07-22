@@ -1,3 +1,4 @@
+import pytest
 from prometheus_ecs_discoverer import toolbox
 
 
@@ -45,4 +46,14 @@ def test_list_to_dict():
 def test_print_structure():
     lst = [{"key1": "hallo", "key2": "my"}, {"key1": "old", "key2": "friend"}]
     toolbox.print_structure(lst)
+    assert True
+
+
+def test_validate_min_len():
+    lst = [{"this": "dict", "is": "too long"}, {"good": {"dict": "only", "len": "one"}}]
+
+    with pytest.raises(ValueError):
+        toolbox.validate_min_len(min_len=10, collections=lst)
+
+    toolbox.validate_min_len(min_len=1, collections=lst)
     assert True
