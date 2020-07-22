@@ -21,6 +21,8 @@ class CachedFetcher:
 
     Reduces the amount of request made to the AWS API helping to stay below the 
     request limits. Only implements necessary methods. So not a generic class.
+
+    Rember to flush all caches with `flush_caches()` after every "full round".
     """
 
     def __init__(self, ecs_client, ec2_client):
@@ -30,6 +32,12 @@ class CachedFetcher:
         self.task_definition_cache = SlidingCache(name="task_definition_cache")
         self.container_instance_cache = SlidingCache(name="container_instance_cache")
         self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
+
+    def flush_caches(self) -> None:
+        self.task_cache.flush()
+        self.task_definition_cache.flush()
+        self.container_instance_cache.flush()
+        self.ec2_instance_cache.flush()
 
     def get_cluster_arns(self) -> List[str]:
         """Get all cluster ARNs.
@@ -93,7 +101,7 @@ class CachedFetcher:
             task_arns += self.get_task_arns(cluster_arn, "FARGATE")
             task_arns += self.get_task_arns(cluster_arn, "EC2")
 
-        return self.task_cache.cached(
+        return self.task_cache.get(
             allowed_keys=task_arns, fetch_missing_data=uncached_fetch
         )
 
@@ -142,7 +150,7 @@ class CachedFetcher:
             task_definition_arns += self.get_task_definition_arns("ACTIVE")
             task_definition_arns += self.get_task_definition_arns("INACTIVE")
 
-        return self.task_definition_cache.cached(
+        return self.task_definition_cache.get(
             allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
         )
 
@@ -171,7 +179,7 @@ class CachedFetcher:
 
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
-        return self.container_instance_cache.cached(
+        return self.container_instance_cache.get(
             allowed_keys=container_instance_arns, fetch_missing_data=uncached_fetch,
         )
 
@@ -197,6 +205,6 @@ class CachedFetcher:
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
-        return self.ec2_instance_cache.cached(
+        return self.ec2_instance_cache.get(
             allowed_keys=instance_ids, fetch_missing_data=uncached_fetch,
         )
