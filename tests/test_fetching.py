@@ -281,7 +281,22 @@ def test_get_task_definitions(ecs_client, ec2_resource, fetcher: Type[CachedFetc
 
 
 # ==============================================================================
-# get_container_instances
+# Container instances.
+
+
+def test_get_container_instance_arns(
+    ecs_client, ec2_resource, fetcher: Type[CachedFetcher]
+):
+    expected = setup_ecs(ecs_client, ec2_resource)
+    container_instance_arns = fetcher.get_container_instance_arns(expected["cluster_arn"])
+    print_structure(container_instance_arns, "container_instance_arns")
+    for arn in container_instance_arns:
+        assert arn in expected["container_instance_arns"]
+
+
+def test_get_container_instance_arns_no_defs(fetcher: Type[CachedFetcher]):
+    container_instance_arns = fetcher.get_container_instance_arns("")
+    assert container_instance_arns == []
 
 
 def test_get_container_instances(ecs_client, ec2_resource, fetcher: Type[CachedFetcher]):
