@@ -154,6 +154,20 @@ class CachedFetcher:
             allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
         )
 
+    def get_container_instance_arns(self, cluster_arn: str) -> List[str]:
+        """Get container instance ARNs.
+        
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_container_instances)
+        """
+
+        arns = []
+        for page in self.ecs.get_paginator("list_container_instances").paginate(
+            cluster=cluster_arn
+        ):
+            REQUESTS.labels("ecs", "list_container_instances").inc()
+            arns += page["containerInstanceArns"]
+        return arns
+
     def get_container_instances(
         self, cluster_arn: str, container_instance_arns: List[str]
     ) -> Dict[str, dict]:
