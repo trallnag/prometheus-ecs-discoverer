@@ -36,9 +36,9 @@ class CachedFetcher:
         self.container_instance_cache.flush()
         self.ec2_instance_cache.flush()
 
-    def get_arns(self, method: str, key: str, **kwargs) -> List[str]:
+    def get_arns(self, method: str, key: str, **aws_api_parameters) -> List[str]:
         arns = []
-        for page in self.ecs.get_paginator(method).paginate(**kwargs):
+        for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
             REQUESTS.labels(method).inc()
             arns += page.get(key, [])
         return arns
@@ -46,8 +46,13 @@ class CachedFetcher:
     def get_cluster_arns(self) -> List[str]:
         return self.get_arns("list_clusters", "clusterArns")
 
-    def get_task_arns(self, cluster_arn) -> List[str]:
-        return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
+    def get_task_arns(self, cluster_arn: str, launch_type: str = None) -> List[str]:
+        if launch_type:
+            return self.get_arns(
+                "list_tasks", "taskArns", cluster=cluster_arn, launchType=launch_type
+            )
+        else:
+            return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
 
     def get_task_definition_arns(self) -> List[str]:
         return self.get_arns("list_task_definitions", "taskDefinitionArns")
