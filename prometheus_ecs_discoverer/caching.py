@@ -1,4 +1,4 @@
-from typing import Dict, List, Callable
+from typing import List, Callable
 import logging
 
 from prometheus_ecs_discoverer import telemetry
@@ -64,23 +64,17 @@ class SlidingCache:
         self._HITS = HITS.labels(self.name)
         self._MISSES = MISSES.labels(self.name)
 
-    def get(
-        self,
-        allowed_keys: List[str],
-        fetch_missing_data: Callable[[List[str]], List[str]],
-    ) -> Dict[str, dict]:
+    def get_multiple(
+        self, keys: List[str], fetch: Callable[[List[str]], List[str]],
+    ) -> dict:
         """Get entries from cache and update if missing.
 
         Important: Don't forget the `flush()` method. Without using it the 
         cache will never remove old data and eat up more and more memory.
 
-        :param allowed_keys: Keys to retrieve from cache. Keys of missing 
-            entries are passed to `fetch_missing_data`. List elements must be 
-            unique.
-        :param fetch_missing_data: Function that fetches and returns values for 
-            keys to keep but not found in the current cache slot.
-        :return: Dictionary where the keys match given keys. If you need to 
-            modify the data deepcopy the data beforehand.
+        :param keys: Keys to retrieve from cache.
+        :param fetch: Function that fetches missing key values.
+        :return: Dictionary where the keys match given keys.
         """
 
         self.last_hits = 0
@@ -89,7 +83,7 @@ class SlidingCache:
         missing = []
         result = {}
 
-        for key in allowed_keys:
+        for key in keys:
             if key in self.current:
                 result[key] = self.current[key]
                 self.total_hits += 1
@@ -99,18 +93,41 @@ class SlidingCache:
                 self.total_misses += 1
                 self.last_misses += 1
 
-        missing = fetch_missing_data(missing)
+        missing = fetch(missing) if missing else {}
         result.update(missing)
 
         self.current.update(missing)
         self.next.update(result)
 
-        logger.info(
-            (
-                f"Retrieved keys={len(allowed_keys)} from cache name={self.name} "
-                f"with last_hits={self.last_hits}, last_misses={self.last_misses}."
-            )
-        )
+        return result
+
+    def get_single(self, key: str, fetch: Callable[[str], dict],) -> dict:
+        """Get entry from cache and update if missing.
+
+        Important: Don't forget the `flush()` method. Without using it the 
+        cache will never remove old data and eat up more and more memory.
+
+        :param key: Key to retrieve from cache.
+        :param fetch: Function that fetches and returns missing.
+        :return: Dictionary representing key value.
+        """
+
+        self.last_hits = 0
+        self.last_misses = 0
+
+        result = {}
+        if key in self.current:
+            result = self.current[key]
+            self.total_hits += 1
+            self.last_hits = 1
+        else:
+            self.total_misses += 1
+            self.last_misses = 1
+            result = fetch(key)
+
+        if result:
+            self.current[key] = result
+            self.next[key] = result
 
         return result
 
