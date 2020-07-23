@@ -120,8 +120,10 @@ class CachedFetcher:
         """
 
         def uncached_fetch(task_definition_arn: str,) -> Dict[str, dict]:
-            response = self.ecs.describe_task_definition(taskDefinition=task_definition_arn)
-            REQUESTS.labels("ecs", "describe_task_definition").inc()
+            response = self.ecs.describe_task_definition(
+                taskDefinition=task_definition_arn
+            )
+            REQUESTS.labels("describe_task_definition").inc()
             description[task_definition_arn] = response["taskDefinition"]
             return descriptions
 
@@ -147,7 +149,7 @@ class CachedFetcher:
             descriptions = {}
             for arn in task_definition_arns:
                 response = self.ecs.describe_task_definition(taskDefinition=arn)
-                REQUESTS.labels("ecs", "describe_task_definition").inc()
+                REQUESTS.labels("describe_task_definition").inc()
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
 
@@ -172,7 +174,7 @@ class CachedFetcher:
         for page in self.ecs.get_paginator("list_container_instances").paginate(
             cluster=cluster_arn
         ):
-            REQUESTS.labels("ecs", "list_container_instances").inc()
+            REQUESTS.labels("list_container_instances").inc()
             arns += page["containerInstanceArns"]
         return arns
 
@@ -197,7 +199,7 @@ class CachedFetcher:
                 lst += self.ecs.describe_container_instances(
                     cluster=cluster_arn, containerInstances=arns_chunk
                 )["containerInstances"]
-                REQUESTS.labels("ecs", "describe_container_instances").inc()
+                REQUESTS.labels("describe_container_instances").inc()
 
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
@@ -226,7 +228,7 @@ class CachedFetcher:
                 response = self.ec2.describe_instances(InstanceIds=ids_chunk)
                 for reservation in response["Reservations"]:
                     instances_list += reservation["Instances"]
-                REQUESTS.labels("ec2", "describe_instances").inc()
+                REQUESTS.labels("describe_instances").inc()
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
