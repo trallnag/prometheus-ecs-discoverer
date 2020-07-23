@@ -68,3 +68,10 @@ def validate_min_len(min_len: int, collections: list) -> None:
     for collection in collections:
         if len(collection) < min_len:
             raise ValueError(f"Collection must have min {min_len}.")
+
+
+def extract_env_var(container: dict, name: str) -> str or None:
+    for entry in container.get("environment", []):
+        if entry["name"] == name:
+            return entry["value"]
+    return None

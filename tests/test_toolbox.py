@@ -57,3 +57,26 @@ def test_validate_min_len():
 
     toolbox.validate_min_len(min_len=1, collections=lst)
     assert True
+
+
+# ------------------------------------------------------------------------------
+# extract_env_var
+
+
+def test_extract_env_var():
+    container = {
+        "random": {"random": "random"},
+        "environment": [
+            {"name": "PROMETHEUS_PORT", "value": "80"},
+            {"name": "SOMETINGELSE", "value": "fefefwe"},
+        ],
+    }
+
+    assert "80" == toolbox.extract_env_var(container, "PROMETHEUS_PORT")
+    assert None is toolbox.extract_env_var(container, "does not exist")
+
+
+def test_extract_env_var_no_environment():
+    container = {"random": {"random": "random"}}
+
+    assert None is toolbox.extract_env_var(container, "does not exist")
