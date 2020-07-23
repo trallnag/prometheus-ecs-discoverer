@@ -218,7 +218,7 @@ def test_get_cluster_arns_with_mock(
 
 def test_get_task_arns(ecs_client, ec2_resource, fetcher: Type[CachedFetcher]):
     expected = setup_ecs(ecs_client, ec2_resource)
-    task_arns = fetcher.get_task_arns(expected["cluster_arn"], "EC2")
+    task_arns = fetcher.get_task_arns(expected["cluster_arn"])
     print_structure(task_arns, "task_arns")
     assert len(task_arns) == len(expected["task_arns"])
     for expected_arn in expected["task_arns"]:
@@ -226,7 +226,7 @@ def test_get_task_arns(ecs_client, ec2_resource, fetcher: Type[CachedFetcher]):
 
 
 def test_get_task_arns_no_tasks(fetcher: Type[CachedFetcher]):
-    task_arns = fetcher.get_task_arns("", "EC2")
+    task_arns = fetcher.get_task_arns("")
     print_structure(task_arns, "task_arns")
     assert task_arns == []
 

@@ -36,35 +36,26 @@ class CachedFetcher:
         self.container_instance_cache.flush()
         self.ec2_instance_cache.flush()
 
+    def get_arns(self, method: str, key: str, **kwargs) -> List[str]:
+        arns = []
+        for page in self.ecs.get_paginator(method).paginate(**kwargs):
+            REQUESTS.labels(method).inc()
+            arns += page.get(key, [])
+        return arns
+
     def get_cluster_arns(self) -> List[str]:
-        """Get all cluster ARNs.
-        
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_clusters)
-        """
+        return self.get_arns("list_clusters", "clusterArns")
 
-        logger.info("Fetch all cluster ARNs.")
-        arns = []
-        for page in self.ecs.get_paginator("list_clusters").paginate():
-            REQUESTS.labels("list_clusters").inc()
-            arns += page.get("clusterArns", [])
-        return arns
+    def get_task_arns(self, cluster_arn) -> List[str]:
+        return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
 
-    def get_task_arns(self, cluster_arn: str, launch_type: str) -> List[str]:
-        """Get all running task ARNs for given cluster ARN and launch type.
+    def get_task_definition_arns(self) -> List[str]:
+        return self.get_arns("list_task_definitions", "taskDefinitionArns")
 
-        :param launch_type: (EC2|FARGATE).
-        
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_tasks)
-        """
-
-        logger.info(f"Fetch launch_type='{launch_type}' tasks cluster='{cluster_arn}'.")
-        arns = []
-        for page in self.ecs.get_paginator("list_tasks").paginate(
-            cluster=cluster_arn, launchType=launch_type, desiredStatus="RUNNING"
-        ):
-            REQUESTS.labels("list_tasks").inc()
-            arns += page["taskArns"]
-        return arns
+    def get_container_instance_arns(self, cluster_arn: str) -> List[str]:
+        return self.get_arns(
+            "list_container_instances", "containerInstanceArns", cluster=cluster_arn
+        )
 
     def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
         """Get task descriptions.
@@ -89,29 +80,11 @@ class CachedFetcher:
             return toolbox.list_to_dict(tasks, "taskArn")
 
         if task_arns is None:
-            task_arns = []
-            task_arns += self.get_task_arns(cluster_arn, "FARGATE")
-            task_arns += self.get_task_arns(cluster_arn, "EC2")
+            task_arns = self.get_task_arns(cluster_arn)
 
         return self.task_cache.get(
             allowed_keys=task_arns, fetch_missing_data=uncached_fetch
         )
-
-    def get_task_definition_arns(self, status: str = "ACTIVE") -> List[str]:
-        """Get task definition ARNs.
-
-        :param status: (ACTIVE|INACTIVE). Defaults to "ACTIVE".
-        
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_task_definitionss)
-        """
-
-        arns = []
-        for page in self.ecs.get_paginator("list_task_definitions").paginate(
-            status=status
-        ):
-            REQUESTS.labels("list_task_definitions").inc()
-            arns += page["taskDefinitionArns"]
-        return arns
 
     def get_task_definition(self, task_definition_arn: str) -> dict:
         """Get single task definition.
@@ -156,27 +129,11 @@ class CachedFetcher:
             return descriptions
 
         if task_definition_arns is None:
-            task_definition_arns = []
-            task_definition_arns += self.get_task_definition_arns("ACTIVE")
-            task_definition_arns += self.get_task_definition_arns("INACTIVE")
+            task_definition_arns = self.get_task_definition_arns()
 
         return self.task_definition_cache.get(
             allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
         )
-
-    def get_container_instance_arns(self, cluster_arn: str) -> List[str]:
-        """Get container instance ARNs.
-        
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_container_instances)
-        """
-
-        arns = []
-        for page in self.ecs.get_paginator("list_container_instances").paginate(
-            cluster=cluster_arn
-        ):
-            REQUESTS.labels("list_container_instances").inc()
-            arns += page["containerInstanceArns"]
-        return arns
 
     def get_container_instances(
         self, cluster_arn: str, container_instance_arns: List[str] = None
