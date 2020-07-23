@@ -67,14 +67,15 @@ class CachedFetcher:
 
         :param task_arns: Defaults to `None`. This will trigger this method to 
             fetch the task ARNs for the given cluster.
-        :return: Dictionary. Every entry represents a task.
+        :return: Dictionary. Every entry represents a task. Keys are the 
+            respective ARNs.
         
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks)
         """
 
-        def uncached_fetch(task_arns: List[str]) -> Dict[str, dict]:
+        def uncached_fetch(task_arns: List[str]) -> dict:
             tasks = []
-            chunked_task_arns = toolbox.chunk_list(task_arns, 5)
+            chunked_task_arns = toolbox.chunk_list(task_arns, 100)
 
             for task_arns_chunk in chunked_task_arns:
                 tasks += self.ecs.describe_tasks(
@@ -87,9 +88,7 @@ class CachedFetcher:
         if task_arns is None:
             task_arns = self.get_task_arns(cluster_arn)
 
-        return self.task_cache.get(
-            allowed_keys=task_arns, fetch_missing_data=uncached_fetch
-        )
+        return self.task_cache.get_multiple(task_arns, uncached_fetch)
 
     def get_task_definition(self, task_definition_arn: str) -> dict:
         """Get single task definition.
@@ -97,17 +96,14 @@ class CachedFetcher:
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
         """
 
-        def uncached_fetch(task_definition_arn: str,) -> Dict[str, dict]:
+        def uncached_fetch(task_definition_arn: str) -> dict:
             response = self.ecs.describe_task_definition(
                 taskDefinition=task_definition_arn
             )
             REQUESTS.labels("describe_task_definition").inc()
-            description[task_definition_arn] = response["taskDefinition"]
-            return descriptions
+            return response["taskDefinition"]
 
-        return self.task_definition_cache.get(
-            allowed_keys=[task_definition_arn], fetch_missing_data=uncached_fetch,
-        )[task_definition_arn]
+        return self.task_definition_cache.get_single(task_definition_arn, uncached_fetch)
 
     def get_task_definitions(
         self, task_definition_arns: List[str] = None
@@ -115,15 +111,14 @@ class CachedFetcher:
         """Get task definition descriptions.
         
         :param task_definition_arns: ARNs of task definitions to retrieve. 
-            Defaults to `None`. In this case, both `ACTIVE` and `INACTIVE` 
-            task definitions will be returned.
+            Defaults to `None`.
         :return: Dictionary wher every entry represents a task definition 
             description. Keys are the respective ARNs.
 
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
         """
 
-        def uncached_fetch(task_definition_arns: List[str],) -> Dict[str, dict]:
+        def uncached_fetch(task_definition_arns: List[str]) -> Dict[str, dict]:
             descriptions = {}
             for arn in task_definition_arns:
                 response = self.ecs.describe_task_definition(taskDefinition=arn)
@@ -136,8 +131,8 @@ class CachedFetcher:
         if task_definition_arns is None:
             task_definition_arns = self.get_task_definition_arns()
 
-        return self.task_definition_cache.get(
-            allowed_keys=task_definition_arns, fetch_missing_data=uncached_fetch,
+        return self.task_definition_cache.get_multiple(
+            task_definition_arns, uncached_fetch,
         )
 
     def get_container_instances(
@@ -168,8 +163,8 @@ class CachedFetcher:
         if container_instance_arns is None:
             container_instance_arns = self.get_container_instance_arns(cluster_arn)
 
-        return self.container_instance_cache.get(
-            allowed_keys=container_instance_arns, fetch_missing_data=uncached_fetch,
+        return self.container_instance_cache.get_multiple(
+            container_instance_arns, uncached_fetch,
         )
 
     def get_ec2_instances(self, instance_ids: List[str]) -> Dict[str, dict]:
@@ -194,6 +189,4 @@ class CachedFetcher:
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
-        return self.ec2_instance_cache.get(
-            allowed_keys=instance_ids, fetch_missing_data=uncached_fetch,
-        )
+        return self.ec2_instance_cache.get_multiple(instance_ids, uncached_fetch,)
