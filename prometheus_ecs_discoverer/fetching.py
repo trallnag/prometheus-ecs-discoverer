@@ -8,11 +8,8 @@ from prometheus_ecs_discoverer.caching import SlidingCache
 
 logger = logging.getLogger(__name__)
 
-CLUSTERS = telemetry.gauge("clusters", "Number of ECS clusters.")
-TASKS = telemetry.gauge("tasks", "Number of ECS tasks.", ("cluster_arn", "launch_type",))
-
 REQUESTS = telemetry.counter(
-    "api_requests", "Number of requests made to the AWS API.", ("client", "method",)
+    "api_requests", "Number of requests made to the AWS API.", ("method",)
 )
 
 
@@ -42,36 +39,31 @@ class CachedFetcher:
     def get_cluster_arns(self) -> List[str]:
         """Get all cluster ARNs.
 
-        :return: List of cluster ARNs or empty list.
-        
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_clusters)
         """
 
         logger.info("Fetch all cluster ARNs.")
-
         arns = []
-
         for page in self.ecs.get_paginator("list_clusters").paginate():
-            REQUESTS.labels(client="ecs", method="list_clusters").inc()
+            REQUESTS.labels("list_clusters").inc()
             arns += page.get("clusterArns", [])
-        CLUSTERS.set(len(arns))
         return arns
 
     def get_task_arns(self, cluster_arn: str, launch_type: str) -> List[str]:
-        """Get all task ARNs for given cluster ARN and launch type.
+        """Get all running task ARNs for given cluster ARN and launch type.
 
         :param launch_type: (EC2|FARGATE).
         
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_tasks)
         """
 
+        logger.info(f"Fetch launch_type='{launch_type}' tasks cluster='{cluster_arn}'.")
         arns = []
         for page in self.ecs.get_paginator("list_tasks").paginate(
             cluster=cluster_arn, launchType=launch_type, desiredStatus="RUNNING"
         ):
-            REQUESTS.labels("ecs", "list_tasks").inc()
+            REQUESTS.labels("list_tasks").inc()
             arns += page["taskArns"]
-        TASKS.labels(cluster_arn, launch_type).set(len(arns))
         return arns
 
     def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
@@ -92,7 +84,7 @@ class CachedFetcher:
                 tasks += self.ecs.describe_tasks(
                     cluster=cluster_arn, tasks=task_arns_chunk
                 )["tasks"]
-                REQUESTS.labels("ecs", "describe_tasks").inc()
+                REQUESTS.labels("describe_tasks").inc()
 
             return toolbox.list_to_dict(tasks, "taskArn")
 
@@ -117,7 +109,7 @@ class CachedFetcher:
         for page in self.ecs.get_paginator("list_task_definitions").paginate(
             status=status
         ):
-            REQUESTS.labels("ecs", "list_task_definitions").inc()
+            REQUESTS.labels("list_task_definitions").inc()
             arns += page["taskDefinitionArns"]
         return arns
 
