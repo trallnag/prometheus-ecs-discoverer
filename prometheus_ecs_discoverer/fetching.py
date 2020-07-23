@@ -38,7 +38,7 @@ class CachedFetcher:
 
     def get_cluster_arns(self) -> List[str]:
         """Get all cluster ARNs.
-
+        
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.list_clusters)
         """
 
@@ -112,6 +112,22 @@ class CachedFetcher:
             REQUESTS.labels("list_task_definitions").inc()
             arns += page["taskDefinitionArns"]
         return arns
+
+    def get_task_definition(self, task_definition_arn: str) -> dict:
+        """Get single task definition.
+
+        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
+        """
+
+        def uncached_fetch(task_definition_arn: str,) -> Dict[str, dict]:
+            response = self.ecs.describe_task_definition(taskDefinition=task_definition_arn)
+            REQUESTS.labels("ecs", "describe_task_definition").inc()
+            description[task_definition_arn] = response["taskDefinition"]
+            return descriptions
+
+        return self.task_definition_cache.get(
+            allowed_keys=[task_definition_arn], fetch_missing_data=uncached_fetch,
+        )[task_definition_arn]
 
     def get_task_definitions(
         self, task_definition_arns: List[str] = None
