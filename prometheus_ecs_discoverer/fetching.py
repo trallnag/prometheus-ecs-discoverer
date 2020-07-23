@@ -64,11 +64,6 @@ class CachedFetcher:
 
     def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
         """Get task descriptions.
-
-        :param task_arns: Defaults to `None`. This will trigger this method to 
-            fetch the task ARNs for the given cluster.
-        :return: Dictionary. Every entry represents a task. Keys are the 
-            respective ARNs.
         
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks)
         """
@@ -109,11 +104,6 @@ class CachedFetcher:
         self, task_definition_arns: List[str] = None
     ) -> Dict[str, dict]:
         """Get task definition descriptions.
-        
-        :param task_definition_arns: ARNs of task definitions to retrieve. 
-            Defaults to `None`.
-        :return: Dictionary wher every entry represents a task definition 
-            description. Keys are the respective ARNs.
 
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
         """
@@ -140,11 +130,6 @@ class CachedFetcher:
     ) -> Dict[str, dict]:
         """Get container instance descriptions.
 
-        :param cluster_arn: ARN of the instances' cluster.
-        :param container_instance_arns: List of container instance ARNs.
-        :return: Dictionary wher every entry represents a container instance 
-            definition description. Keys are the respective ARNs.
-
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_container_instances)
         """
 
@@ -169,10 +154,6 @@ class CachedFetcher:
 
     def get_ec2_instances(self, instance_ids: List[str]) -> Dict[str, dict]:
         """Get EC2 instance descriptions.
-
-        :param instance_ids: Instance IDs to describe.
-        :return: Dictionary wher every entry represents an EC2 instance 
-            description. Keys are the respective instance IDs.
 
         [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.describe_instances)
         """
