@@ -1,5 +1,6 @@
 from typing import Dict, List
 import logging
+from timeit import default_timer
 
 from prometheus_ecs_discoverer import telemetry
 from prometheus_ecs_discoverer import toolbox
@@ -8,8 +9,9 @@ from prometheus_ecs_discoverer.caching import SlidingCache
 
 logger = logging.getLogger(__name__)
 
-REQUESTS = telemetry.counter(
-    "api_requests", "Number of requests made to the AWS API.", ("method",)
+
+DURATION = telemetry.histogram(
+    "api_requests_duration_seconds", "Duration of requests to the AWS API.", ("method",)
 )
 
 
@@ -38,9 +40,11 @@ class CachedFetcher:
 
     def get_arns(self, method: str, key: str, **aws_api_parameters) -> List[str]:
         arns = []
+        start_time = default_timer()
         for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
-            REQUESTS.labels(method).inc()
+            DURATION.labels(method).observe(max(default_timer() - start_time, 0))
             arns += page.get(key, [])
+            start_time = default_timer()
         return arns
 
     def get_cluster_arns(self) -> List[str]:
@@ -73,10 +77,13 @@ class CachedFetcher:
             chunked_task_arns = toolbox.chunk_list(task_arns, 100)
 
             for task_arns_chunk in chunked_task_arns:
+                start_time = default_timer()
                 tasks += self.ecs.describe_tasks(
                     cluster=cluster_arn, tasks=task_arns_chunk
                 )["tasks"]
-                REQUESTS.labels("describe_tasks").inc()
+                DURATION.labels("describe_tasks").observe(
+                    max(default_timer() - start_time, 0)
+                )
 
             return toolbox.list_to_dict(tasks, "taskArn")
 
@@ -92,10 +99,13 @@ class CachedFetcher:
         """
 
         def uncached_fetch(task_definition_arn: str) -> dict:
+            start_time = default_timer()
             response = self.ecs.describe_task_definition(
                 taskDefinition=task_definition_arn
             )
-            REQUESTS.labels("describe_task_definition").inc()
+            DURATION.labels("describe_task_definition").observe(
+                max(default_timer() - start_time, 0)
+            )
             return response["taskDefinition"]
 
         return self.task_definition_cache.get_single(task_definition_arn, uncached_fetch)
@@ -111,8 +121,11 @@ class CachedFetcher:
         def uncached_fetch(task_definition_arns: List[str]) -> Dict[str, dict]:
             descriptions = {}
             for arn in task_definition_arns:
+                start_time = default_timer()
                 response = self.ecs.describe_task_definition(taskDefinition=arn)
-                REQUESTS.labels("describe_task_definition").inc()
+                DURATION.labels("describe_task_definition").observe(
+                    max(default_timer() - start_time, 0)
+                )
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
 
@@ -138,10 +151,13 @@ class CachedFetcher:
             arns_chunks = toolbox.chunk_list(container_instance_arns, 100)
 
             for arns_chunk in arns_chunks:
+                start_time = default_timer()
                 lst += self.ecs.describe_container_instances(
                     cluster=cluster_arn, containerInstances=arns_chunk
                 )["containerInstances"]
-                REQUESTS.labels("describe_container_instances").inc()
+                DURATION.labels("describe_container_instances").observe(
+                    max(default_timer() - start_time, 0)
+                )
 
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
@@ -163,10 +179,13 @@ class CachedFetcher:
             ids_chunks = toolbox.chunk_list(instance_ids, 100)
 
             for ids_chunk in ids_chunks:
+                start_time = default_timer()
                 response = self.ec2.describe_instances(InstanceIds=ids_chunk)
                 for reservation in response["Reservations"]:
                     instances_list += reservation["Instances"]
-                REQUESTS.labels("describe_instances").inc()
+                DURATION.labels("describe_instances").observe(
+                    max(default_timer() - start_time, 0)
+                )
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
