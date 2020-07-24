@@ -13,7 +13,9 @@ PROMETHEUS_SUBSYSTEM = ""
 
 # Logging ----------------------------------------------------------------------
 
-LOGGING_LEVEL = "DEBUG"
+DEBUG = "DEBUG"
+INFO = "INFO"
+LOGGING_LEVEL = INFO
 JSON_LOGGING = False
 PRINT_STRUCTURES = False
 

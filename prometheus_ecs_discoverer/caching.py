@@ -3,7 +3,7 @@ from typing import List, Callable
 from loguru import logger
 
 from prometheus_ecs_discoverer import telemetry
-from prometheus_ecs_discoverer.settings import LOGGING_LEVEL
+from prometheus_ecs_discoverer.settings import LOGGING_LEVEL, DEBUG
 
 
 HITS = telemetry.gauge(
@@ -101,7 +101,7 @@ class SlidingCache:
                 self.total_misses += 1
                 self.last_misses += 1
 
-        if LOGGING_LEVEL == "DEBUG":
+        if LOGGING_LEVEL == DEBUG:
             logger.bind(
                 cache_name=self.name, found_keys=list(result.keys()), missing_keys=missing
             ).debug(
@@ -137,7 +137,7 @@ class SlidingCache:
             result = self.current[key]
             self.total_hits += 1
             self.last_hits = 1
-            if LOGGING_LEVEL == "DEBUG":
+            if LOGGING_LEVEL == DEBUG:
                 logger.bind(cache_name=self.name, key=key).debug(
                     "Retrieve single key from cache."
                 )
@@ -145,7 +145,7 @@ class SlidingCache:
             self.total_misses += 1
             self.last_misses = 1
             result = fetch(key)
-            if LOGGING_LEVEL == "DEBUG":
+            if LOGGING_LEVEL == DEBUG:
                 logger.bind(cache_name=self.name, key=key).debug("Fetch missing key.")
 
         if result:

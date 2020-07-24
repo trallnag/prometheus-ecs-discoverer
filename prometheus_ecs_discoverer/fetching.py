@@ -1,13 +1,12 @@
 from typing import Dict, List
-import logging
 from timeit import default_timer
+
+from loguru import logger
 
 from prometheus_ecs_discoverer import telemetry
 from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.caching import SlidingCache
-
-
-logger = logging.getLogger(__name__)
+from prometheus_ecs_discoverer.settings import LOGGING_LEVEL, DEBUG
 
 
 DURATION = telemetry.histogram(
@@ -38,13 +37,22 @@ class CachedFetcher:
         self.container_instance_cache.flush()
         self.ec2_instance_cache.flush()
 
+    # ==========================================================================
+
     def get_arns(self, method: str, key: str, **aws_api_parameters) -> List[str]:
         arns = []
-        start_time = default_timer()
+
+        total_start_time = default_timer
+        start_time = total_start_time
+
         for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
             DURATION.labels(method).observe(max(default_timer() - start_time, 0))
             arns += page.get(key, [])
             start_time = default_timer()
+
+        if LOGGING_LEVEL == DEBUG:
+            logger.bind(method=method, key=key, arns=str(arns)).debug("Fetched ARNs.")
+
         return arns
 
     def get_cluster_arns(self) -> List[str]:
@@ -66,6 +74,8 @@ class CachedFetcher:
             "list_container_instances", "containerInstanceArns", cluster=cluster_arn
         )
 
+    # ==========================================================================
+
     def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
         """Get task descriptions.
         
@@ -84,6 +94,9 @@ class CachedFetcher:
                 DURATION.labels("describe_tasks").observe(
                     max(default_timer() - start_time, 0)
                 )
+
+            if LOGGING_LEVEL == DEBUG:
+                logger.bind(keys=task_arns).debug("Fetched tasks.")
 
             return toolbox.list_to_dict(tasks, "taskArn")
 
@@ -106,6 +119,10 @@ class CachedFetcher:
             DURATION.labels("describe_task_definition").observe(
                 max(default_timer() - start_time, 0)
             )
+
+            if LOGGING_LEVEL == DEBUG:
+                logger.bind(key=task_definition_arn).debug("Fetched task definition.")
+
             return response["taskDefinition"]
 
         return self.task_definition_cache.get_single(task_definition_arn, uncached_fetch)
@@ -128,6 +145,9 @@ class CachedFetcher:
                 )
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
+
+            if LOGGING_LEVEL == DEBUG:
+                logger.bind(keys=task_definition_arns).debug("Fetched task definitions.")
 
             return descriptions
 
@@ -159,6 +179,11 @@ class CachedFetcher:
                     max(default_timer() - start_time, 0)
                 )
 
+            if LOGGING_LEVEL == DEBUG:
+                logger.bind(keys=container_instance_arns).debug(
+                    "Fetched container instances."
+                )
+
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
         if container_instance_arns is None:
@@ -186,6 +211,9 @@ class CachedFetcher:
                 DURATION.labels("describe_instances").observe(
                     max(default_timer() - start_time, 0)
                 )
+
+            if LOGGING_LEVEL == DEBUG:
+                logger.bind(keys=instance_ids).debug("Fetched EC2 instances.")
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 
