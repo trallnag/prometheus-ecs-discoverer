@@ -1,16 +1,21 @@
 from typing import List, Callable
-import logging
+
+from loguru import logger
 
 from prometheus_ecs_discoverer import telemetry
 
-
-logger = logging.getLogger(__name__)
 
 HITS = telemetry.gauge(
     "cache_hits", "Number of cache hits just before moving window.", ("name",)
 )
 MISSES = telemetry.gauge(
     "cache_misses", "Number of cache misses just before moving window.", ("name",)
+)
+CURRENT_CACHE_ENTRIES = telemetry.gauge(
+    "current_cache_entries", "Number of current cache entries.", ("name",)
+)
+NEXT_CACHE_ENTRIES = telemetry.gauge(
+    "next_cache_entries", "Number of next cache entries.", ("name",)
 )
 
 
@@ -63,6 +68,8 @@ class SlidingCache:
 
         self._HITS = HITS.labels(self.name)
         self._MISSES = MISSES.labels(self.name)
+        self._CURRENT_CACHE_ENTRIES = CURRENT_CACHE_ENTRIES.labels(self.name)
+        self._NEXT_CACHE_ENTRIES = NEXT_CACHE_ENTRIES.labels(self.name)
 
     def get_multiple(
         self, keys: List[str], fetch: Callable[[List[str]], List[str]],
@@ -134,15 +141,17 @@ class SlidingCache:
     def flush(self):
         """Slides the window making the next slot the current one."""
 
-        logger.info(
-            (
-                f"Flush cache name='{self.name}' slot with "
-                f"hits='{self.total_hits}', misses='{self.total_misses}'."
-            )
-        )
+        logger.bind(
+            cache=self.name,
+            hits=self.total_hits,
+            misses=self.total_misses,
+            entries=len(self.current),
+        ).info("Flush cache.")
 
         self._HITS.set(self.total_hits)
         self._MISSES.set(self.total_misses)
+        self._CURRENT_CACHE_ENTRIES.set(len(self.current))
+        self._NEXT_CACHE_ENTRIES.set(len(self.next))
 
         self.current = self.next
         self.next = {}
