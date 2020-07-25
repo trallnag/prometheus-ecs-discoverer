@@ -11,27 +11,6 @@ from prometheus_ecs_discoverer.toolbox import print_structure as ps
 from prometheus_ecs_discoverer.settings import PRINT_STRUCTURES
 
 
-@dataclass
-class Target:
-    ip: str
-    port: str
-    metrics_path: str
-    cluster_name: str = None
-    task_name: str = None
-    task_version: int = None
-    task_id: str = None
-    container_id: str = None
-    instance_id: str = None
-
-
-@dataclass
-class TaskInfo:
-    task: dict
-    task_definition: dict
-    container_instance: dict = None
-    ec2_instance: dict = None
-
-
 class PrometheusEcsDiscoverer:
     def __init__(self, session: Type[boto3.Session] = None):
         self.session = session or boto3.Session()
@@ -139,15 +118,15 @@ class PrometheusEcsDiscoverer:
             container_definition, "PROMETHEUS_ENDPOINT"
         )
 
-        if not self._has_proper_network_binding(container, data):
+        if not _has_proper_network_binding(container, data):
             _logger.debug("No proper network binding. Reject container and remove task from cache.")
             self.fetcher.task_cache.current.pop(task_arn, None)
             return
 
-        port = self._extract_port(container, data)
-        ip = self._extract_ip(container, data)
+        port = _extract_port(container, data)
+        ip = _extract_ip(container, data)
 
-        custom_labels = self._extract_custom_labels(container_definition)
+        custom_labels = _extract_custom_labels(container_definition)
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
             target = Target(ip=ip, port=port, metrics_path=metrics_path, custom_labels=custom_labels,)
@@ -194,68 +173,89 @@ class PrometheusEcsDiscoverer:
 
         return target
 
-    def _extract_port(self, container: dict, data: dict) -> str:
-        prom_port = toolbox.extract_env_var(container, "PROMETHEUS_PORT")
-        prom_container_port = toolbox.extract_env_var(
-            container, "PROMETHEUS_CONTAINER_PORT"
-        )
 
-        has_host_port_mapping = len(container.get("portMappings", [])) > 0
+def _extract_port(container: dict, data: dict) -> str:
+    prom_port = toolbox.extract_env_var(container, "PROMETHEUS_PORT")
+    prom_container_port = toolbox.extract_env_var(
+        container, "PROMETHEUS_CONTAINER_PORT"
+    )
 
-        if prom_port:
-            port = prom_port
-        elif data.task_definition.get("networkMode") in ("host", "awsvpc"):
-            if has_host_port_mapping:
-                port = str(container["portMappings"][0]["hostPort"])
-            else:
-                port = "80"
-        elif prom_container_port:
-            binding_by_container_port = [
-                c
-                for c in container["networkBindings"]
-                if str(c["containerPort"]) == prom_container_port
-            ]
-            if binding_by_container_port:
-                port = str(binding_by_container_port[0]["hostPort"])
-            else:
-                return
+    has_host_port_mapping = len(container.get("portMappings", [])) > 0
+
+    if prom_port:
+        port = prom_port
+    elif data.task_definition.get("networkMode") in ("host", "awsvpc"):
+        if has_host_port_mapping:
+            port = str(container["portMappings"][0]["hostPort"])
         else:
-            port = str(container["networkBindings"][0]["hostPort"])
-
-        return port
-
-    def _extract_ip(self, container: dict, data: dict) -> str:
-        if data.task_definition.get("networkMode") == "awsvpc":
-            return container["networkInterfaces"][0]["privateIpv4Address"]
+            port = "80"
+    elif prom_container_port:
+        binding_by_container_port = [
+            c
+            for c in container["networkBindings"]
+            if str(c["containerPort"]) == prom_container_port
+        ]
+        if binding_by_container_port:
+            port = str(binding_by_container_port[0]["hostPort"])
         else:
-            return data.ec2_instance["PrivateIpAddress"]
+            return
+    else:
+        port = str(container["networkBindings"][0]["hostPort"])
 
-    def _has_proper_network_binding(self, container: dict, data: Type[TaskInfo]) -> bool:
-        if (
-            len(container.get("networkBindings", [])) > 0
-            or len(container.get("networkInterfaces", [])) > 0
-        ):
-            return True
+    return port
 
-        is_host_network_mode = data.task_definition.get("networkMode") == "host"
-        prom_port = toolbox.extract_env_var(container, "PROMETHEUS_PORT")
-        port_mappings = container["portMappings"]
 
-        if not (is_host_network_mode and (prom_port or port_mappings)):
-            ps(container, "container") if PRINT_STRUCTURES else None
-            return False
+def _extract_ip(container: dict, data: dict) -> str:
+    if data.task_definition.get("networkMode") == "awsvpc":
+        return container["networkInterfaces"][0]["privateIpv4Address"]
+    else:
+        return data.ec2_instance["PrivateIpAddress"]
 
+
+def _has_proper_network_binding(container: dict, data: Type[TaskInfo]) -> bool:
+    if (
+        len(container.get("networkBindings", [])) > 0
+        or len(container.get("networkInterfaces", [])) > 0
+    ):
         return True
 
-    def _extract_custom_labels(self, container_definition: dict) -> Dict[str, str]:
-        labels = {}
-        for envvar in container_definition.get("environment", []):
-            name = envvar["name"]
-            if name.startswith("PROMETHEUS_CUSTOM"):
-                labels[name] = envvar["value"]
-        return labels
+    is_host_network_mode = data.task_definition.get("networkMode") == "host"
+    prom_port = toolbox.extract_env_var(container, "PROMETHEUS_PORT")
+    port_mappings = container["portMappings"]
+
+    if not (is_host_network_mode and (prom_port or port_mappings)):
+        ps(container, "container") if PRINT_STRUCTURES else None
+        return False
+
+    return True
 
 
-# time = default_timer()
-# x.discover()
-# print(default_timer() - time)
+def _extract_custom_labels(container_definition: dict) -> Dict[str, str]:
+    labels = {}
+    for envvar in container_definition.get("environment", []):
+        name = envvar["name"]
+        if name.startswith("PROMETHEUS_CUSTOM"):
+            labels[name] = envvar["value"]
+    return labels
+
+
+@dataclass
+class Target:
+    ip: str
+    port: str
+    metrics_path: str
+    cluster_name: str = None
+    task_name: str = None
+    task_version: int = None
+    task_id: str = None
+    container_id: str = None
+    instance_id: str = None
+    custom_labels: Dict[str, str] = None
+
+
+@dataclass
+class TaskInfo:
+    task: dict
+    task_definition: dict
+    container_instance: dict = None
+    ec2_instance: dict = None
