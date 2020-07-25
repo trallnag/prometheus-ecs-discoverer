@@ -37,9 +37,13 @@ class PrometheusEcsDiscoverer:
     def __init__(
         self, session: Type[boto3.Session] = None, ecs_client=None, ec2_client=None
     ):
-        self.session = session or boto3.Session()
-        self.ecs_client = ecs_client or self.session.client("ecs")
-        self.ec2_client = ec2_client or self.session.client("ec2")
+        if ecs_client and ec2_client:
+            self.ecs_client = ecs_client
+            self.ec2_client = ec2_client
+        else:
+            self.session = session or boto3.Session()
+            self.ecs_client = self.session.client("ecs")
+            self.ec2_client = self.session.client("ec2")
         self.fetcher = CachedFetcher(self.ecs_client, self.ec2_client)
         logger.info("Initialized discoverer and required boto3 clients.")
 
@@ -90,7 +94,7 @@ class PrometheusEcsDiscoverer:
 
             container_instance = None
             ec2_instance = None
-            if task["launchType"] == "EC2":
+            if task.get("launchType") != "FARGATE":
                 container_instance = container_instances[task["containerInstanceArn"]]
                 ec2_instance = ec2_instances[container_instance["ec2InstanceId"]]
 
@@ -108,7 +112,9 @@ class PrometheusEcsDiscoverer:
 
         return task_infos
 
-    def _build_target(self, container: dict, data: Type[TaskInfo]) -> Type[Target] or None:
+    def _build_target(
+        self, container: dict, data: Type[TaskInfo]
+    ) -> Type[Target] or None:
         """Builds target if conditions are met.
 
         :param container: Container from task. Not the continer definition.

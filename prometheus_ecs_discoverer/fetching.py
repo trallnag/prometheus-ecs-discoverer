@@ -50,9 +50,6 @@ class CachedFetcher:
             arns += page.get(key, [])
             start_time = default_timer()
 
-        if LOGGING_LEVEL == DEBUG:
-            logger.bind(method=method, key=key, arns=str(arns)).debug("Fetched ARNs.")
-
         return arns
 
     def get_cluster_arns(self) -> List[str]:
@@ -77,11 +74,6 @@ class CachedFetcher:
     # ==========================================================================
 
     def get_tasks(self, cluster_arn: str, task_arns: List[str] = None) -> Dict[str, dict]:
-        """Get task descriptions.
-        
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_tasks)
-        """
-
         def uncached_fetch(task_arns: List[str]) -> dict:
             tasks = []
             chunked_task_arns = toolbox.chunk_list(task_arns, 100)
@@ -95,9 +87,6 @@ class CachedFetcher:
                     max(default_timer() - start_time, 0)
                 )
 
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(keys=task_arns).debug("Fetched tasks.")
-
             return toolbox.list_to_dict(tasks, "taskArn")
 
         if task_arns is None:
@@ -106,35 +95,22 @@ class CachedFetcher:
         return self.task_cache.get_multiple(task_arns, uncached_fetch)
 
     def get_task_definition(self, task_definition_arn: str) -> dict:
-        """Get single task definition.
-
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
-        """
-
         def uncached_fetch(task_definition_arn: str) -> dict:
             start_time = default_timer()
-            response = self.ecs.describe_task_definition(
+            task_definition = self.ecs.describe_task_definition(
                 taskDefinition=task_definition_arn
-            )
+            )["taskDefinition"]
             DURATION.labels("describe_task_definition").observe(
                 max(default_timer() - start_time, 0)
             )
 
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(key=task_definition_arn).debug("Fetched task definition.")
-
-            return response["taskDefinition"]
+            return task_definition
 
         return self.task_definition_cache.get_single(task_definition_arn, uncached_fetch)
 
     def get_task_definitions(
         self, task_definition_arns: List[str] = None
     ) -> Dict[str, dict]:
-        """Get task definition descriptions.
-
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_task_definition)
-        """
-
         def uncached_fetch(task_definition_arns: List[str]) -> Dict[str, dict]:
             descriptions = {}
             for arn in task_definition_arns:
@@ -145,9 +121,6 @@ class CachedFetcher:
                 )
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
-
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(keys=task_definition_arns).debug("Fetched task definitions.")
 
             return descriptions
 
@@ -161,11 +134,6 @@ class CachedFetcher:
     def get_container_instances(
         self, cluster_arn: str, container_instance_arns: List[str] = None
     ) -> Dict[str, dict]:
-        """Get container instance descriptions.
-
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.describe_container_instances)
-        """
-
         def uncached_fetch(container_instance_arns: List[str]) -> Dict[str, dict]:
             lst = []
             arns_chunks = toolbox.chunk_list(container_instance_arns, 100)
@@ -179,11 +147,6 @@ class CachedFetcher:
                     max(default_timer() - start_time, 0)
                 )
 
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(keys=container_instance_arns).debug(
-                    "Fetched container instances."
-                )
-
             return toolbox.list_to_dict(lst, "containerInstanceArn")
 
         if container_instance_arns is None:
@@ -194,11 +157,6 @@ class CachedFetcher:
         )
 
     def get_ec2_instances(self, instance_ids: List[str]) -> Dict[str, dict]:
-        """Get EC2 instance descriptions.
-
-        [Boto3 API Documentation](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.describe_instances)
-        """
-
         def uncached_fetch(instance_ids: List[str]) -> Dict[str, dict]:
             instances_list = []
             ids_chunks = toolbox.chunk_list(instance_ids, 100)
@@ -211,9 +169,6 @@ class CachedFetcher:
                 DURATION.labels("describe_instances").observe(
                     max(default_timer() - start_time, 0)
                 )
-
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(keys=instance_ids).debug("Fetched EC2 instances.")
 
             return toolbox.list_to_dict(instances_list, "InstanceId")
 

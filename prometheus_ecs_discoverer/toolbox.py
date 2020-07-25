@@ -25,6 +25,10 @@ def print_structure(data, name: str = "generic"):
     print(" ")
 
 
+def pformat(data, name: str = "generic"):
+    return "\n" + ("=" * 70) + f"\n{name}\n" + pprint.pformat(data) + "\n"
+
+
 def list_to_dict(lst: List[dict], key) -> dict:
     """Turns a list of dicts into a single dict.
 

@@ -2,8 +2,9 @@ from typing import List, Callable
 
 from loguru import logger
 
+from prometheus_ecs_discoverer.toolbox import pformat
 from prometheus_ecs_discoverer import telemetry
-from prometheus_ecs_discoverer.settings import LOGGING_LEVEL, DEBUG
+from prometheus_ecs_discoverer.settings import LOGGING_LEVEL, DEBUG, PRINT_STRUCTURES
 
 
 HITS = telemetry.gauge(
@@ -101,20 +102,17 @@ class SlidingCache:
                 self.total_misses += 1
                 self.last_misses += 1
 
-        if LOGGING_LEVEL == DEBUG:
-            logger.bind(
-                cache_name=self.name, found_keys=list(result.keys()), missing_keys=missing
-            ).debug(
-                "Found {keys} in cache and fetch {missing}.",
-                self.last_hits,
-                self.last_misses,
-            )
+        logger.bind(cache=self.name).debug(
+            "{} keys found. {} keys not found.", self.last_hits, self.last_misses,
+        )
 
-        missing = fetch(missing) if missing else {}
-        result.update(missing)
+        fetched = fetch(missing) if missing else {}
+        result.update(fetched)
 
-        self.current.update(missing)
+        self.current.update(fetched)
         self.next.update(result)
+        
+        logger.debug(pformat(result, "result")) if PRINT_STRUCTURES else None
 
         return result
 
@@ -137,20 +135,18 @@ class SlidingCache:
             result = self.current[key]
             self.total_hits += 1
             self.last_hits = 1
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(cache_name=self.name, key=key).debug(
-                    "Retrieve single key from cache."
-                )
+            logger.bind(cache=self.name, found=key).debug("Key found.")
         else:
             self.total_misses += 1
             self.last_misses = 1
+            logger.bind(cache=self.name, found=key).debug("Key not found.")
             result = fetch(key)
-            if LOGGING_LEVEL == DEBUG:
-                logger.bind(cache_name=self.name, key=key).debug("Fetch missing key.")
 
         if result:
             self.current[key] = result
             self.next[key] = result
+            
+        logger.debug(pformat(result, "result")) if PRINT_STRUCTURES else None
 
         return result
 
@@ -158,12 +154,11 @@ class SlidingCache:
         """Slides the window making the next slot the current one."""
 
         logger.bind(
-            cache=self.name,
             hits=self.total_hits,
             misses=self.total_misses,
             entries_current=len(self.current),
             entries_next=len(self.next),
-        ).debug("Flush cache.")
+        ).debug("Flush {} cache.", self.name)
 
         self._HITS.set(self.total_hits)
         self._MISSES.set(self.total_misses)
