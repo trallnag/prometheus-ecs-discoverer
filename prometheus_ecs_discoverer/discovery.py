@@ -263,6 +263,6 @@ def _extract_custom_labels(container_definition: dict) -> Dict[str, str]:
     labels = {}
     for envvar in container_definition.get("environment", []):
         name = envvar["name"]
-        if name.startswith("PROMETHEUS_CUSTOM"):
-            labels[name] = envvar["value"]
+        if name.startswith("PROMETHEUS_LABEL_"):
+            labels[name[17:]] = envvar["value"]
     return labels
