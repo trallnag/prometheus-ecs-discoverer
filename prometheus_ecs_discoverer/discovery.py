@@ -11,13 +11,35 @@ from prometheus_ecs_discoverer.toolbox import print_structure as ps
 from prometheus_ecs_discoverer.settings import PRINT_STRUCTURES
 
 
+@dataclass
+class Target:
+    ip: str
+    port: str
+    metrics_path: str
+    cluster_name: str = None
+    task_name: str = None
+    task_version: int = None
+    task_id: str = None
+    container_id: str = None
+    instance_id: str = None
+    custom_labels: Dict[str, str] = None
+
+
+@dataclass
+class TaskInfo:
+    task: dict
+    task_definition: dict
+    container_instance: dict = None
+    ec2_instance: dict = None
+
+
 class PrometheusEcsDiscoverer:
     def __init__(self, session: Type[boto3.Session] = None):
         self.session = session or boto3.Session()
         self.ecs_client = self.session.client("ecs")
         self.ec2_client = self.session.client("ec2")
         self.fetcher = CachedFetcher(self.ecs_client, self.ec2_client)
-        logger.info("Initialized PrometheusEcsDiscoverer.")
+        logger.info("Initialized discoverer and required boto3 clients.")
 
     def discover(self) -> List[Type[Target]]:
         start_time = default_timer()
@@ -119,7 +141,13 @@ class PrometheusEcsDiscoverer:
         )
 
         if not _has_proper_network_binding(container, data):
-            _logger.debug("No proper network binding. Reject container and remove task from cache.")
+            _logger.warning(
+                (
+                    "Container marked as Prometheus target, but it has no "
+                    "proper network binding. Reject container and remove task "
+                    "from cache."
+                )
+            )
             self.fetcher.task_cache.current.pop(task_arn, None)
             return
 
@@ -135,7 +163,7 @@ class PrometheusEcsDiscoverer:
                 port=target.port,
                 metrics_path=target.metrics_path,
                 custom_labels=custom_labels,
-            )
+            ).info("Build target successfully from discovered task info.")
             return target
 
         if "FARGATE" in data.task_definition.get("requiresCompatibilities", ""):
@@ -169,7 +197,7 @@ class PrometheusEcsDiscoverer:
             container_id=target.container_id,
             custom_labels=custom_labels,
 
-        ).debug("Built target successfully.")
+        ).info("Build target successfully from discovered task info.")
 
         return target
 
@@ -237,25 +265,3 @@ def _extract_custom_labels(container_definition: dict) -> Dict[str, str]:
         if name.startswith("PROMETHEUS_CUSTOM"):
             labels[name] = envvar["value"]
     return labels
-
-
-@dataclass
-class Target:
-    ip: str
-    port: str
-    metrics_path: str
-    cluster_name: str = None
-    task_name: str = None
-    task_version: int = None
-    task_id: str = None
-    container_id: str = None
-    instance_id: str = None
-    custom_labels: Dict[str, str] = None
-
-
-@dataclass
-class TaskInfo:
-    task: dict
-    task_definition: dict
-    container_instance: dict = None
-    ec2_instance: dict = None
