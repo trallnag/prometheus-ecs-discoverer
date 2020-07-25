@@ -34,10 +34,12 @@ class TaskInfo:
 
 
 class PrometheusEcsDiscoverer:
-    def __init__(self, session: Type[boto3.Session] = None):
+    def __init__(
+        self, session: Type[boto3.Session] = None, ecs_client=None, ec2_client=None
+    ):
         self.session = session or boto3.Session()
-        self.ecs_client = self.session.client("ecs")
-        self.ec2_client = self.session.client("ec2")
+        self.ecs_client = ecs_client or self.session.client("ecs")
+        self.ec2_client = ec2_client or self.session.client("ec2")
         self.fetcher = CachedFetcher(self.ecs_client, self.ec2_client)
         logger.info("Initialized discoverer and required boto3 clients.")
 
@@ -157,7 +159,9 @@ class PrometheusEcsDiscoverer:
         custom_labels = _extract_custom_labels(container_definition)
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
-            target = Target(ip=ip, port=port, metrics_path=metrics_path, custom_labels=custom_labels,)
+            target = Target(
+                ip=ip, port=port, metrics_path=metrics_path, custom_labels=custom_labels,
+            )
             logger.bind(
                 ip=target.ip,
                 port=target.port,
@@ -196,7 +200,6 @@ class PrometheusEcsDiscoverer:
             instance_id=target.instance_id,
             container_id=target.container_id,
             custom_labels=custom_labels,
-
         ).info("Build target successfully from discovered task info.")
 
         return target
@@ -204,9 +207,7 @@ class PrometheusEcsDiscoverer:
 
 def _extract_port(container: dict, data: dict) -> str:
     prom_port = toolbox.extract_env_var(container, "PROMETHEUS_PORT")
-    prom_container_port = toolbox.extract_env_var(
-        container, "PROMETHEUS_CONTAINER_PORT"
-    )
+    prom_container_port = toolbox.extract_env_var(container, "PROMETHEUS_CONTAINER_PORT")
 
     has_host_port_mapping = len(container.get("portMappings", [])) > 0
 
