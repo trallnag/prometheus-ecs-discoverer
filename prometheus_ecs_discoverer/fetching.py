@@ -42,7 +42,7 @@ class CachedFetcher:
     def get_arns(self, method: str, key: str, **aws_api_parameters) -> List[str]:
         arns = []
 
-        total_start_time = default_timer
+        total_start_time = default_timer()
         start_time = total_start_time
 
         for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
