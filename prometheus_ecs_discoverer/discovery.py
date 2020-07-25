@@ -50,11 +50,11 @@ class PrometheusEcsDiscoverer:
 
         task_infos = []  # type: List[Type[TaskInfo]]
         for cluster_arn in self.fetcher.get_cluster_arns():
-            task_infos += self.discover_task_infos(cluster_arn)
+            task_infos += self._discover_task_infos(cluster_arn)
 
         for task_info in task_infos:
             for container in task_info.task["containers"]:
-                target = self.build_target(container, task_info)
+                target = self._build_target(container, task_info)
                 if target:
                     targets.append(target)
 
@@ -64,7 +64,7 @@ class PrometheusEcsDiscoverer:
         self.fetcher.flush_caches()
         return targets
 
-    def discover_task_infos(self, cluster_arn: str) -> List[Type[TaskInfo]]:
+    def _discover_task_infos(self, cluster_arn: str) -> List[Type[TaskInfo]]:
         """Discovers tasks in a cluster and extracts necessary raw data."""
 
         task_infos = []  # type: List[Type[TaskInfo]]
@@ -108,7 +108,7 @@ class PrometheusEcsDiscoverer:
 
         return task_infos
 
-    def build_target(self, container: dict, data: Type[TaskInfo]) -> Type[Target] or None:
+    def _build_target(self, container: dict, data: Type[TaskInfo]) -> Type[Target] or None:
         """Builds target if conditions are met.
 
         :param container: Container from task. Not the continer definition.
