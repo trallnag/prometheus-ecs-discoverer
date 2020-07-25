@@ -163,7 +163,7 @@ class SlidingCache:
             misses=self.total_misses,
             entries_current=len(self.current),
             entries_next=len(self.next),
-        ).info("Flush cache.")
+        ).debug("Flush cache.")
 
         self._HITS.set(self.total_hits)
         self._MISSES.set(self.total_misses)
