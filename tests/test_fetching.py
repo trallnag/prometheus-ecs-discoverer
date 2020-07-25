@@ -63,9 +63,7 @@ def print_structure(data, name: str = "generic"):
 
 
 def setup_ecs(ecs_client, ec2_resource, instance_count: int = 3) -> dict:
-    info_dict = {
-        "cluster_arn": None,
-    }
+    info_dict = {}
 
     # cluster ------------------------------------------------------------------
 

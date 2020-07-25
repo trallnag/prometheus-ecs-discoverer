@@ -59,10 +59,6 @@ def test_validate_min_len():
     assert True
 
 
-# ------------------------------------------------------------------------------
-# extract_env_var
-
-
 def test_extract_env_var():
     container = {
         "random": {"random": "random"},

@@ -6,6 +6,8 @@ from prometheus_ecs_discoverer import caching
 # ==============================================================================
 # Helpers
 
+# Used as a dummy value for all keys since with the cacher we are not
+# interested in the value, just the key.
 
 DUMMY = {
     "dummy_key1": "dummy_value1",
