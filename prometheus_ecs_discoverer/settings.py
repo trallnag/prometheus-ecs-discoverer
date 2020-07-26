@@ -4,7 +4,16 @@ from loguru import logger
 # ==============================================================================
 # Configuration constants.
 
-BOTO3_DEBUG_LOGGING = False
+# Marshalling ------------------------------------------------------------------
+
+FALLBACK_METRICS_ENDPOINT = "/metrics"
+
+OUTPUT_DIRECTORY = "./"
+FILENAME_15S_JOBS = "15s-tasks.json"
+FILENAME_30S_JOBS = "30s-tasks.json"
+FILENAME_1M_JOBS = "1m-tasks.json"
+FILENAME_5M_JOBS = "5m-tasks.json"
+FILENAME_GENERIC_JOBS = "tasks.json"
 
 # Prometheus -------------------------------------------------------------------
 
@@ -18,6 +27,7 @@ INFO = "INFO"
 LOG_LEVEL = DEBUG
 JSON_LOGGING = False
 PRINT_STRUCTS = True
+BOTO3_DEBUG_LOGGING = False
 
 # ==============================================================================
 # Configuration based on constants.
