@@ -62,11 +62,11 @@ class CachedFetcher:
             "list_container_instances", "containerInstanceArns", cluster=cluster_arn
         )
 
-    def get_task_arns(self, cluster_arn: str) -> list:
-        return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
-
     def get_task_definition_arns(self) -> list:
         return self.get_arns("list_task_definitions", "taskDefinitionArns")
+
+    def get_task_arns(self, cluster_arn: str) -> list:
+        return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
 
     # ==========================================================================
 
