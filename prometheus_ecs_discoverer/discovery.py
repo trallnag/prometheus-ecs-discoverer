@@ -6,9 +6,7 @@ from loguru import logger
 import boto3
 
 from prometheus_ecs_discoverer.fetching import CachedFetcher
-from prometheus_ecs_discoverer import toolbox
-from prometheus_ecs_discoverer.toolbox import print_structure as ps
-from prometheus_ecs_discoverer.settings import PRINT_STRUCTURES
+from prometheus_ecs_discoverer import telemetry, toolbox, settings
 
 
 @dataclass
@@ -16,6 +14,7 @@ class Target:
     ip: str
     port: str
     metrics_path: str
+    p_instance: str
     cluster_name: str = None
     task_name: str = None
     task_version: int = None
@@ -166,7 +165,7 @@ class PrometheusEcsDiscoverer:
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
             target = Target(
-                ip=ip, port=port, metrics_path=metrics_path, custom_labels=custom_labels,
+                ip=ip, port=port, metrics_path=metrics_path, p_instance=data.task["taskDefinitionArn"].split(":")[5].split("/")[-1], custom_labels=custom_labels,
             )
             logger.bind(
                 ip=target.ip,
@@ -190,6 +189,7 @@ class PrometheusEcsDiscoverer:
             task_name=data.task["taskDefinitionArn"].split(":")[5].split("/")[-1],
             task_version=data.task["taskDefinitionArn"].split(":")[6],
             task_id=data.task["taskArn"].split(":")[5].split("/")[-1],
+            p_instance=f"{ip}:{port}",
             instance_id=instance_id,
             container_id=container_id,
             custom_labels=custom_labels,
