@@ -2,9 +2,7 @@ from typing import List, Callable
 
 from loguru import logger
 
-from prometheus_ecs_discoverer.toolbox import pformat
-from prometheus_ecs_discoverer import telemetry
-from prometheus_ecs_discoverer.settings import LOGGING_LEVEL, DEBUG, PRINT_STRUCTURES
+from prometheus_ecs_discoverer import telemetry, toolbox, settings
 
 
 HITS = telemetry.gauge(
@@ -103,7 +101,7 @@ class SlidingCache:
                 self.last_misses += 1
 
         logger.bind(cache=self.name).debug(
-            "{} keys found. {} keys not found.", self.last_hits, self.last_misses,
+            "{} hits. {} misses.", self.last_hits, self.last_misses,
         )
 
         fetched = fetch(missing) if missing else {}
@@ -111,9 +109,8 @@ class SlidingCache:
 
         self.current.update(fetched)
         self.next.update(result)
-        
-        logger.debug(pformat(result, "result")) if PRINT_STRUCTURES else None
 
+        toolbox.pstruct(result) if settings.PRINT_STRUCTS else None
         return result
 
     def get_single(self, key: str, fetch: Callable[[str], dict],) -> dict:
@@ -135,19 +132,18 @@ class SlidingCache:
             result = self.current[key]
             self.total_hits += 1
             self.last_hits = 1
-            logger.bind(cache=self.name, found=key).debug("Key found.")
+            logger.bind(cache=self.name, found=key).debug("Hit.")
         else:
             self.total_misses += 1
             self.last_misses = 1
-            logger.bind(cache=self.name, found=key).debug("Key not found.")
+            logger.bind(cache=self.name, found=key).debug("Miss.")
             result = fetch(key)
 
         if result:
             self.current[key] = result
             self.next[key] = result
-            
-        logger.debug(pformat(result, "result")) if PRINT_STRUCTURES else None
 
+        toolbox.pstruct(result) if settings.PRINT_STRUCTS else None
         return result
 
     def flush(self):
