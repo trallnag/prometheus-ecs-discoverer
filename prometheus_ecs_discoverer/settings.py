@@ -15,9 +15,9 @@ PROMETHEUS_SUBSYSTEM = ""
 
 DEBUG = "DEBUG"
 INFO = "INFO"
-LOGGING_LEVEL = INFO
+LOG_LEVEL = DEBUG
 JSON_LOGGING = False
-PRINT_STRUCTURES = False
+PRINT_STRUCTS = True
 
 # ==============================================================================
 # Configuration based on constants.
@@ -35,7 +35,11 @@ def configure_logging():
 
     if JSON_LOGGING:
         fmt = "{message}"
-        logger.add(sys.stderr, format=fmt, serialize=True, level=LOGGING_LEVEL)
+        logger.add(sys.stderr, format=fmt, serialize=True, level=LOG_LEVEL)
     else:
-        fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{name}:{function}:{line}</cyan> {message} <dim>{extra}</dim>"
-        logger.add(sys.stderr, colorize=True, format=fmt, level=LOGGING_LEVEL)
+        # <green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{name}:{function}:{line}</cyan> {message} <dim>{extra}</dim>
+        fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
+        logger.add(sys.stderr, colorize=True, format=fmt, level=LOG_LEVEL)
+
+
+configure_logging()

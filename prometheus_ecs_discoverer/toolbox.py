@@ -1,5 +1,11 @@
 from typing import List
-import pprint
+import builtins
+import sys
+
+import prettyprinter
+
+builtins.pretty = prettyprinter.pprint
+builtins.cpretty = prettyprinter.cpprint
 
 
 def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
@@ -18,15 +24,27 @@ def extract_set(root: dict, nested_key_to_extract) -> set:
     return extract
 
 
-def print_structure(data, name: str = "generic"):
-    print("=" * 70)
-    print(name)
-    pprint.pprint(data)
+def pstruct(structure, name: str = "generic structure") -> None:
+    """Print given structure in a pretty way with prettyprinter"""
+
+    sys.stdout = sys.stderr
+    print(f"{name}".center(70, "-"))
+    pretty(structure, indent=2)
     print(" ")
+    sys.stdout = sys.__stdout__
 
 
-def pformat(data, name: str = "generic"):
-    return "\n" + ("=" * 70) + f"\n{name}\n" + pprint.pformat(data) + "\n"
+def validate_min_len(min_len: int, collections: list) -> None:
+    for collection in collections:
+        if len(collection) < min_len:
+            raise ValueError(f"Collection must have min {min_len}.")
+
+
+def extract_env_var(container: dict, name: str) -> str or None:
+    for entry in container.get("environment", []):
+        if entry["name"] == name:
+            return entry["value"]
+    return None
 
 
 def list_to_dict(lst: List[dict], key) -> dict:
@@ -66,16 +84,3 @@ def list_to_dict(lst: List[dict], key) -> dict:
     for item in lst:
         dct[item[key]] = item
     return dct
-
-
-def validate_min_len(min_len: int, collections: list) -> None:
-    for collection in collections:
-        if len(collection) < min_len:
-            raise ValueError(f"Collection must have min {min_len}.")
-
-
-def extract_env_var(container: dict, name: str) -> str or None:
-    for entry in container.get("environment", []):
-        if entry["name"] == name:
-            return entry["value"]
-    return None
