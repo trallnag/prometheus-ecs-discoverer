@@ -165,7 +165,11 @@ class PrometheusEcsDiscoverer:
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
             target = Target(
-                ip=ip, port=port, metrics_path=metrics_path, p_instance=data.task["taskDefinitionArn"].split(":")[5].split("/")[-1], custom_labels=custom_labels,
+                ip=ip,
+                port=port,
+                metrics_path=metrics_path,
+                p_instance=data.task["taskDefinitionArn"].split(":")[5].split("/")[-1],
+                custom_labels=custom_labels,
             )
             logger.bind(
                 ip=target.ip,

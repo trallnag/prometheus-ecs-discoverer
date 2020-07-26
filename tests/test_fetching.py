@@ -21,6 +21,7 @@ from prometheus_ecs_discoverer.fetching import CachedFetcher
 # ==============================================================================
 # Fixtures
 
+
 @dataclass
 class Boto:
     client: "typing.Any"
@@ -38,10 +39,7 @@ def aws_credentials() -> object:
 @pytest.fixture(scope="function")
 def ecs(aws_credentials) -> Type[Boto]:
     with mock_ecs():
-        yield Boto(
-            client=boto3.client("ecs", region_name="us-east-1"),
-            resource=None
-        )  
+        yield Boto(client=boto3.client("ecs", region_name="us-east-1"), resource=None)
 
 
 @pytest.fixture(scope="function")
@@ -49,8 +47,8 @@ def ec2(aws_credentials) -> Type[Boto]:
     with mock_ec2():
         yield Boto(
             client=boto3.client("ec2", region_name="us-east-1"),
-            resource=boto3.resource("ec2", region_name="us-east-1")
-        )  
+            resource=boto3.resource("ec2", region_name="us-east-1"),
+        )
 
 
 @pytest.fixture(scope="function")
@@ -91,8 +89,10 @@ def test_get_container_instance_arns(fetcher, ecs, ec2):
     response = ecs.client.register_container_instance(
         cluster=cluster_name, instanceIdentityDocument=instance_id_document
     )
-    expected_container_instance_arn = response["containerInstance"]["containerInstanceArn"]
-    
+    expected_container_instance_arn = response["containerInstance"][
+        "containerInstanceArn"
+    ]
+
     assert response["containerInstance"]["ec2InstanceId"] == test_instance.id
 
     container_instance_arns = fetcher.get_container_instance_arns(cluster_arn=cluster_arn)
@@ -135,7 +135,7 @@ def test_get_task_definition_arns(fetcher, ecs, ec2):
         ],
     )
     toolbox.pstruct(response["taskDefinition"], "register_task_definition")
-    
+
     task_definition_arns = fetcher.get_task_definition_arns()
 
     assert len(task_definition_arns) == 1
@@ -206,8 +206,3 @@ def test_get_task_arns_with_run_task(fetcher, ecs, ec2):
 
     task_arns = fetcher.get_task_arns(cluster_arn=cluster_arn)
     assert len(task_arns) == 3
-
-
-    
-
-

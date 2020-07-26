@@ -1,4 +1,5 @@
 from prometheus_ecs_discoverer import settings
+from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.discovery import PrometheusEcsDiscoverer
 from loguru import logger
 
@@ -9,7 +10,9 @@ def main():
     x = PrometheusEcsDiscoverer()
 
     time = default_timer()
-    x.discover()
+    targets = x.discover()
+
+    print(f"Num of targets: {len(targets)}")
     print(default_timer() - time)
 
 
