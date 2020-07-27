@@ -50,6 +50,3 @@ def configure_logging():
         # <green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{name}:{function}:{line}</cyan> {message} <dim>{extra}</dim>
         fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
         logger.add(sys.stderr, colorize=True, format=fmt, level=LOG_LEVEL)
-
-
-configure_logging()
