@@ -2,7 +2,8 @@ from typing import List, Callable
 
 from loguru import logger
 
-from prometheus_ecs_discoverer import telemetry, toolbox, settings
+from prometheus_ecs_discoverer import settings as s
+from prometheus_ecs_discoverer import telemetry, toolbox
 
 
 HITS = telemetry.gauge(
@@ -102,7 +103,7 @@ class SlidingCache:
 
         logger.bind(cache=self.name).debug(
             "{} hits. {} misses.", self.last_hits, self.last_misses,
-        )
+        ) if s.DEBUG else None
 
         fetched = fetch(missing) if missing else {}
         result.update(fetched)
@@ -110,7 +111,7 @@ class SlidingCache:
         self.current.update(fetched)
         self.next.update(result)
 
-        toolbox.pstruct(result) if settings.PRINT_STRUCTS else None
+        toolbox.pstruct(result) if s.PRINT_STRUCTS else None
         return result
 
     def get_single(self, key: str, fetch: Callable[[str], dict],) -> dict:
@@ -143,7 +144,7 @@ class SlidingCache:
             self.current[key] = result
             self.next[key] = result
 
-        toolbox.pstruct(result) if settings.PRINT_STRUCTS else None
+        toolbox.pstruct(result) if s.PRINT_STRUCTS else None
         return result
 
     def flush(self):
@@ -154,7 +155,7 @@ class SlidingCache:
             misses=self.total_misses,
             entries_current=len(self.current),
             entries_next=len(self.next),
-        ).debug("Flush {} cache.", self.name)
+        ).debug("Flush {} cache.", self.name) if s.DEBUG else None
 
         self._HITS.set(self.total_hits)
         self._MISSES.set(self.total_misses)

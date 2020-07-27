@@ -45,7 +45,7 @@ def test_list_to_dict():
 
 def test_print_structure():
     lst = [{"key1": "hallo", "key2": "my"}, {"key1": "old", "key2": "friend"}]
-    toolbox.print_structure(lst)
+    toolbox.pstruct(lst)
     assert True
 
 

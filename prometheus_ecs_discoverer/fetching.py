@@ -2,7 +2,8 @@ from timeit import default_timer
 
 from loguru import logger
 
-from prometheus_ecs_discoverer import telemetry, toolbox, settings
+from prometheus_ecs_discoverer import settings as s
+from prometheus_ecs_discoverer import telemetry, toolbox
 from prometheus_ecs_discoverer.caching import SlidingCache
 
 
@@ -47,9 +48,9 @@ class CachedFetcher:
             arns += page.get(key, [])
             start_time = default_timer()
 
-        if settings.LOG_LEVEL == settings.DEBUG:
+        if s.DEBUG:
             logger.bind(**aws_api_parameters).debug("{} {}.", method, key)
-        if settings.PRINT_STRUCTS:
+        if s.PRINT_STRUCTS:
             toolbox.pstruct(arns, f"{key} {method}")
 
         return arns
@@ -74,7 +75,7 @@ class CachedFetcher:
         def uncached_fetch(task_arns: list) -> dict:
             logger.bind(cluster_arn=cluster_arn, task_arns=task_arns).debug(
                 "Fetch tasks from AWS with describe_tasks."
-            ) if settings.LOG_LEVEL == settings.DEBUG else None
+            ) if s.DEBUG else None
 
             tasks = []
             chunked_task_arns = toolbox.chunk_list(task_arns, 100)
@@ -88,7 +89,7 @@ class CachedFetcher:
                     max(default_timer() - start_time, 0)
                 )
 
-            if settings.PRINT_STRUCTS:
+            if s.PRINT_STRUCTS:
                 toolbox.pstruct(tasks, "fetched tasks")
 
             return toolbox.list_to_dict(tasks, "taskArn")
@@ -102,7 +103,7 @@ class CachedFetcher:
         def uncached_fetch(arn: str) -> dict:
             logger.bind(arn=arn).debug(
                 "Fetch task definition from AWS with describe_task_definition."
-            ) if settings.LOG_LEVEL == settings.DEBUG else None
+            ) if s.DEBUG else None
 
             start_time = default_timer()
             task_definition = self.ecs.describe_task_definition(taskDefinition=arn)[
@@ -112,7 +113,7 @@ class CachedFetcher:
                 max(default_timer() - start_time, 0)
             )
 
-            if settings.PRINT_STRUCTS:
+            if s.PRINT_STRUCTS:
                 toolbox.pstruct(task_definition, "fetched task definition")
 
             return task_definition
@@ -123,7 +124,7 @@ class CachedFetcher:
         def uncached_fetch(arns: list) -> dict:
             logger.bind(arns=arns).debug(
                 "Fetch task definitions from AWS with describe_task_definition."
-            ) if settings.LOG_LEVEL == settings.DEBUG else None
+            ) if s.DEBUG else None
 
             descriptions = {}
             for arn in arns:
@@ -135,7 +136,7 @@ class CachedFetcher:
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
 
-            if settings.PRINT_STRUCTS:
+            if s.PRINT_STRUCTS:
                 toolbox.pstruct(descriptions, "fetched task definitions")
 
             return descriptions
@@ -149,7 +150,7 @@ class CachedFetcher:
         def uncached_fetch(arns: list) -> dict:
             logger.bind(arns=arns).debug(
                 "Fetch container instances from AWS with describe_container_instances."
-            ) if settings.LOG_LEVEL == settings.DEBUG else None
+            ) if s.DEBUG else None
 
             lst = []
             arns_chunks = toolbox.chunk_list(arns, 100)
@@ -165,7 +166,7 @@ class CachedFetcher:
 
             dct = toolbox.list_to_dict(lst, "containerInstanceArn")
 
-            if settings.PRINT_STRUCTS:
+            if s.PRINT_STRUCTS:
                 toolbox.pstruct(dct, "fetched container instances")
 
             return dct
@@ -179,7 +180,7 @@ class CachedFetcher:
         def uncached_fetch(instance_ids: list) -> dict:
             logger.bind(instance_ids=instance_ids).debug(
                 "Fetch EC2 instances from AWS with describe_instances."
-            ) if settings.LOG_LEVEL == settings.DEBUG else None
+            ) if s.DEBUG else None
 
             instances_list = []
             ids_chunks = toolbox.chunk_list(instance_ids, 100)
@@ -195,7 +196,7 @@ class CachedFetcher:
 
             dct = toolbox.list_to_dict(instances_list, "InstanceId")
 
-            if settings.PRINT_STRUCTS:
+            if s.PRINT_STRUCTS:
                 toolbox.pstruct(dct, "fetched ec2 instances")
 
             return dct

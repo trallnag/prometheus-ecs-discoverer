@@ -1,7 +1,7 @@
 from typing import Type
 from prometheus_client import Counter, Gauge, Histogram
 
-from prometheus_ecs_discoverer import settings
+from prometheus_ecs_discoverer import settings as s
 
 
 def gauge(name: str, documentation: str, labels: tuple = ()) -> Type[Gauge]:
@@ -9,8 +9,8 @@ def gauge(name: str, documentation: str, labels: tuple = ()) -> Type[Gauge]:
         name,
         documentation,
         labelnames=labels,
-        namespace=settings.PROMETHEUS_NAMESPACE,
-        subsystem=settings.PROMETHEUS_SUBSYSTEM,
+        namespace=s.PROMETHEUS_NAMESPACE,
+        subsystem=s.PROMETHEUS_SUBSYSTEM,
     )
 
 
@@ -19,8 +19,8 @@ def counter(name: str, documentation: str, labels: tuple = ()) -> Type[Counter]:
         name,
         documentation,
         labelnames=labels,
-        namespace=settings.PROMETHEUS_NAMESPACE,
-        subsystem=settings.PROMETHEUS_SUBSYSTEM,
+        namespace=s.PROMETHEUS_NAMESPACE,
+        subsystem=s.PROMETHEUS_SUBSYSTEM,
     )
 
 
@@ -29,6 +29,6 @@ def histogram(name: str, documentation: str, labels: tuple = ()) -> Type[Histogr
         name,
         documentation,
         labelnames=labels,
-        namespace=settings.PROMETHEUS_NAMESPACE,
-        subsystem=settings.PROMETHEUS_SUBSYSTEM,
+        namespace=s.PROMETHEUS_NAMESPACE,
+        subsystem=s.PROMETHEUS_SUBSYSTEM,
     )

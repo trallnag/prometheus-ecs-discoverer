@@ -1,16 +1,16 @@
-from typing import List, Type, Tuple
+from typing import Type, List, Dict
 import os
 import json
+import re
 
 from loguru import logger
 
+from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer.discovery import Target
-from prometheus_ecs_discoverer import toolbox, settings
+from prometheus_ecs_discoverer import toolbox
 
 
-def _extract_path_interval_pairs(
-    metrics_path: str = None,
-) -> Dict[Tuple[str, str or None]]:
+def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:
     """Extracts path intervals from given metrics path.
 
     Transforms a string like this `30s:/mymetrics1,/mymetrics2` into:
@@ -24,7 +24,7 @@ def _extract_path_interval_pairs(
     """
 
     if not metrics_path:
-        return {settings.FALLBACK_METRICS_ENDPOINT: None}
+        return {s.FALLBACK_METRICS_ENDPOINT: None}
 
     path_interval = {}
 
@@ -40,19 +40,44 @@ def _extract_path_interval_pairs(
 
     logger.bind(inp=metrics_path, outp=path_interval).debug(
         "Extracted path interval pairs."
-    ) if settings.LOG_LEVEL == settings.DEBUG else None
+    ) if s.DEBUG else None
 
     return path_interval
 
 
+def _get_filename(
+    interval: str or None,
+    filename_15s: str = s.FILENAME_15S,
+    filename_30s: str = s.FILENAME_30S,
+    filename_1m: str = s.FILENAME_1M,
+    filename_5m: str = s.FILENAME_5M,
+    filename_generic: str = s.FILENAME_GENERIC,
+) -> str:
+    if interval == "15s":
+        return filename_15s
+    elif interval == "30s":
+        return filename_30s
+    elif interval == "1m":
+        return filename_1m
+    elif interval == "5m":
+        return filename_5m
+    else:
+        return filename_generic
+
+
 def marshall_targets(
     targets: List[Type[Target]],
-    filename_generic: str = settings.FILENAME_GENERIC_JOBS,
-    filename_15s: str = settings.FILENAME_15S_JOBS,
-    filename_30s: str = settings.FILENAME_30S_JOBS,
-    filename_1m: str = settings.FILENAME_1M_JOBS,
-    filename_5m: str = settings.FILENAME_5M_JOBS,
-) -> Dict[List[Dict]]:
+    filename_15s: str = s.FILENAME_15S,
+    filename_30s: str = s.FILENAME_30S,
+    filename_1m: str = s.FILENAME_1M,
+    filename_5m: str = s.FILENAME_5M,
+    filename_generic: str = s.FILENAME_GENERIC,
+    labelname_cluster: str = s.LABELNAME_CLUSTER,
+    labelname_taskversion: str = s.LABELNAME_TASKVERSION,
+    labelname_taskid: str = s.LABELNAME_TASKID,
+    labelname_containerid: str = s.LABELNAME_CONTAINERID,
+    labelname_instanceid: str = s.LABELNAME_INSTANCEID,
+) -> Dict[str, List[Dict]]:
     """Marshalls given targets into JSON compatible structure.
 
     ```
@@ -87,11 +112,11 @@ def marshall_targets(
     """
 
     result = {
-        filename_generic: [],
-        filename_15s: [],
-        filename_30s: [],
-        filename_1m: [],
-        filename_5m: [],
+        s.FILENAME_GENERIC: [],
+        s.FILENAME_15S: [],
+        s.FILENAME_30S: [],
+        s.FILENAME_1M: [],
+        s.FILENAME_5M: [],
     }
 
     for target in targets:
@@ -99,36 +124,34 @@ def marshall_targets(
         for path, interval in path_interval_pairs.items():
             labels = {}
 
-            labels.update(target.custom_labels)
+            if target.custom_labels:
+                labels.update(target.custom_labels)
 
             labels["instance"] = target.p_instance
             labels["job"] = target.task_name
             labels["metrics_path"] = path
 
-            labels["cluster"] = target.cluster_name if target.cluster_name else None
-            labels["task_version"] = target.task_version if target.task_version else None
-            labels["task_id"] = target.task_id if target.task_id else None
-            labels["container_id"] = target.container_id if target.container_id else None
-            labels["instance_id"] = target.instance_id if target.instance_id else None
+            if target.cluster_name:
+                labels[labelname_cluster] = target.cluster_name
+            if target.task_version:
+                labels[labelname_taskversion] = target.task_version
+            if target.task_id:
+                labels[labelname_taskid] = target.task_id
+            if target.container_id:
+                labels[labelname_containerid] = target.container_id
+            if target.instance_id:
+                labels[labelname_instanceid] = target.instance_id
 
             job = {"targets": [f"{target.ip}:{target.port}"], "labels": labels}
 
-            if interval == "15s":
-                result[filename_15s].append(job)
-            elif interval == "30s":
-                result[filename_30s].append(job)
-            elif interval == "1m":
-                result[filename_1m].append(job)
-            elif interval == "5m":
-                result[filename_5m].append(job)
-            else:
-                result[filename_generic].append(job)
+            result[_get_filename(interval)].append(job)
 
-    toolbox.pstruct(result) if settings.PRINT_STRUCTS else None
+    toolbox.pstruct(result) if s.PRINT_STRUCTS else None
+    return result
 
 
 def write_targets_to_file(
-    result: Dict[List[Dict]], output_directory: str = settings.OUTPUT_DIRECTORY
+    result: Dict[str, List[Dict]], output_directory: str = s.OUTPUT_DIRECTORY
 ) -> None:
     for file_name, content in result.items():
         file_path = f"{output_directory}/{file_name}"
@@ -136,3 +159,4 @@ def write_targets_to_file(
         with open(tmp_file_path, "w") as file:
             file.write(json.dumps(content, indent=4))
         os.rename(tmp_file_path, file_path)
+        logger.bind(file=file_path).debug("Written file.") if s.DEBUG else None

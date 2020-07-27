@@ -132,3 +132,5 @@ dmypy.json
 .vscode/*
 !.vscode/*.code-workspace
 .history/
+# Ignore dynaconf secret files
+.secrets.*

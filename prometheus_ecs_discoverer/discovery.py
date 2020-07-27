@@ -6,17 +6,17 @@ from loguru import logger
 import boto3
 
 from prometheus_ecs_discoverer.fetching import CachedFetcher
-from prometheus_ecs_discoverer import telemetry, toolbox, settings
+from prometheus_ecs_discoverer import toolbox
 
 
 @dataclass
 class Target:
     ip: str
     port: str
-    metrics_path: str
     p_instance: str
+    task_name: str
+    metrics_path: str = None
     cluster_name: str = None
-    task_name: str = None
     task_version: int = None
     task_id: str = None
     container_id: str = None
@@ -163,12 +163,15 @@ class PrometheusEcsDiscoverer:
 
         custom_labels = _extract_custom_labels(container_definition)
 
+        task_name = data.task["taskDefinitionArn"].split(":")[5].split("/")[-1]
+
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
             target = Target(
                 ip=ip,
                 port=port,
                 metrics_path=metrics_path,
-                p_instance=data.task["taskDefinitionArn"].split(":")[5].split("/")[-1],
+                p_instance=task_name,
+                task_name=task_name,
                 custom_labels=custom_labels,
             )
             logger.bind(

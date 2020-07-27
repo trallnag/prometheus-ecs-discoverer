@@ -14,7 +14,8 @@ from moto import mock_ecs, mock_ec2
 from moto.ec2 import utils as ec2_utils
 import pytest
 
-from prometheus_ecs_discoverer import toolbox, settings
+from prometheus_ecs_discoverer.conf import settings as s
+from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 

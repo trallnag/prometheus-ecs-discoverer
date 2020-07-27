@@ -1,4 +1,3 @@
-from prometheus_ecs_discoverer import settings
 from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.discovery import PrometheusEcsDiscoverer
 from loguru import logger

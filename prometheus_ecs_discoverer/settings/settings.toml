@@ -1,0 +1,28 @@
+# marshalling ==================================================================
+
+OUTPUT_DIRECTORY = "./"
+FALLBACK_METRICS_ENDPOINT = "/metrics"
+
+FILENAME_15S = "15s-tasks.json"
+FILENAME_30S = "30s-tasks.json"
+FILENAME_1M = "1m-tasks.json"
+FILENAME_5M = "5m-tasks.json"
+FILENAME_GENERIC = "tasks.json"
+
+LABELNAME_CLUSTER = "cluster"
+LABELNAME_TASKVERSION = "task_version"
+LABELNAME_TASKID = "task_id"
+LABELNAME_CONTAINERID = "container_id"
+LABELNAME_INSTANCEID = "instance_id"
+
+# instrumentation ==============================================================
+
+PROMETHEUS_NAMESPACE = "PrometheusEcsDiscoverer_"
+PROMETHEUS_SUBSYSTEM = ""
+
+# logging ======================================================================
+
+LOG_LEVEL = "DEBUG"
+LOG_JSON = false
+PRINT_STRUCTS = true
+BOTO3_DEBUG = false
