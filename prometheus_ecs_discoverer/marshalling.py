@@ -46,7 +46,7 @@ def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or 
 
 
 def _get_filename(
-    interval: str or None,
+    interval: str or None = None,
     filename_15s: str = s.FILENAME_15S,
     filename_30s: str = s.FILENAME_30S,
     filename_1m: str = s.FILENAME_1M,
@@ -65,7 +65,7 @@ def _get_filename(
         return filename_generic
 
 
-def marshall_targets(
+def _marshall_targets(
     targets: List[Type[Target]],
     filename_15s: str = s.FILENAME_15S,
     filename_30s: str = s.FILENAME_30S,
@@ -146,14 +146,14 @@ def marshall_targets(
 
             result[_get_filename(interval)].append(job)
 
-    toolbox.pstruct(result) if s.PRINT_STRUCTS else None
+    toolbox.pstruct(result, "result") if s.PRINT_STRUCTS else None
     return result
 
 
 def write_targets_to_file(
-    result: Dict[str, List[Dict]], output_directory: str = s.OUTPUT_DIRECTORY
+    targets: List[Type[Target]], output_directory: str = s.OUTPUT_DIRECTORY
 ) -> None:
-    for file_name, content in result.items():
+    for file_name, content in _marshall_targets(targets).items():
         file_path = f"{output_directory}/{file_name}"
         tmp_file_path = f"{file_path}.tmp"
         with open(tmp_file_path, "w") as file:
