@@ -4,9 +4,8 @@ warnings.filterwarnings(action="ignore", category=DeprecationWarning, module=r"b
 warnings.filterwarnings(action="ignore", category=DeprecationWarning, module=r"moto")
 
 import os
-from collections import namedtuple
 from dataclasses import dataclass
-from typing import Type
+from typing import Type, Any
 import json
 
 import boto3
@@ -14,7 +13,6 @@ from moto import mock_ecs, mock_ec2
 from moto.ec2 import utils as ec2_utils
 import pytest
 
-from prometheus_ecs_discoverer.conf import settings as s
 from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.fetching import CachedFetcher
 
@@ -25,8 +23,8 @@ from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 @dataclass
 class Boto:
-    client: "typing.Any"
-    resource: "typing.Any"
+    client: Any
+    resource: Any
 
 
 @pytest.fixture(scope="function")
@@ -188,7 +186,7 @@ def test_get_task_arns_with_run_task(fetcher, ecs, ec2):
     )
     toolbox.pstruct(response, "run_task ec2")
 
-    response_fargate = ecs.client.run_task(
+    _ = ecs.client.run_task(
         cluster=cluster_name,
         overrides={},
         taskDefinition="test_ecs_task",
@@ -199,11 +197,125 @@ def test_get_task_arns_with_run_task(fetcher, ecs, ec2):
     toolbox.pstruct(response, "run_task fargate")
 
     assert len(response_ec2["tasks"]) == 2
-    assert "EC2" == response_ec2["tasks"][0]["launchType"]
-    assert "EC2" == response_ec2["tasks"][1]["launchType"]
 
-    assert len(response_fargate["tasks"]) == 1
-    assert "FARGATE" == response_fargate["tasks"][0]["launchType"]
+    # Currently moto does not support launch type.
+    assert "EC2" != response_ec2["tasks"][0].get("launchType", None)
+    assert "EC2" != response_ec2["tasks"][1].get("launchType", None)
 
     task_arns = fetcher.get_task_arns(cluster_arn=cluster_arn)
     assert len(task_arns) == 3
+
+
+# ------------------------------------------------------------------------------
+
+
+def test_get_tasks(fetcher, ecs, ec2):
+    cluster_name = "test_ecs_cluster"
+
+    response = ecs.client.create_cluster(clusterName=cluster_name)
+    cluster_arn = response["cluster"]["clusterArn"]
+
+    test_instances = ec2.resource.create_instances(
+        ImageId="ami-bb9a6bc2", MinCount=3, MaxCount=3
+    )
+
+    for test_instance in test_instances:
+        instance_id_document = json.dumps(
+            ec2_utils.generate_instance_identity_document(test_instance)
+        )
+        _ = ecs.client.register_container_instance(
+            cluster=cluster_name, instanceIdentityDocument=instance_id_document
+        )
+
+    _ = ecs.client.register_task_definition(
+        family="test_ecs_task",
+        containerDefinitions=[
+            {
+                "name": "hello_world",
+                "image": "docker/hello-world:latest",
+                "cpu": 1024,
+                "memory": 400,
+                "essential": True,
+                "logConfiguration": {"logDriver": "json-file"},
+            }
+        ],
+    )
+
+    response = ecs.client.run_task(
+        cluster=cluster_name,
+        overrides={},
+        taskDefinition="test_ecs_task",
+        count=2,
+        launchType="EC2",
+        startedBy="moto",
+    )
+
+    tasks = fetcher.get_tasks(cluster_arn=cluster_arn)
+
+    assert len(tasks) == 2
+    assert response["tasks"][0]["taskArn"] in tasks.keys()
+    assert response["tasks"][1]["taskArn"] in tasks.keys()
+
+    tasks = fetcher.get_tasks(
+        cluster_arn=cluster_arn, task_arns=fetcher.get_task_arns(cluster_arn=cluster_arn)
+    )
+
+    assert len(tasks) == 2
+    assert response["tasks"][0]["taskArn"] in tasks.keys()
+    assert response["tasks"][1]["taskArn"] in tasks.keys()
+
+
+# ------------------------------------------------------------------------------
+
+
+def test_get_container_instances(fetcher, ecs, ec2):
+    cluster_name = "test_ecs_cluster"
+
+    response = ecs.client.create_cluster(clusterName=cluster_name)
+    cluster_arn = response["cluster"]["clusterArn"]
+
+    test_instances = ec2.resource.create_instances(
+        ImageId="ami-bb9a6bc2", MinCount=3, MaxCount=3
+    )
+
+    instance_id_document = json.dumps(
+        ec2_utils.generate_instance_identity_document(test_instances[0])
+    )
+    response = ecs.client.register_container_instance(
+        cluster=cluster_name, instanceIdentityDocument=instance_id_document
+    )
+    toolbox.pstruct(response, "register_container_instance")
+
+    container_instances = fetcher.get_container_instances(cluster_arn)
+
+    assert len(container_instances) == 1
+    assert (
+        response["containerInstance"]["containerInstanceArn"]
+        in container_instances.keys()
+    )
+
+    container_instances = fetcher.get_container_instances(
+        cluster_arn, arns=fetcher.get_container_instance_arns(cluster_arn)
+    )
+
+    assert len(container_instances) == 1
+    assert (
+        response["containerInstance"]["containerInstanceArn"]
+        in container_instances.keys()
+    )
+
+
+# ------------------------------------------------------------------------------
+
+
+def test_get_ec2_instances(fetcher, ecs, ec2):
+    test_instances = ec2.resource.create_instances(
+        ImageId="ami-bb9a6bc2", MinCount=3, MaxCount=3
+    )
+    toolbox.pstruct(test_instances, "c2.resource.create_instances")
+
+    ids = [instance.id for instance in test_instances]
+
+    ec2_instances = fetcher.get_ec2_instances(ids)
+
+    assert len(ec2_instances) == 3

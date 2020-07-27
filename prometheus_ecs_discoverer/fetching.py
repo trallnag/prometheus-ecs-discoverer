@@ -90,7 +90,7 @@ class CachedFetcher:
                 )
 
             if s.PRINT_STRUCTS:
-                toolbox.pstruct(tasks, "fetched tasks")
+                toolbox.pstruct(tasks, "describe_tasks")
 
             return toolbox.list_to_dict(tasks, "taskArn")
 
@@ -167,7 +167,7 @@ class CachedFetcher:
             dct = toolbox.list_to_dict(lst, "containerInstanceArn")
 
             if s.PRINT_STRUCTS:
-                toolbox.pstruct(dct, "fetched container instances")
+                toolbox.pstruct(dct, "describe_container_instances")
 
             return dct
 
@@ -197,7 +197,7 @@ class CachedFetcher:
             dct = toolbox.list_to_dict(instances_list, "InstanceId")
 
             if s.PRINT_STRUCTS:
-                toolbox.pstruct(dct, "fetched ec2 instances")
+                toolbox.pstruct(dct, "ec2.describe_instances")
 
             return dct
 
