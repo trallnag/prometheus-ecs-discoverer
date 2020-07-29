@@ -106,7 +106,7 @@ def test_marshalling_targets_nolabels():
         ),
     ]
 
-    result = marshalling.marshall_targets(targets)
+    result = marshalling._marshall_targets(targets)
 
     expected = {
         s.FILENAME_GENERIC: [
@@ -197,7 +197,7 @@ def test_marshalling_targets_labels():
         )
     ]
 
-    result = marshalling.marshall_targets(targets)
+    result = marshalling._marshall_targets(targets)
 
     expected = {
         s.FILENAME_GENERIC: [

@@ -101,9 +101,10 @@ class SlidingCache:
                 self.total_misses += 1
                 self.last_misses += 1
 
-        logger.bind(cache=self.name).debug(
-            "{} hits. {} misses.", self.last_hits, self.last_misses,
-        ) if s.DEBUG else None
+        if s.DEBUG:
+            logger.bind(cache=self.name, missing_keys=missing).debug(
+                "{} hits. {} misses.", self.last_hits, self.last_misses,
+            )
 
         fetched = fetch(missing) if missing else {}
         result.update(fetched)
@@ -133,11 +134,11 @@ class SlidingCache:
             result = self.current[key]
             self.total_hits += 1
             self.last_hits = 1
-            logger.bind(cache=self.name, found=key).debug("Hit.")
+            logger.bind(cache=self.name, found_key=key).debug("Hit.")
         else:
             self.total_misses += 1
             self.last_misses = 1
-            logger.bind(cache=self.name, found=key).debug("Miss.")
+            logger.bind(cache=self.name, missing_key=key).debug("Miss.")
             result = fetch(key)
 
         if result:

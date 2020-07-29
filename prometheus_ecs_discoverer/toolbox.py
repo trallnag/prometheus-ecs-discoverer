@@ -28,7 +28,7 @@ def pstruct(structure, name: str = "generic structure") -> None:
     """Print given structure in a pretty way with prettyprinter"""
 
     sys.stdout = sys.stderr
-    print(f"{name}".center(70, "-"))
+    print(f"{name}".center(80, "-"))
     pretty(structure, indent=2)
     print(" ")
     sys.stdout = sys.__stdout__
