@@ -8,9 +8,7 @@ current_directory = os.path.dirname(os.path.realpath(__file__))
 
 settings = Dynaconf(
     envvar_prefix="DYNACONF",
-    settings_files=[
-        f"{current_directory}/settings/settings.toml",
-    ],
+    settings_files=[f"{current_directory}/settings/settings.toml",],
 )
 
 

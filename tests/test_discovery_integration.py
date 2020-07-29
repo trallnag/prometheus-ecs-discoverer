@@ -1,6 +1,7 @@
 import os
 
 import boto3
+import botocore
 from botocore.stub import Stubber
 
 from prometheus_ecs_discoverer import discovery, toolbox, fetching
@@ -8,13 +9,14 @@ from tests import test_discovery_integration_data as data
 
 
 def test_discovery_full():
+    os.environ["AWS_DEFAULT_REGION"] = "eu-central-1"
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
-    ecs_client = boto3.client("ecs")
-    ec2_client = boto3.client("ec2")
+    ecs_client = botocore.session.get_session().create_client("ecs")
+    ec2_client = botocore.session.get_session().create_client("ec2")
 
     ecs_stubber = Stubber(ecs_client)
     ec2_stubber = Stubber(ec2_client)

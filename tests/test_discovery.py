@@ -42,7 +42,7 @@ def test_has_proper_network_binding():
             network_mode="bridge",
             prom_port=None,
             port_mappings=[],
-            scoped_logger=logger
+            scoped_logger=logger,
         )
         is True
     )
@@ -54,7 +54,7 @@ def test_has_proper_network_binding():
             network_mode="awsvpc",
             prom_port=80,
             port_mappings=[],
-            scoped_logger=logger
+            scoped_logger=logger,
         )
         is False
     )
@@ -66,7 +66,7 @@ def test_has_proper_network_binding():
             network_mode="host",
             prom_port=80,
             port_mappings=[],
-            scoped_logger=logger
+            scoped_logger=logger,
         )
         is True
     )
@@ -78,7 +78,7 @@ def test_has_proper_network_binding():
             network_mode="host",
             prom_port=None,
             port_mappings=["something true"],
-            scoped_logger=logger
+            scoped_logger=logger,
         )
         is True
     )
