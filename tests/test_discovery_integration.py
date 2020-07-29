@@ -1,6 +1,5 @@
 import os
 
-import pytest
 import boto3
 from botocore.stub import Stubber
 
