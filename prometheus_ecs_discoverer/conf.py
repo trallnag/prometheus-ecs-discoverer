@@ -10,7 +10,6 @@ settings = Dynaconf(
     envvar_prefix="DYNACONF",
     settings_files=[
         f"{current_directory}/settings/settings.toml",
-        f"{current_directory}/settings/.secrets.toml",
     ],
 )
 

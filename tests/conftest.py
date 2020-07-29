@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from prometheus_ecs_discoverer import settings
