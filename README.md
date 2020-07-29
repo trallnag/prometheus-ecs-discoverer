@@ -21,10 +21,10 @@ of tasks** running in parallel.
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
 
-* Throttling allows the usage with bigger environments. prometheus-
-    ecs-sd will stop working after passing a certain ECS size.
+* Throttling allows the usage in environments with hundreds of 
+    tasks.
 * Custom labels can be exposed to Prometheus by adding them to the container 
     definition.
-* Deployment via provided container or Python package.
+* Deployment via a container (provided and can be used directly) or Python package.
 * Extensive testing with high coverage ensures functionality.
 * More configuration options.
