@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from timeit import default_timer
 
 from loguru import logger
+from botocore.config import Config
 import boto3
 
 from prometheus_ecs_discoverer import settings as s
@@ -37,13 +38,25 @@ class PrometheusEcsDiscoverer:
     def __init__(
         self, session: Type[boto3.Session] = None, ecs_client=None, ec2_client=None
     ):
+        """
+        :param session: Will be used to create clients if no clients are given.
+        :param ecs_client: Will be created if missing.
+        :param ec2_client: Will be created if missing.
+        """
+
         if ecs_client and ec2_client:
             self.ecs_client = ecs_client
             self.ec2_client = ec2_client
         else:
             self.session = session or boto3.Session()
-            self.ecs_client = self.session.client("ecs")
-            self.ec2_client = self.session.client("ec2")
+            config = Config(
+                retries={
+                    "max_attempts": 8,
+                    "mode": "standard"
+                }
+            )
+            self.ecs_client = self.session.client("ecs", config=config)
+            self.ec2_client = self.session.client("ec2", config=config)
         self.fetcher = CachedFetcher(self.ecs_client, self.ec2_client)
         logger.info("Initialized discoverer and required boto3 clients.")
 
