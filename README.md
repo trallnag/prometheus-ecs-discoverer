@@ -21,7 +21,7 @@ of tasks** running in parallel.
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
 
-* Throttling allows the usage in environments with hundreds of 
+* Modified throttling allows the usage in environments with hundreds of 
     tasks.
 * Custom labels can be exposed to Prometheus by adding them to the container 
     definition.
