@@ -1,48 +1,51 @@
+# Default and immutable settings.
+
 # ==============================================================================
 # Main settings
 
+# The exact interval in seconds for the discoverer. The actual interval will 
+# always be greater or equal (if the process takes longer than the interval).
 INTERVAL = 15
-OUTPUT_DIRECTORY = "./"
+
+# This dir fill contain all target files for Prometheus.
+OUTPUT_DIRECTORY = "/tmp"
 
 # ==============================================================================
-# fetching
+# Other
 
-SHOULD_THROTTLE = false
+# Logging
+LOG_LEVEL = "INFO"
+LOG_JSON = false
+PRINT_STRUCTS = false
+BOTO3_DEBUG = false
+
+# Should the first run be throttled ensuring that the limits are not hit?
+WARMUP_THROTTLE = true
 THROTTLE_INTERVAL_SECONDS = 0.1
 
-# ==============================================================================
-# discovery
+# How often should a request be retried if it failed due to hitting limits? 
+# Backoff time increases with every attempt.
+MAX_RETRY_ATTEMPTS = 8
 
+# Environment variables with this prefix are added as custom labels to targets.
 CUSTOM_LABEL_PREFIX = "PROMETHEUS_LABEL_"
 
-# ==============================================================================
-# marshalling
-
-
+# If no endpoint is given in the respective env var, this will be used.
 FALLBACK_METRICS_ENDPOINT = "/metrics"
 
+# Names of files containing the targets for Prometheus.
 FILENAME_15S = "15s-tasks.json"
 FILENAME_30S = "30s-tasks.json"
 FILENAME_1M = "1m-tasks.json"
 FILENAME_5M = "5m-tasks.json"
 FILENAME_GENERIC = "tasks.json"
 
+# Metric label names.
 LABELNAME_CLUSTER = "cluster"
 LABELNAME_TASKVERSION = "task_version"
 LABELNAME_TASKID = "task_id"
 LABELNAME_CONTAINERID = "container_id"
 LABELNAME_INSTANCEID = "instance_id"
 
-# ==============================================================================
-# instrumentation
-
 PROMETHEUS_NAMESPACE = "PrometheusEcsDiscoverer_"
 PROMETHEUS_SUBSYSTEM = ""
-
-# ==============================================================================
-# logging
-
-LOG_LEVEL = "DEBUG"
-LOG_JSON = false
-PRINT_STRUCTS = true
-BOTO3_DEBUG = false

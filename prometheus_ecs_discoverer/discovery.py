@@ -36,8 +36,6 @@ class PrometheusEcsDiscoverer:
         self.fetcher = fetcher
 
     def discover(self) -> List[Type[Target]]:
-        start_time = default_timer()
-
         targets = []
 
         task_infos = []  # type: List[Type[TaskInfo]]
@@ -50,8 +48,7 @@ class PrometheusEcsDiscoverer:
                 if target:
                     targets.append(target)
 
-        duration = max(default_timer() - start_time, 0)
-        logger.bind(duration=duration).info("Discovered {} targets.", len(targets))
+        logger.info("Discovered {} targets.", len(targets))
 
         self.fetcher.flush_caches()
         return targets
@@ -165,7 +162,8 @@ class PrometheusEcsDiscoverer:
         task_name = data.task["taskDefinitionArn"].split(":")[5].split("/")[-1]
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
-            _logger.info("Build target successfully from discovered task info.")
+            _logger.debug("Build target successfully from discovered task info.")
+
             return Target(
                 ip=ip,
                 port=port,
@@ -181,7 +179,8 @@ class PrometheusEcsDiscoverer:
             instance_id = data.container_instance["ec2InstanceId"]
             container_id = container["containerArn"].split(":")[5].split("/")[-1]
 
-        _logger.info("Build target successfully from discovered task info.")
+        _logger.debug("Build target successfully from discovered task info.")
+
         return Target(
             ip=ip,
             port=port,
