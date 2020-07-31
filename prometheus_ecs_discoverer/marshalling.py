@@ -146,13 +146,17 @@ def _marshall_targets(
 
             result[_get_filename(interval)].append(job)
 
-    toolbox.pstruct(result, "result") if s.PRINT_STRUCTS else None
+    logger.bind(**result).info("Marshalled targets")
+
     return result
 
 
 def write_targets_to_file(
     targets: List[Type[Target]], output_directory: str = s.OUTPUT_DIRECTORY
 ) -> None:
+    if not os.path.isdir(output_directory):
+        raise OSError(f"Directory '{output_directory}' not found.")
+
     for file_name, content in _marshall_targets(targets).items():
         file_path = f"{output_directory}/{file_name}"
         tmp_file_path = f"{file_path}.tmp"
