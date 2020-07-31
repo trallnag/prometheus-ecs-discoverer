@@ -1,4 +1,5 @@
 from typing import Type
+
 from prometheus_client import Counter, Gauge, Histogram
 
 from prometheus_ecs_discoverer import settings as s
@@ -24,11 +25,17 @@ def counter(name: str, documentation: str, labels: tuple = ()) -> Type[Counter]:
     )
 
 
-def histogram(name: str, documentation: str, labels: tuple = ()) -> Type[Histogram]:
+def histogram(
+    name: str,
+    documentation: str,
+    labels: tuple = (),
+    buckets: tuple = Histogram.DEFAULT_BUCKETS,
+) -> Type[Histogram]:
     return Histogram(
         name,
         documentation,
         labelnames=labels,
         namespace=s.PROMETHEUS_NAMESPACE,
         subsystem=s.PROMETHEUS_SUBSYSTEM,
+        buckets=buckets,
     )
