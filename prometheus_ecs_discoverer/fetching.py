@@ -1,4 +1,5 @@
 from timeit import default_timer
+import time
 
 from loguru import logger
 
@@ -21,13 +22,21 @@ class CachedFetcher:
     Rember to flush all caches with `flush_caches()` after every "full round".
     """
 
-    def __init__(self, ecs_client, ec2_client):
+    def __init__(
+        self,
+        ecs_client,
+        ec2_client,
+        throttle_interval_seconds: float = s.THROTTLE_INTERVAL_SECONDS,
+        should_throttle: bool = s.SHOULD_THROTTLE,
+    ):
         self.ecs = ecs_client
         self.ec2 = ec2_client
         self.task_cache = SlidingCache(name="task_cache")
         self.task_definition_cache = SlidingCache(name="task_definition_cache")
         self.container_instance_cache = SlidingCache(name="container_instance_cache")
         self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
+        self.throttle_interval_seconds = throttle_interval_seconds
+        self.should_throttle = should_throttle
 
     def flush_caches(self) -> None:
         self.task_cache.flush()
@@ -46,6 +55,10 @@ class CachedFetcher:
         for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
             DURATION.labels(method).observe(max(default_timer() - start_time, 0))
             arns += page.get(key, [])
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
             start_time = default_timer()
 
         if s.DEBUG:
@@ -89,6 +102,9 @@ class CachedFetcher:
                     max(default_timer() - start_time, 0)
                 )
 
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
             if s.PRINT_STRUCTS:
                 toolbox.pstruct(tasks, "describe_tasks")
 
@@ -116,6 +132,9 @@ class CachedFetcher:
             if s.PRINT_STRUCTS:
                 toolbox.pstruct(task_definition, "fetched task definition")
 
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
             return task_definition
 
         return self.task_definition_cache.get_single(arn, uncached_fetch)
@@ -135,6 +154,9 @@ class CachedFetcher:
                 )
                 response_arn = response["taskDefinition"]["taskDefinitionArn"]
                 descriptions[response_arn] = response["taskDefinition"]
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
 
             if s.PRINT_STRUCTS:
                 toolbox.pstruct(descriptions, "fetched task definitions")
@@ -163,6 +185,9 @@ class CachedFetcher:
                 DURATION.labels("describe_container_instances").observe(
                     max(default_timer() - start_time, 0)
                 )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
 
             dct = toolbox.list_to_dict(lst, "containerInstanceArn")
 
@@ -193,6 +218,9 @@ class CachedFetcher:
                 DURATION.labels("describe_instances").observe(
                     max(default_timer() - start_time, 0)
                 )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
 
             dct = toolbox.list_to_dict(instances_list, "InstanceId")
 

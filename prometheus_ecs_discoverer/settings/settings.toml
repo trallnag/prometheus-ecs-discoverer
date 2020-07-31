@@ -1,3 +1,8 @@
+# fetching =====================================================================
+
+SHOULD_THROTTLE = false
+THROTTLE_INTERVAL_SECONDS = 0.1
+
 # discovery ====================================================================
 
 CUSTOM_LABEL_PREFIX = "PROMETHEUS_LABEL_"
