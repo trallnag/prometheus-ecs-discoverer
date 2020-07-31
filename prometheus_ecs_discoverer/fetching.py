@@ -26,17 +26,27 @@ class CachedFetcher:
         self,
         ecs_client,
         ec2_client,
-        throttle_interval_seconds: float = s.THROTTLE_INTERVAL_SECONDS,
-        should_throttle: bool = s.SHOULD_THROTTLE,
+        throttle_interval_seconds: float = 0.1,
+        should_throttle: bool = False,
     ):
+        """
+        :param ecs_client: Boto3 ECS client.
+        :param ec2_client: Boto3 EC2 client.
+        :param throttle_interval_seconds: Time to sleep after every single 
+            request made to the AWS API.
+        :param should_throttle: If process should go to sleep after a request 
+            made to the AWS API.
+        """
+
         self.ecs = ecs_client
         self.ec2 = ec2_client
+        self.throttle_interval_seconds = throttle_interval_seconds
+        self.should_throttle = should_throttle
+
         self.task_cache = SlidingCache(name="task_cache")
         self.task_definition_cache = SlidingCache(name="task_definition_cache")
         self.container_instance_cache = SlidingCache(name="container_instance_cache")
         self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
-        self.throttle_interval_seconds = throttle_interval_seconds
-        self.should_throttle = should_throttle
 
     def flush_caches(self) -> None:
         self.task_cache.flush()
@@ -57,6 +67,7 @@ class CachedFetcher:
             arns += page.get(key, [])
 
             if self.should_throttle:
+                print("hALLO")
                 time.sleep(self.throttle_interval_seconds)
 
             start_time = default_timer()

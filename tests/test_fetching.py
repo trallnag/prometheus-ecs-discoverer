@@ -6,6 +6,7 @@ warnings.filterwarnings(action="ignore", category=DeprecationWarning, module=r"m
 import os
 from dataclasses import dataclass
 from typing import Type, Any
+from timeit import default_timer
 import json
 
 import boto3
@@ -52,11 +53,28 @@ def ec2(aws_credentials) -> Type[Boto]:
 
 @pytest.fixture(scope="function")
 def fetcher(ecs: Type[Boto], ec2: Type[Boto]) -> Type[CachedFetcher]:
-    return CachedFetcher(ecs.client, ec2.client)
+    return CachedFetcher(
+        ecs.client, ec2.client, should_throttle=True, throttle_interval_seconds=0
+    )
 
 
 # ==============================================================================
 # Tests
+
+
+def test_throttle(fetcher, ecs):
+    start_time = default_timer()
+    _ = fetcher.get_cluster_arns()
+    duration = max(default_timer() - start_time, 0)
+    assert duration < 0.1
+
+    fetcher.should_throttle = True
+    fetcher.throttle_interval_seconds = 0.15
+
+    start_time = default_timer()
+    _ = fetcher.get_cluster_arns()
+    duration = max(default_timer() - start_time, 0)
+    assert duration > 0.1
 
 
 def test_get_cluster_arns(fetcher, ecs):

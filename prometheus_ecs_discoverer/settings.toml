@@ -1,15 +1,24 @@
-# fetching =====================================================================
+# ==============================================================================
+# Main settings
+
+INTERVAL = 15
+OUTPUT_DIRECTORY = "./"
+
+# ==============================================================================
+# fetching
 
 SHOULD_THROTTLE = false
 THROTTLE_INTERVAL_SECONDS = 0.1
 
-# discovery ====================================================================
+# ==============================================================================
+# discovery
 
 CUSTOM_LABEL_PREFIX = "PROMETHEUS_LABEL_"
 
-# marshalling ==================================================================
+# ==============================================================================
+# marshalling
 
-OUTPUT_DIRECTORY = "./"
+
 FALLBACK_METRICS_ENDPOINT = "/metrics"
 
 FILENAME_15S = "15s-tasks.json"
@@ -24,12 +33,14 @@ LABELNAME_TASKID = "task_id"
 LABELNAME_CONTAINERID = "container_id"
 LABELNAME_INSTANCEID = "instance_id"
 
-# instrumentation ==============================================================
+# ==============================================================================
+# instrumentation
 
 PROMETHEUS_NAMESPACE = "PrometheusEcsDiscoverer_"
 PROMETHEUS_SUBSYSTEM = ""
 
-# logging ======================================================================
+# ==============================================================================
+# logging
 
 LOG_LEVEL = "DEBUG"
 LOG_JSON = false
