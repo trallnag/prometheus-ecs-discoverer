@@ -1,6 +1,6 @@
 import os
 
-import botocore
+import boto3
 from botocore.stub import Stubber
 
 from prometheus_ecs_discoverer import discovery, toolbox, fetching
@@ -14,8 +14,8 @@ def test_discovery_full():
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
     os.environ["AWS_SESSION_TOKEN"] = "testing"
 
-    ecs_client = botocore.session.get_session().create_client("ecs")
-    ec2_client = botocore.session.get_session().create_client("ec2")
+    ecs_client = boto3.client("ecs")
+    ec2_client = boto3.client("ec2")
 
     ecs_stubber = Stubber(ecs_client)
     ec2_stubber = Stubber(ec2_client)
@@ -40,11 +40,9 @@ def test_discovery_full():
 
     # --------------------------------------------------------------------------
 
-    discoverer = discovery.PrometheusEcsDiscoverer(
-        ecs_client=ecs_client, ec2_client=ec2_client
-    )
     fetcher = fetching.CachedFetcher(ecs_client, ec2_client)
-    discoverer.fetcher = fetcher
+
+    discoverer = discovery.PrometheusEcsDiscoverer(fetcher)
 
     # Inject data into caches.
 
