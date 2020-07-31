@@ -1,10 +1,9 @@
-from typing import List, Callable
+from typing import Callable, List
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer import telemetry, toolbox
-
 
 HITS = telemetry.gauge(
     "cache_hits", "Number of cache hits just before moving window.", ("name",)

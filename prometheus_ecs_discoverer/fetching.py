@@ -1,12 +1,11 @@
-from timeit import default_timer
 import time
+from timeit import default_timer
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer import telemetry, toolbox
 from prometheus_ecs_discoverer.caching import SlidingCache
-
 
 DURATION = telemetry.histogram(
     "api_requests_duration_seconds", "Duration of requests to the AWS API.", ("method",)
@@ -67,7 +66,6 @@ class CachedFetcher:
             arns += page.get(key, [])
 
             if self.should_throttle:
-                print("hALLO")
                 time.sleep(self.throttle_interval_seconds)
 
             start_time = default_timer()

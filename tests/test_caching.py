@@ -2,7 +2,6 @@ from typing import List
 
 from prometheus_ecs_discoverer import caching
 
-
 # ==============================================================================
 # Helpers
 

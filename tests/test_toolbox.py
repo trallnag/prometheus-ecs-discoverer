@@ -1,4 +1,5 @@
 import pytest
+
 from prometheus_ecs_discoverer import toolbox
 
 

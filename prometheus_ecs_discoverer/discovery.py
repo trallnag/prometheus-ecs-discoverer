@@ -1,12 +1,11 @@
-from typing import Type, List, Dict
 from dataclasses import dataclass
-from timeit import default_timer
+from typing import Dict, List, Type
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import settings as s
-from prometheus_ecs_discoverer.fetching import CachedFetcher
 from prometheus_ecs_discoverer import toolbox
+from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 
 @dataclass

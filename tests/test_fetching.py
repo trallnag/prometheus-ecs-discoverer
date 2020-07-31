@@ -3,20 +3,19 @@ import warnings
 warnings.filterwarnings(action="ignore", category=DeprecationWarning, module=r"boto")
 warnings.filterwarnings(action="ignore", category=DeprecationWarning, module=r"moto")
 
+import json
 import os
 from dataclasses import dataclass
-from typing import Type, Any
 from timeit import default_timer
-import json
+from typing import Any, Type
 
 import boto3
-from moto import mock_ecs, mock_ec2
-from moto.ec2 import utils as ec2_utils
 import pytest
+from moto import mock_ec2, mock_ecs
+from moto.ec2 import utils as ec2_utils
 
 from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.fetching import CachedFetcher
-
 
 # ==============================================================================
 # Fixtures

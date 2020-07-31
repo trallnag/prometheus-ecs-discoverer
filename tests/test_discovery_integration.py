@@ -3,7 +3,7 @@ import os
 import boto3
 from botocore.stub import Stubber
 
-from prometheus_ecs_discoverer import discovery, toolbox, fetching
+from prometheus_ecs_discoverer import discovery, fetching, toolbox
 from tests import test_discovery_integration_data as data
 
 

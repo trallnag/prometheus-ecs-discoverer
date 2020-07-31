@@ -1,13 +1,13 @@
-from typing import Type, List, Dict
-import os
 import json
+import os
 import re
+from typing import Dict, List, Type
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import settings as s
-from prometheus_ecs_discoverer.discovery import Target
 from prometheus_ecs_discoverer import toolbox
+from prometheus_ecs_discoverer.discovery import Target
 
 
 def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:

@@ -5,8 +5,9 @@ from prometheus_ecs_discoverer import settings
 
 @pytest.fixture(scope="session", autouse=True)
 def configure_logging():
-    from loguru import logger
     import sys
+
+    from loguru import logger
 
     logger.remove()
 

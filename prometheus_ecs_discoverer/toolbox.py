@@ -1,6 +1,6 @@
-from typing import List
 import builtins
 import sys
+from typing import List
 
 import prettyprinter
 

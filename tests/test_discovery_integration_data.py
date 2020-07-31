@@ -1,6 +1,7 @@
 # noqa
 
 import datetime
+
 from dateutil.tz import tzlocal, tzutc
 
 list_clusters_response = {
