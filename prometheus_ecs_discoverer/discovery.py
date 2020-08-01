@@ -38,7 +38,7 @@ class PrometheusEcsDiscoverer:
     def discover(self) -> List[Type[Target]]:
         targets = []
 
-        task_infos = []  # type: List[Type[TaskInfo]]
+        task_infos = []
         for cluster_arn in self.fetcher.get_cluster_arns():
             task_infos += self._discover_task_infos(cluster_arn)
 

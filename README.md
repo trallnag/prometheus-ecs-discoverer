@@ -23,8 +23,8 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 
 * Modified throttling allows the usage in environments with hundreds of 
     tasks.
-* Custom labels can be exposed to Prometheus by adding them to the container 
-    definition.
-* Deployment via a container (provided and can be used directly) or Python package.
+* Every target can expose custom labels via its environment variables.
+* Deploy as container (provided and can be used directly) or Python package.
+* Instrumented with Prometheus. Allows more insights into the discoverer.
 * Extensive testing with high coverage ensures functionality.
 * More configuration options.

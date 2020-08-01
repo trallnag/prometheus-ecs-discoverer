@@ -150,9 +150,7 @@ def _marshall_targets(
     return result
 
 
-def write_targets_to_file(
-    targets: List[Type[Target]], output_directory: str = s.OUTPUT_DIRECTORY
-) -> None:
+def write_targets_to_file(targets: List[Type[Target]], output_directory: str) -> None:
     if not os.path.isdir(output_directory):
         raise OSError(f"Directory '{output_directory}' not found.")
 
