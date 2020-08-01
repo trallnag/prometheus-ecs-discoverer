@@ -49,7 +49,7 @@ jobs:
       run: poetry run black .
 
     - name: Run isort
-      run: isort .
+      run: poetry run isort .
   
     - name: Recommit
       uses: stefanzweifel/git-auto-commit-action@v4
