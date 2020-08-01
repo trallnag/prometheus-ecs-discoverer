@@ -31,7 +31,11 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 * Works out of the box with being deployed in a container.
 * More configuration options.
 
+---
+
 Contents: **[Setup](#setup)** | **[Configuration](#configuration)** |
+
+---
 
 ## Setup
 

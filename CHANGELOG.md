@@ -14,4 +14,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Initial re-release. Previous project - same name but different - removed.
-
