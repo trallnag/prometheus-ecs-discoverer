@@ -52,9 +52,7 @@ def ec2(aws_credentials) -> Type[Boto]:
 
 @pytest.fixture(scope="function")
 def fetcher(ecs: Type[Boto], ec2: Type[Boto]) -> Type[CachedFetcher]:
-    return CachedFetcher(
-        ecs.client, ec2.client, should_throttle=False, throttle_interval_seconds=0
-    )
+    return CachedFetcher(ecs.client, ec2.client)
 
 
 # ==============================================================================
@@ -65,15 +63,15 @@ def test_throttle(fetcher, ecs):
     start_time = default_timer()
     _ = fetcher.get_cluster_arns()
     duration = max(default_timer() - start_time, 0)
-    assert duration < 0.1
+    assert duration < 1
 
     fetcher.should_throttle = True
-    fetcher.throttle_interval_seconds = 0.15
+    fetcher.throttle_interval_seconds = 1
 
     start_time = default_timer()
     _ = fetcher.get_cluster_arns()
     duration = max(default_timer() - start_time, 0)
-    assert duration > 0.1
+    assert duration > 1
 
 
 def test_get_cluster_arns(fetcher, ecs):
