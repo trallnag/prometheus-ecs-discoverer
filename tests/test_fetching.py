@@ -53,7 +53,7 @@ def ec2(aws_credentials) -> Type[Boto]:
 @pytest.fixture(scope="function")
 def fetcher(ecs: Type[Boto], ec2: Type[Boto]) -> Type[CachedFetcher]:
     return CachedFetcher(
-        ecs.client, ec2.client, should_throttle=True, throttle_interval_seconds=0
+        ecs.client, ec2.client, should_throttle=False, throttle_interval_seconds=0
     )
 
 
