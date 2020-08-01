@@ -6,7 +6,6 @@ from typing import Dict, List, Type
 from loguru import logger
 
 from prometheus_ecs_discoverer import settings as s
-from prometheus_ecs_discoverer import toolbox
 from prometheus_ecs_discoverer.discovery import Target
 
 
