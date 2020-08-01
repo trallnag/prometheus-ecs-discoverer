@@ -10,7 +10,6 @@ from prometheus_ecs_discoverer import conf, discovery, fetching, marshalling
 from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer import telemetry
 
-
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
 
