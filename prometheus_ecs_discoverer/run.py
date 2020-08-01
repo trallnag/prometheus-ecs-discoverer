@@ -41,7 +41,7 @@ def main(
     # Application logic
 
     session = boto3.Session()
-    config = Config(retries={"max_attempts": boto_max_retries, "mode": "standard"})
+    config = Config(retries={"max_attempts": s.MAX_RETRY_ATTEMPTS, "mode": "standard"})
 
     fetcher = fetching.CachedFetcher(
         session.client("ecs", config=config),
@@ -75,4 +75,5 @@ def main(
         time.sleep(time_left)
 
 
-main()
+if __name__ == "__main__":
+    main()
