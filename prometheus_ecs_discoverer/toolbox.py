@@ -8,6 +8,9 @@ builtins.pretty = prettyprinter.pprint
 builtins.cpretty = prettyprinter.cpprint
 
 
+# Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+
 def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
     return [
         list_to_chunk[i : i + chunk_size]

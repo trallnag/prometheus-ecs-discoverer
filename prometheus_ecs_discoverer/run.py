@@ -11,6 +11,9 @@ from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer import telemetry
 
 
+# Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+
 def get_interval_histogram(interval: int):
     steps = 10
     step_size = round(interval / steps, 0)

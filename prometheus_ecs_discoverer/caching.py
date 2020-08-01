@@ -5,6 +5,11 @@ from loguru import logger
 from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer import telemetry, toolbox
 
+
+# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
+# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+
 HITS = telemetry.gauge(
     "cache_hits", "Number of cache hits just before moving window.", ("name",)
 )
@@ -50,6 +55,9 @@ class SlidingCache:
     # Now the cache only holds the "my" key.
     # Only stuff that has been cached after the last flush.
     ```
+
+    Attribution:
+
     """
 
     def __init__(self, name: str = "generic"):

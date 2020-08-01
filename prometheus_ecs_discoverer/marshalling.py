@@ -9,6 +9,10 @@ from prometheus_ecs_discoverer import settings as s
 from prometheus_ecs_discoverer.discovery import Target
 
 
+# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
+# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+
 def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:
     """Extracts path intervals from given metrics path.
 
