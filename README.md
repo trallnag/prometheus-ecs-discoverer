@@ -1,5 +1,3 @@
-**WORK IN PROGRESS, RELEASE BEGINNING OF AUGUST**
-
 # Prometheus ECS Discoverer
 
 [![PyPI version](https://badge.fury.io/py/prometheus-ecs-discoverer.svg)](https://pypi.python.org/pypi/prometheus-ecs-discoverer/)
