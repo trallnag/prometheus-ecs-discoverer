@@ -4,7 +4,6 @@ from prometheus_client import Counter, Gauge, Histogram
 
 from prometheus_ecs_discoverer import settings as s
 
-
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
 
