@@ -1,9 +1,7 @@
 name: release
 
-on:
-  release:
-    types:
-      - published
+on: 
+  workflow_dispatch:
     
 jobs:
 
@@ -73,8 +71,6 @@ jobs:
     needs: test
     
     runs-on: ubuntu-latest
-    env:
-      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
 
     steps:
     
@@ -96,7 +92,7 @@ jobs:
         run: poetry build
       
       - name: Release
-        run: poetry publish -u __token__ -p "${PYPI_TOKEN}"
+        run: poetry publish -u __token__ -p ${{ secrets.PYPI_TOKEN }}
 
   # ============================================================================
 
@@ -129,3 +125,35 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKERHUB_REPOSITORY: trallnag/prometheus_ecs_discoverer
           README_FILEPATH: ./README.md
+
+  # ============================================================================
+
+  create-github-release:
+    needs: release-to-dockerhub
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repositry
+        uses: actions/checkout@v2
+
+      - name: Retrieve version
+        run: echo ::set-env name=PROJECT_VERSION::$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+
+      - name: Retrieve change
+        run: echo ::set-env name=CHANGE::$(awk '/\[${{ env.PROJECT_VERSION }}\]/{flag=1; next} /\[.*\]/{flag=0} flag' CHANGELOG.md)
+
+      - name: Retrieve date
+        run: echo "::set-env name=NOW::$(date +'%Y-%m-%d')"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.PROJECT_VERSION }}
+          release_name: "[${{ env.PROJECT_VERSION }}] ${{ env.NOW }}"
+          body: ${{ env.CHANGE }}
+          draft: false
+          prerelease: false
