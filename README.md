@@ -140,7 +140,7 @@ This might look like this:
 
 ```sh
 docker run \
-    -e DYNACONF_INTERVAL=1m \
+    -e DYNACONF_INTERVAL=60 \
     -e DYNACONF_OUTPUT_DIRECTORY=/targets \
     -e AWS_ACCESS_KEY_ID=foo \
     -e AWS_SECRET_ACCESS_KEY=bar \
@@ -255,17 +255,3 @@ FALLBACK_METRICS_ENDPOINT = "/metrics"
 
 # And more. See `settings.toml` file.
 ```
-
-For example if you want to override fallback metrics endpoint you can either 
-provide your own settings file or just do:
-
-```sh 
-export DYNACONF_FALLBACK_METRICS_ENDPOINT=/custom/metrics
-``` 
-
-
-<!-- ### Add custom labels to an ECS task
-
-
-
--->
