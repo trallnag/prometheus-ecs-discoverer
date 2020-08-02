@@ -19,6 +19,8 @@ of tasks** running in parallel.
 Once the discoverer is up and running, any task can be made visible to 
 Prometheus.
 
+![diagram](https://github.com/trallnag/prometheus-ecs-discoverer/documents/drawio-diagram.png)
+
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
 
@@ -34,6 +36,7 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 ---
 
 Contents: **[Setup](#setup)** | **[Configuration](#configuration)** |
+[Prepare targets](#perpare-targets) | [Deploy PromED](#deploy-promed)
 
 ---
 
@@ -43,11 +46,7 @@ As this project is based on
 [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd), the setup 
 is very similar / exactly the same.
 
-1. Prepare targets
-2. Deploy PromED
-3. Configure Prometheus
-
-### **Prepare targets**
+### Prepare targets
 
 Targets are setup via setting environment variables in the task definitions.
 
@@ -129,7 +128,98 @@ python -m prometheus_ecs_discoverer.run
 ```
 
 To configure PromED you can either provide a settings file or use plain 
-environment variables. Please see [Configuration](#configuration) for more info.
+environment variables.  Please see [Configuration](#configuration) for more 
+info. Please see [Configuration](#configuration) for more info.
+
+#### Using Docker image
+
+The image `trallnag/prometheus_ecs_discoverer` can be found 
+[here](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer).
+The recommended way for configuring the image is to use environment variables.
+This might look like this:
+
+```sh
+docker run \
+    -e DYNACONF_INTERVAL=1m \
+    -e DYNACONF_OUTPUT_DIRECTORY=/targets \
+    -e AWS_ACCESS_KEY_ID=foo \
+    -e AWS_SECRET_ACCESS_KEY=bar \
+    -e AWS_DEFAULT_REGION=us-west-2 \
+    trallnag/prometheus_ecs_discoverer:latest
+```
+
+You will probably want to run the discoverer in ECS. Here, you don't have to 
+provide credentials assuming everything is set up correctly. Boto3 will 
+automatically detect relative credentials URI and retrieve them from AWS.
+Nevertheless, the region must be set by you. Here is an exemplary container 
+definition to deploy PromED:
+
+```json
+{
+    name: "discovery",
+    image : "trallnag/prometheus_ecs_discoverer:latest",
+    environment: [
+        { "name": "DYNACONF_OUTPUT_DIRECTORY", "value": "/targets" },
+        { "name": "AWS_DEFAULT_REGION", "value": "eu-central-1" }
+    ],
+    mountPoints : [{
+        "sourceVolume": "discovery",
+        "containerPath": "/targets",
+    }]
+}
+```
+
+#### AWS IAM
+
+A role with the following policy must be assigned to the PromED scope. If you 
+deploy PromED with ECS this will be the task role.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:DescribeClusters",
+        "ecs:DescribeContainerInstances",
+        "ecs:DescribeServices",
+        "ecs:DescribeTaskDefinition",
+        "ecs:DescribeTaskSets",
+        "ecs:DescribeTasks",
+        "ecs:ListAccountSettings",
+        "ecs:ListClusters",
+        "ecs:ListContainerInstances",
+        "ecs:ListServices",
+        "ecs:ListTagsForResource",
+        "ecs:ListTaskDefinitionFamilies",
+        "ecs:ListTaskDefinitions",
+        "ecs:ListTasks",
+        "ecs:ListAttributes"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+Attach this policy to the following role:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
 
 ## Configuration
 
