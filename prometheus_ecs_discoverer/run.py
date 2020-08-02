@@ -24,47 +24,56 @@ def get_interval_histogram(interval: int):
     )
 
 
-def main(
-    interval: int = s.INTERVAL,
-    directory: str = s.OUTPUT_DIRECTORY,
-    should_start_prom_server: bool = s.PROMETHEUS_START_HTTP_SERVER,
-    prom_server_port: int = s.PROMETHEUS_SERVER_PORT,
-    boto_max_retries: int = s.MAX_RETRY_ATTEMPTS,
-    should_warmup_throttle: bool = s.WARMUP_THROTTLE,
-    throttle_interval: int = s.THROTTLE_INTERVAL_SECONDS,
-) -> None:
+def main():
+    interval = s.INTERVAL
+    output_dir = s.OUTPUT_DIRECTORY
+    should_throttle = s.WARMUP_THROTTLE
+
     conf.configure_logging()
+
+    logger.info("Welcome to PromED, the Prometheus ECS Discoverer.")
+    logger.bind(settings=s.as_dict()).info("Here is the used configuration.")
 
     DURATION = get_interval_histogram(interval)
 
-    if should_start_prom_server:
-        start_http_server(port=prom_server_port)
+    if s.PROMETHEUS_START_HTTP_SERVER:
+        port = s.PROMETHEUS_SERVER_PORT
+        logger.bind(port=port).info("Start Prometheus HTTP server to expose metrics.")
+        start_http_server(port=port)
 
-    # Application logic
-
+    logger.info("Create Boto3 session.")
     session = boto3.Session()
     config = Config(retries={"max_attempts": s.MAX_RETRY_ATTEMPTS, "mode": "standard"})
 
+    logger.info("Create Boto3 clients and CachedFetcher.")
     fetcher = fetching.CachedFetcher(
         session.client("ecs", config=config),
         session.client("ec2", config=config),
-        should_throttle=should_warmup_throttle,
-        throttle_interval_seconds=throttle_interval,
+        should_throttle=should_throttle,
+        throttle_interval_seconds=s.THROTTLE_INTERVAL_SECONDS,
     )
 
+    logger.info("Create PrometheusEcsDiscoverer.")
     discoverer = discovery.PrometheusEcsDiscoverer(fetcher)
+
+    if should_throttle:
+        logger.info("First discovery round will be throttled down.")
+
+    logger.info("Ready for discovery. The discoverer will run until interrupted.")
 
     first_round = True
     while True:
+        logger.info("Start new discovery round.")
+
         start_time = default_timer()
 
         if not first_round:
             discoverer.fetcher.should_throttle = False
 
         targets = discoverer.discover()
-        marshalling.write_targets_to_file(targets, directory)
+        marshalling.write_targets_to_file(targets, output_dir)
 
-        if first_round and should_warmup_throttle:
+        if first_round and should_throttle:
             fetcher.should_throttle = False
             first_round = False
 
