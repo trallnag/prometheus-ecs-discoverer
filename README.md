@@ -17,7 +17,7 @@ alternative and can be used in low- to mid-sized environments with **hundreds
 of tasks** running in parallel.
 
 Once the discoverer is up and running, any task can be made visible to 
-Prometheus by setting environment variables in the task's definition.
+Prometheus.
 
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
@@ -113,6 +113,23 @@ and `awsvpc`).
 
 Quoted from [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd) 
 commit `ece6ca2`.
+
+### Deploy PromED
+
+You can either use the Python package directly or go for the Docker image. 
+Please note that just running the package / image is not enough. The enviornment
+must be ready for boto3. This includes credentials and approbiate rights.
+
+#### Using package from PyPI
+
+Available under the name `prometheus_ecs_discoverer`. To start PromED:
+
+```sh
+python -m prometheus_ecs_discoverer.run
+```
+
+To configure PromED you can either provide a settings file or use plain 
+environment variables. Please see [Configuration](#configuration) for more info.
 
 ## Configuration
 

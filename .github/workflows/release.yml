@@ -7,6 +7,8 @@ on:
     
 jobs:
 
+  # ============================================================================
+
   test:    
     runs-on: ubuntu-latest
     strategy:
@@ -65,7 +67,9 @@ jobs:
     - name: Build package
       run: poetry build
 
-  release:
+  # ============================================================================
+
+  release-to-pypi:
     needs: test
     
     runs-on: ubuntu-latest
@@ -93,3 +97,27 @@ jobs:
       
       - name: Release
         run: poetry publish -u __token__ -p "${PYPI_TOKEN}"
+
+  # ============================================================================
+
+  release-to-dockerhub:
+    needs: release-to-pypi
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repositry
+        uses: actions/checkout@v2
+
+      - name: Retrieve version
+        run: echo ::set-env name=PROJECT_VERSION::$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+          repository: trallnag/prometheus_ecs_discoverer
+          tags: latest,${{ env.PROJECT_VERSION }}
+          add_git_labels: true
