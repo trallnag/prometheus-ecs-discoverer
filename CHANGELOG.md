@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* Nothing
+### Added
+
+* Provide Docker image for deployment of PromED.
+* Improved INFO logging.
+
+### Changed
+
+* Misc around the documentation of the project.
 
 ## [2.0.0] 2020-08-01
 
