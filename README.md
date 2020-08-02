@@ -24,14 +24,16 @@ Prometheus.
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
 
-* Modified throttling allows the usage in environments with hundreds of 
-    tasks.
-* Every target can expose custom labels via its environment variables.
+* Modified throttling in combination with the already existing caching allows 
+    the usage in environments with hundreds of tasks.
+* Every target can expose custom labels via its environment variables. This way 
+    you can provide more ways to aggregate metrics. For example by type of API.
 * Deploy as container (provided and can be used directly) or Python package.
-* Instrumented with Prometheus. Allows more insights into the discoverer.
+    No need to manually install boto3 and so on.
+* Instrumented with Prometheus. Allows more insights into the discoverer. You 
+    can monitor how long discovery rounds take and stuff like used memory.
 * Extensive testing with high coverage ensures functionality.
-* Works out of the box with being deployed in a container.
-* More configuration options.
+* More configuration options. For example structured logs.
 
 ---
 
@@ -136,17 +138,6 @@ info. Please see [Configuration](#configuration) for more info.
 The image `trallnag/prometheus_ecs_discoverer` can be found 
 [here](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer).
 The recommended way for configuring the image is to use environment variables.
-This might look like this:
-
-```sh
-docker run \
-    -e DYNACONF_INTERVAL=60 \
-    -e DYNACONF_OUTPUT_DIRECTORY=/targets \
-    -e AWS_ACCESS_KEY_ID=foo \
-    -e AWS_SECRET_ACCESS_KEY=bar \
-    -e AWS_DEFAULT_REGION=us-west-2 \
-    trallnag/prometheus_ecs_discoverer:latest
-```
 
 You will probably want to run the discoverer in ECS. Here, you don't have to 
 provide credentials assuming everything is set up correctly. Boto3 will 
@@ -238,7 +229,10 @@ prefix. All supported settings together with their default values can be found
 Here are a few notable settings (together with their defaults) you can modify:
 
 ```sh
+# The interval of PromED in seconds.
 INTERVAL = 15
+
+# Where should the files with the targets be written to?
 OUTPUT_DIRECTORY = "/tmp"
 
 # Throttles the first discovery run to ensure that even hundreds of tasks and 
@@ -252,6 +246,12 @@ PROMETHEUS_SERVER_PORT = 8080
 
 # If no endpoint is given in the respective env var, this will be used.
 FALLBACK_METRICS_ENDPOINT = "/metrics"
+
+# Self explanatory.
+LOG_LEVEL = "INFO"
+
+# Set this to true if you prefer structured logs.
+LOG_JSON = false
 
 # And more. See `settings.toml` file.
 ```
