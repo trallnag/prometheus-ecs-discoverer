@@ -154,7 +154,7 @@ automatically detect relative credentials URI and retrieve them from AWS.
 Nevertheless, the region must be set by you. Here is an exemplary container 
 definition to deploy PromED:
 
-```json
+```sh
 {
     name: "discovery",
     image : "trallnag/prometheus_ecs_discoverer:latest",
@@ -174,7 +174,7 @@ definition to deploy PromED:
 A role with the following policy must be assigned to the PromED scope. If you 
 deploy PromED with ECS this will be the task role.
 
-```json
+```sh
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -205,7 +205,7 @@ deploy PromED with ECS this will be the task role.
 
 Attach this policy to the following role:
 
-```json
+```sh
 {
   "Version": "2012-10-17",
   "Statement": [
