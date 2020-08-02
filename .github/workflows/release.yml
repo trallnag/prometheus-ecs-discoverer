@@ -121,3 +121,11 @@ jobs:
           repository: trallnag/prometheus_ecs_discoverer
           tags: latest,${{ env.PROJECT_VERSION }}
           add_git_labels: true
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKERHUB_REPOSITORY: trallnag/prometheus_ecs_discoverer
+          README_FILEPATH: ./README.md
