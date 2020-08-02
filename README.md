@@ -19,7 +19,7 @@ of tasks** running in parallel.
 Once the discoverer is up and running, any task can be made visible to 
 Prometheus.
 
-![diagram](https://github.com/trallnag/prometheus-ecs-discoverer/documents/drawio-diagram.png)
+![diagram](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/drawio-diagram.png)
 
 What are the advantages of using this project over [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd
 )?
