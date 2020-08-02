@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Nothing.
+
+## [2.0.1] 2020-08-02
+
 ### Added
 
 * Provide Docker image for deployment of PromED.
