@@ -30,7 +30,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Check if version tag exists
-      run: if ${{ steps.checkTag.outputs.exists }} == "false"; then exit 1
+      run: if ${{ steps.checkTag.outputs.exists }} == "true"; then exit 1
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
