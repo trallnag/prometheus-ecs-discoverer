@@ -37,8 +37,13 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 
 ---
 
-Contents: **[Setup](#setup)** | **[Configuration](#configuration)** |
-[Prepare targets](#perpare-targets) | [Deploy PromED](#deploy-promed)
+Contents: **[Setup](#setup)** |
+[Prepare targets](#perpare-targets) | 
+[Deploy PromED](#deploy-promed) |
+[Configure Prometheus](#configure-prometheus) | 
+**[Configuration](#configuration)** |
+**[Prerequesites](#prerequesites)** |
+**[Development](#development)**
 
 ---
 
@@ -46,7 +51,10 @@ Contents: **[Setup](#setup)** | **[Configuration](#configuration)** |
 
 As this project is based on 
 [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd), the setup 
-is very similar / exactly the same.
+is very similar / exactly the same. The setup consists out of three parts. 
+The targets must be prepared by adding environment variables. Next, PromED 
+itself must be deployed. And finally, the Prometheus configuration must be 
+updated.
 
 ### Prepare targets
 
@@ -57,63 +65,52 @@ Targets are setup via setting environment variables in the task definitions.
 Set `PROMETHEUS` to any value to make PromED consider the container. This 
 by itself is already enough to make it work with the configured defaults.
 
-```json
-{ "name": "PROMETHEUS", "value": "does not matter" },
-```
-
 #### Specify metrics endpoint(s)
 
 If your metrics are not exposed on the default `/metrics` endpoint, you can 
-specifiy the endpoint like so:
-
-```json
-{ "name": "PROMETHEUS_ENDPOINT", "value": "/custom/metrics" },
-```
+specifiy the endpoint with `PROMETHEUS_ENDPOINT`.
 
 You can also declare multiple endpoints and different intervals. The supported 
 intervals are `15s`, `30s`, `1m` and `5m`. Based on the interval targets will 
 end up in different files. The default interval is "generic". Examples for this:
 
-```json
-{ "name": "PROMETHEUS_ENDPOINT", "value": "5m:/mymetrics,30s:/mymetrics2"},
-{ "name": "PROMETHEUS_ENDPOINT", "value": "/mymetrics"},
-{ "name": "PROMETHEUS_ENDPOINT", "value": "/mymetrics,30s:/mymetrics2"},
-```
+* `5m:/mymetrics,30s:/mymetrics2`
+* `/mymetrics`
+* `/mymetrics,30s:/mymetrics2`
+
 
 #### Set custom labels for container
 
 Sometimes you might want to add additonal labels to targets to group them. 
 For example by the used API type (REST vs. GraphQL). This can be done by adding 
 environment variables to the container definition in the respective task 
-definition with the  `PROMETHEUS_LABEL_` prefix. Environment variables set
-from within the container are not visible to PromED and are ignored.
+definition with the  `PROMETHEUS_LABEL_` prefix. For example 
+`PROMETHEUS_LABEL_api_type` or `PROMETHEUS_LABEL_foo`.
 
-```json
-{ "name": "PROMETHEUS_LABEL_api_type", "value": "GraphQL" },
-{ "name": "PROMETHEUS_LABEL_foo", "value": "bar" },
-``` 
+Environment variables set from within the container are not visible to PromED 
+and are ignored.
 
 #### Customize networking
 
 Regarding networking, all network modes are supported (`bridge`, `host` 
 and `awsvpc`).
 
-> If `PROMETHEUS_PORT` and `PROMETHEUS_CONTAINER_PORT` are not set, the script 
-> will pick the first port from the container definition (in awsvpc and host 
-> network mode) or the container host network bindings in bridge mode. On 
-> Fargate, if `PROMETHEUS_PORT` is not set, it will default to port `80`.
-> 
-> If `PROMETHEUS_CONTAINER_PORT` is set, it will look at the container host 
-> network bindings, and find the entry with a matching `containerPort`. It will 
-> then use the `hostPort` found there as target port. This is useful when the 
-> container port is known, but the `hostPort` is randomly picked by ECS (by 
-> setting `hostPort` to `0` in the task definition).
-> 
-> If your container uses multiple ports, it's recommended to specify 
-> `PROMETHEUS_PORT` (`awsvpc`, `host`) or `PROMETHEUS_CONTAINER_PORT` (`bridge`).
+If `PROMETHEUS_PORT` and `PROMETHEUS_CONTAINER_PORT` are not set, the script 
+will pick the first port from the container definition (in awsvpc and host 
+network mode) or the container host network bindings in bridge mode. On 
+Fargate, if `PROMETHEUS_PORT` is not set, it will default to port `80`.
+ 
+If `PROMETHEUS_CONTAINER_PORT` is set, it will look at the container host 
+network bindings, and find the entry with a matching `containerPort`. It will 
+then use the `hostPort` found there as target port. This is useful when the 
+container port is known, but the `hostPort` is randomly picked by ECS (by 
+setting `hostPort` to `0` in the task definition).
 
-Quoted from [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd) 
-commit `ece6ca2`.
+If your container uses multiple ports, it's recommended to specify 
+`PROMETHEUS_PORT` (`awsvpc`, `host`) or `PROMETHEUS_CONTAINER_PORT` (`bridge`).
+
+*Quoted from [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd) 
+commit `ece6ca2`.*
 
 ### Deploy PromED
 
@@ -142,74 +139,38 @@ The recommended way for configuring the image is to use environment variables.
 You will probably want to run the discoverer in ECS. Here, you don't have to 
 provide credentials assuming everything is set up correctly. Boto3 will 
 automatically detect relative credentials URI and retrieve them from AWS.
-Nevertheless, the region must be set by you. Here is an exemplary container 
-definition to deploy PromED:
-
-```sh
-{
-    name: "discovery",
-    image : "trallnag/prometheus_ecs_discoverer:latest",
-    environment: [
-        { "name": "DYNACONF_OUTPUT_DIRECTORY", "value": "/targets" },
-        { "name": "AWS_DEFAULT_REGION", "value": "eu-central-1" }
-    ],
-    mountPoints : [{
-        "sourceVolume": "discovery",
-        "containerPath": "/targets",
-    }]
-}
-```
+Nevertheless, the region must be set by you.
 
 #### AWS IAM
 
-A role with the following policy must be assigned to the PromED scope. If you 
-deploy PromED with ECS this will be the task role.
+The actions that PromED is performing on the AWS API can be found in 
+[aws-iam-policy.json](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/documents/aws-iam-policy.json).
+The allowed actions must be attached to an approbiate role. If you deploy 
+PromED in ECS, this should look like in [aws-iam-ecs-role.json](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/documents/aws-iam-ecs-role.json).
 
-```sh
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "ecs:DescribeClusters",
-        "ecs:DescribeContainerInstances",
-        "ecs:DescribeServices",
-        "ecs:DescribeTaskDefinition",
-        "ecs:DescribeTaskSets",
-        "ecs:DescribeTasks",
-        "ecs:ListAccountSettings",
-        "ecs:ListClusters",
-        "ecs:ListContainerInstances",
-        "ecs:ListServices",
-        "ecs:ListTagsForResource",
-        "ecs:ListTaskDefinitionFamilies",
-        "ecs:ListTaskDefinitions",
-        "ecs:ListTasks",
-        "ecs:ListAttributes"
-      ],
-      "Resource": "*"
-    }
-  ]
-}
+### Configure Prometheus
+
+If you want all your targets to be scraped in the same interval, the following 
+job is enough.
+
+```txt
+- job_name: 'ecs'
+  file_sd_configs:
+    - files:
+        - /tmp/tasks.json
+  relabel_configs:
+    - source_labels: [metrics_path]
+      action: replace
+      target_label: __metrics_path__
+      regex: (.+)
 ```
 
-Attach this policy to the following role:
+By default, PromED exposes an `/metrics` endpoint.
 
-```sh
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ecs-tasks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
+```txt
+- job_name: discovery
+  static_configs: 
+    - targets: ["discovery:8080"]
 ```
 
 ## Configuration
@@ -224,34 +185,16 @@ custom settings file with the env var `SETTINGS_FILES_FOR_DYNACONF` (see
 [here](https://www.dynaconf.com/configuration/#on-environment-options)) 
 or directly setting the respective values via env vars with the `DYNACONF_` 
 prefix. All supported settings together with their default values can be found 
-[`settings.toml` (click me)](prometheus_ecs_discoverer/settings.toml).
+[`settings.toml` (click me)](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/prometheus_ecs_discoverer/settings.toml).
 
-Here are a few notable settings (together with their defaults) you can modify:
+## Prerequesites
 
-```sh
-# The interval of PromED in seconds.
-INTERVAL = 15
+See [pyproject.toml](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/pyproject.toml).
 
-# Where should the files with the targets be written to?
-OUTPUT_DIRECTORY = "/tmp"
+## Development
 
-# Throttles the first discovery run to ensure that even hundreds of tasks and 
-# definitions don't overwhelm the AWS API while building up the local cache.
-WARMUP_THROTTLE = true
-THROTTLE_INTERVAL_SECONDS = 0.1
-
-# Exposes metrics about discoverer itself.
-PROMETHEUS_START_HTTP_SERVER = true
-PROMETHEUS_SERVER_PORT = 8080
-
-# If no endpoint is given in the respective env var, this will be used.
-FALLBACK_METRICS_ENDPOINT = "/metrics"
-
-# Self explanatory.
-LOG_LEVEL = "INFO"
-
-# Set this to true if you prefer structured logs.
-LOG_JSON = false
-
-# And more. See `settings.toml` file.
-```
+Developing and building this package on a local machine requires 
+[Python Poetry](https://python-poetry.org/). I recommend to run Poetry in 
+tandem with [Pyenv](https://github.com/pyenv/pyenv). Once the repository is 
+cloned, run `poetry install` and `poetry shell`. From here you may start the 
+IDE of your choice.
