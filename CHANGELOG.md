@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Misc around the documentation of the project.
+* Change default Prometheus namespace from `PrometheusEcsDiscoverer_` to
+    `discoverer_`.
 
 ## [2.0.2] 2020-08-02
 

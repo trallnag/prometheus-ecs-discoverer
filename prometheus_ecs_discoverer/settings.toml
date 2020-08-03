@@ -36,7 +36,7 @@ LABELNAME_INSTANCEID = "instance_id"
 # ==============================================================================
 # Instrumentation
 
-PROMETHEUS_NAMESPACE = "PrometheusEcsDiscoverer_"
+PROMETHEUS_NAMESPACE = "discoverer_"
 PROMETHEUS_SUBSYSTEM = ""
 PROMETHEUS_START_HTTP_SERVER = true
 PROMETHEUS_SERVER_PORT = 8080
