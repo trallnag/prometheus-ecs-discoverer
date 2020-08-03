@@ -71,13 +71,15 @@ If your metrics are not exposed on the default `/metrics` endpoint, you can
 specifiy the endpoint with `PROMETHEUS_ENDPOINT`.
 
 You can also declare multiple endpoints and different intervals. The supported 
-intervals are `15s`, `30s`, `1m` and `5m`. Based on the interval targets will 
+intervals are `15s`, `30s`, `1m` and `5m`. Based on the interval, targets will 
 end up in different files. The default interval is "generic". Examples for this:
 
 * `5m:/mymetrics,30s:/mymetrics2`
 * `/mymetrics`
 * `/mymetrics,30s:/mymetrics2`
 
+By default, all targets will end up in a single file called `tasks.json` in the 
+configured directory (defaults to `/tmp`).
 
 #### Set custom labels for container
 

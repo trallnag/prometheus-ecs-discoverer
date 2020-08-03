@@ -17,7 +17,7 @@ def get_interval_histogram(interval: int):
     steps = 10
     step_size = round(interval / steps, 0)
     return telemetry.histogram(
-        "run_duration_seconds",
+        "round_duration_seconds",
         "Histogram for duration",
         buckets=[x * step_size for x in range(steps)]
         + [interval + 10, interval + 20, float("inf"),],

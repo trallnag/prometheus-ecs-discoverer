@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Misc around the documentation of the project.
 * Change default Prometheus namespace from `PrometheusEcsDiscoverer_` to
-    `discoverer_`.
+    `discoverer_` and rename metric.
 
 ## [2.0.2] 2020-08-02
 
