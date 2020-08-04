@@ -42,6 +42,7 @@ Contents: **[Setup](#setup)** |
 [Deploy PromED](#deploy-promed) |
 [Configure Prometheus](#configure-prometheus) | 
 **[Configuration](#configuration)** |
+**[Grafana Dashboard](#grafana-dashboard)** |
 **[Prerequesites](#prerequesites)** |
 **[Development](#development)**
 
@@ -188,6 +189,16 @@ custom settings file with the env var `SETTINGS_FILES_FOR_DYNACONF` (see
 or directly setting the respective values via env vars with the `DYNACONF_` 
 prefix. All supported settings together with their default values can be found 
 [`settings.toml` (click me)](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/prometheus_ecs_discoverer/settings.toml).
+
+## Grafana Dashboard
+
+You can find the Grafana dashboard for PromED in 
+[dashboard.json](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/documents/dashboard.json)
+and in the [Grafana Cloud](https://grafana.com/grafana/dashboards/12773).
+
+![dashboard-screenshot-1](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/dashboard-screenshot-1.png)
+
+![dashboard-screenshot-1](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/dashboard-screenshot-2.png)
 
 ## Prerequesites
 
