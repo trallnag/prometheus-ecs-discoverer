@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Grafana Dashboard.
 
+### Changed
+
+* Misc around the documentation of the project.
+
 ## [2.0.3] 2020-08-03
 
 ### Changed

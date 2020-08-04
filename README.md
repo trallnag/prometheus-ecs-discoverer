@@ -31,7 +31,8 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 * Deploy as container (provided and can be used directly) or Python package.
     No need to manually install boto3 and so on.
 * Instrumented with Prometheus. Allows more insights into the discoverer. You 
-    can monitor how long discovery rounds take and stuff like used memory.
+    can monitor how long discovery rounds take and stuff like used memory. 
+    Dashboard already included and ready to use.
 * Extensive testing with high coverage ensures functionality.
 * More configuration options. For example structured logs.
 
@@ -112,7 +113,8 @@ setting `hostPort` to `0` in the task definition).
 If your container uses multiple ports, it's recommended to specify 
 `PROMETHEUS_PORT` (`awsvpc`, `host`) or `PROMETHEUS_CONTAINER_PORT` (`bridge`).
 
-*Quoted from [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd) 
+*Quoted from 
+[prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd) 
 commit `ece6ca2`.*
 
 ### Deploy PromED
