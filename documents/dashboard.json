@@ -59,7 +59,7 @@
   "gnetId": 12773,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1596547592209,
+  "iteration": 1596613927581,
   "links": [],
   "panels": [
     {
@@ -77,8 +77,8 @@
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 4,
+      "fillGradient": 8,
       "gridPos": {
         "h": 5,
         "w": 8,
@@ -97,23 +97,29 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1664",
+          "alias": "rounds",
+          "color": "#5794F2"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "increase(discoverer__round_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[1m])",
-          "interval": "",
+          "expr": "sum(increase(discoverer__round_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[1m]))",
+          "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "rounds",
           "refId": "A"
         }
       ],
@@ -121,7 +127,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Discover Rounds per 1m",
+      "title": "Discovery Rounds per 1m",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -161,7 +167,10 @@
       }
     },
     {
-      "aliasColors": {},
+      "aliasColors": {
+        "Value": "red",
+        "red": "red"
+      },
       "bars": false,
       "dashLength": 10,
       "dashes": false,
@@ -173,50 +182,72 @@
         },
         "overrides": []
       },
-      "fill": 4,
+      "fill": 10,
       "fillGradient": 0,
       "gridPos": {
-        "h": 6,
+        "h": 3,
         "w": 8,
         "x": 8,
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 4,
+      "id": 33,
       "legend": {
         "avg": false,
         "current": false,
         "max": false,
         "min": false,
-        "show": true,
+        "show": false,
         "total": false,
         "values": false
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:5851",
+          "alias": "red",
+          "color": "#C4162A",
+          "hideTooltip": true,
+          "zindex": -3
+        },
+        {
+          "$$hashKey": "object:5858",
+          "alias": "up",
+          "color": "#37872D",
+          "hideTooltip": true,
+          "zindex": -2
+        }
+      ],
       "spaceLength": 10,
-      "stack": true,
+      "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "discoverer__current_cache_entries{job=\"$job\", instance=\"$instance\"}",
+          "expr": "up{job=\"$job\", instance=\"$instance\"}",
           "interval": "",
-          "legendFormat": "{{name}}",
+          "intervalFactor": 1,
+          "legendFormat": "up",
           "refId": "A"
+        },
+        {
+          "expr": "1",
+          "interval": "",
+          "legendFormat": "red",
+          "refId": "B"
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Current Cache Entries",
+      "title": "Uptime",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -232,22 +263,22 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:263",
+          "$$hashKey": "object:5833",
           "format": "short",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
+          "max": "1",
+          "min": "0",
+          "show": false
         },
         {
-          "$$hashKey": "object:264",
+          "$$hashKey": "object:5834",
           "format": "short",
           "label": null,
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": true
+          "show": false
         }
       ],
       "yaxis": {
@@ -351,6 +382,101 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 4,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 3
+      },
+      "hiddenSeries": false,
+      "id": 4,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 3,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.0",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "discoverer__current_cache_entries{job=\"$job\", instance=\"$instance\"}",
+          "interval": "",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Current Cache Entries",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:263",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:264",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "aliasColors": {
         "Value": "blue"
       },
@@ -365,8 +491,8 @@
         },
         "overrides": []
       },
-      "fill": 1,
-      "fillGradient": 0,
+      "fill": 4,
+      "fillGradient": 8,
       "gridPos": {
         "h": 6,
         "w": 8,
@@ -385,23 +511,29 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
       "pluginVersion": "7.1.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:2031",
+          "alias": "requests",
+          "color": "#5794F2"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(discoverer__api_requests_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[$short_interval]))",
-          "interval": "",
+          "expr": "sum(increase(discoverer__api_requests_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[1m]))",
+          "interval": "1m",
           "intervalFactor": 1,
-          "legendFormat": "",
+          "legendFormat": "requests",
           "refId": "A"
         }
       ],
@@ -409,7 +541,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "AWS API Request per $short_interval",
+      "title": "AWS API Requests per 1m",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -435,102 +567,6 @@
         },
         {
           "$$hashKey": "object:550",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 0,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 12,
-        "w": 8,
-        "x": 8,
-        "y": 6
-      },
-      "hiddenSeries": false,
-      "id": 13,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.0",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "increase(discoverer__api_requests_duration_seconds_sum{job=\"$job\", instance=\"$instance\"}[$short_interval])",
-          "interval": "",
-          "intervalFactor": 2,
-          "legendFormat": "{{method}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Request Latency by Method over $short_interval",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:366",
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:367",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -622,8 +658,9 @@
       "yaxes": [
         {
           "$$hashKey": "object:371",
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -631,6 +668,102 @@
         },
         {
           "$$hashKey": "object:372",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 12,
+        "w": 8,
+        "x": 8,
+        "y": 10
+      },
+      "hiddenSeries": false,
+      "id": 13,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.0",
+      "pointradius": 0.5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "increase(discoverer__api_requests_duration_seconds_sum{job=\"$job\", instance=\"$instance\"}[1m])\n/\nincrease(discoverer__api_requests_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[1m])",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{method}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request Latency by Method over 1m",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:366",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:367",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -723,8 +856,9 @@
       "yaxes": [
         {
           "$$hashKey": "object:371",
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -761,7 +895,7 @@
         "overrides": []
       },
       "fill": 1,
-      "fillGradient": 0,
+      "fillGradient": 3,
       "gridPos": {
         "h": 11,
         "w": 8,
@@ -780,7 +914,7 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 2,
+      "linewidth": 1,
       "nullPointMode": "null",
       "percentage": false,
       "pluginVersion": "7.1.0",
@@ -793,8 +927,8 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (method) (increase(discoverer__api_requests_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[$short_interval]))",
-          "interval": "",
+          "expr": "sum by (method) (increase(discoverer__api_requests_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[1m]))",
+          "interval": "1m",
           "legendFormat": "{{method}}",
           "refId": "A"
         }
@@ -803,7 +937,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "AWS API Requests by Method per $short_interval",
+      "title": "AWS API Requests by Method per 1m",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -921,8 +1055,9 @@
       "yaxes": [
         {
           "$$hashKey": "object:371",
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": "0",
@@ -936,122 +1071,6 @@
           "max": null,
           "min": null,
           "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {
-        "Value": "red",
-        "red": "red"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 10,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 4,
-        "w": 8,
-        "x": 8,
-        "y": 18
-      },
-      "hiddenSeries": false,
-      "id": 33,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.0",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:5851",
-          "alias": "red",
-          "zindex": -3
-        },
-        {
-          "$$hashKey": "object:5858",
-          "alias": "up",
-          "zindex": -2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "up{job=\"$job\", instance=\"$instance\"}",
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "up",
-          "refId": "A"
-        },
-        {
-          "expr": "1",
-          "interval": "",
-          "legendFormat": "red",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Uptime",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:5833",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": "1",
-          "min": "0",
-          "show": false
-        },
-        {
-          "$$hashKey": "object:5834",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
         }
       ],
       "yaxis": {
@@ -1148,8 +1167,9 @@
         },
         {
           "$$hashKey": "object:372",
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
@@ -1186,6 +1206,7 @@
           },
           "dataFormat": "tsbuckets",
           "datasource": "${DS_PROMETHEUS}",
+          "description": "",
           "fieldConfig": {
             "defaults": {
               "custom": {
@@ -1225,16 +1246,16 @@
           "reverseYBuckets": false,
           "targets": [
             {
-              "expr": "sum by (le) (increase(discoverer__api_requests_duration_seconds_bucket{job=\"$job\", instance=\"$instance\"}[$short_interval]))",
+              "expr": "sum by (le) (increase(discoverer__api_requests_duration_seconds_bucket{job=\"$job\", instance=\"$instance\"}[$__interval]))",
               "format": "heatmap",
-              "interval": "$short_interval",
+              "interval": "1m",
               "legendFormat": "{{le}}",
               "refId": "A"
             }
           ],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Request Latency Histogram over $short_interval",
+          "title": "Request Latency Histogram",
           "tooltip": {
             "show": true,
             "showHistogram": false
@@ -1292,7 +1313,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 24
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 22,
@@ -1321,7 +1342,7 @@
             {
               "expr": "rate(python_gc_objects_collected_total{job=\"$job\", instance=\"$instance\"}[5m])",
               "interval": "1m",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "gen {{generation}}",
               "refId": "A"
             }
@@ -1386,13 +1407,13 @@
             },
             "overrides": []
           },
-          "fill": 2,
+          "fill": 5,
           "fillGradient": 0,
           "gridPos": {
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 24
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 27,
@@ -1422,14 +1443,14 @@
             {
               "expr": "process_virtual_memory_bytes{job=\"$job\", instance=\"$instance\"}",
               "interval": "",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "virtual mem",
               "refId": "A"
             },
             {
               "expr": "process_resident_memory_bytes{job=\"$job\", instance=\"$instance\"}",
               "interval": "",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "resident mem",
               "refId": "B"
             }
@@ -1500,7 +1521,7 @@
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 24
+            "y": 35
           },
           "hiddenSeries": false,
           "id": 28,
@@ -1530,14 +1551,14 @@
             {
               "expr": "deriv(process_virtual_memory_bytes{job=\"$job\", instance=\"$instance\"}[5m])",
               "interval": "",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "virtual mem",
               "refId": "A"
             },
             {
               "expr": "deriv(process_resident_memory_bytes{job=\"$job\", instance=\"$instance\"}[5m])",
               "interval": "",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "resident mem",
               "refId": "B"
             }
@@ -1604,7 +1625,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 31
+            "y": 42
           },
           "hiddenSeries": false,
           "id": 25,
@@ -1633,7 +1654,7 @@
             {
               "expr": "increase(python_gc_collections_total{job=\"$job\", instance=\"$instance\"}[5m])",
               "interval": "1m",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "gen {{generation}}",
               "refId": "A"
             }
@@ -1700,7 +1721,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 31
+            "y": 42
           },
           "hiddenSeries": false,
           "id": 24,
@@ -1729,7 +1750,7 @@
             {
               "expr": "rate(python_gc_objects_uncollectable_total{job=\"$job\", instance=\"$instance\"}[5m])",
               "interval": "",
-              "intervalFactor": 2,
+              "intervalFactor": 1,
               "legendFormat": "gen {{generation}}",
               "refId": "A"
             }
@@ -1801,7 +1822,7 @@
             "h": 3,
             "w": 8,
             "x": 16,
-            "y": 31
+            "y": 42
           },
           "id": 30,
           "options": {
@@ -1857,7 +1878,7 @@
             "h": 3,
             "w": 8,
             "x": 16,
-            "y": 34
+            "y": 45
           },
           "id": 31,
           "options": {
@@ -1903,101 +1924,6 @@
   ],
   "templating": {
     "list": [
-      {
-        "auto": true,
-        "auto_count": "400",
-        "auto_min": "1m",
-        "current": {
-          "selected": false,
-          "text": "auto",
-          "value": "$__auto_interval_short_interval"
-        },
-        "hide": 0,
-        "label": null,
-        "name": "short_interval",
-        "options": [
-          {
-            "selected": true,
-            "text": "auto",
-            "value": "$__auto_interval_short_interval"
-          },
-          {
-            "selected": false,
-            "text": "1m",
-            "value": "1m"
-          },
-          {
-            "selected": false,
-            "text": "10m",
-            "value": "10m"
-          },
-          {
-            "selected": false,
-            "text": "15m",
-            "value": "15m"
-          },
-          {
-            "selected": false,
-            "text": "30m",
-            "value": "30m"
-          },
-          {
-            "selected": false,
-            "text": "1h",
-            "value": "1h"
-          },
-          {
-            "selected": false,
-            "text": "2h",
-            "value": "2h"
-          },
-          {
-            "selected": false,
-            "text": "3h",
-            "value": "3h"
-          },
-          {
-            "selected": false,
-            "text": "4h",
-            "value": "4h"
-          },
-          {
-            "selected": false,
-            "text": "6h",
-            "value": "6h"
-          },
-          {
-            "selected": false,
-            "text": "12h",
-            "value": "12h"
-          },
-          {
-            "selected": false,
-            "text": "1d",
-            "value": "1d"
-          },
-          {
-            "selected": false,
-            "text": "7d",
-            "value": "7d"
-          },
-          {
-            "selected": false,
-            "text": "14d",
-            "value": "14d"
-          },
-          {
-            "selected": false,
-            "text": "30d",
-            "value": "30d"
-          }
-        ],
-        "query": "1m,10m,15m,30m,1h,2h,3h,4h,6h,12h,1d,7d,14d,30d",
-        "queryValue": "",
-        "refresh": 2,
-        "skipUrlSync": false,
-        "type": "interval"
-      },
       {
         "allValue": null,
         "current": {},
@@ -2045,7 +1971,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -2064,5 +1990,5 @@
   "timezone": "",
   "title": "PromED",
   "uid": "vq1ilC4Gko",
-  "version": 2
+  "version": 12
 }
