@@ -1,4 +1,4 @@
-from typing import Type, Dict
+from typing import Dict, Type
 
 from prometheus_client import Counter, Gauge, Histogram
 

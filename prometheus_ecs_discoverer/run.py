@@ -1,5 +1,5 @@
-import time
 import sys
+import time
 from timeit import default_timer
 
 import boto3
@@ -7,13 +7,16 @@ from botocore.config import Config
 from loguru import logger
 from prometheus_client import start_http_server
 
-from prometheus_ecs_discoverer import s, discovery, fetching, marshalling
-from prometheus_ecs_discoverer import telemetry
+from prometheus_ecs_discoverer import (discovery, fetching, marshalling, s,
+                                       telemetry)
 
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
 
-INTERVAL_BREACHED = telemetry.counter("execution_breaches_total", "Number of times the discovery round took longer than the configured interval.")
+INTERVAL_BREACHED = telemetry.counter(
+    "execution_breaches_total",
+    "Number of times the discovery round took longer than the configured interval.",
+)
 INTERVAL_BREACHED.inc(0)
 
 
@@ -35,9 +38,9 @@ def configure_logging():
 
 
 def expose_info() -> None:
-    telemetry.info({
-        "interval_seconds": str(s.INTERVAL),
-    })
+    telemetry.info(
+        {"interval_seconds": str(s.INTERVAL),}
+    )
 
 
 def get_interval_histogram(interval: int):
@@ -114,7 +117,9 @@ def main():
         DURATION.observe(duration)
 
         if duration > interval:
-            logger.bind(duration=duration).error("Discovery round took longer than the configured interval. Please investigate.")
+            logger.bind(duration=duration).error(
+                "Discovery round took longer than the configured interval. Please investigate."
+            )
             INTERVAL_BREACHED.inc()
 
         time_left = max(interval - duration, 0)

@@ -28,6 +28,6 @@ def test_info_gauge():
 
     telemetry.info(dct, "test_info_gauge")
 
-    assert REGISTRY.get_sample_value(
-        f"{s.PROMETHEUS_NAMESPACE}_test_info_gauge", dct
-    ) == 1
+    assert (
+        REGISTRY.get_sample_value(f"{s.PROMETHEUS_NAMESPACE}_test_info_gauge", dct) == 1
+    )

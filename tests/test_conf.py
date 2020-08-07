@@ -1,6 +1,6 @@
 import os
 
-from prometheus_ecs_discoverer import s, run
+from prometheus_ecs_discoverer import run, s
 
 
 def test_config():
