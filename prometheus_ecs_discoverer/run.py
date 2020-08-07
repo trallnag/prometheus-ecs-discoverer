@@ -13,6 +13,10 @@ from prometheus_ecs_discoverer import telemetry
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
 
+INTERVAL_BREACHED = telemetry.counter("execution_breaches_total", "Number of times the discovery round took longer than the configured interval.")
+INTERVAL_BREACHED.inc(0)
+
+
 def configure_logging():
     logger.remove()
 
@@ -45,6 +49,9 @@ def get_interval_histogram(interval: int):
         buckets=[x * step_size for x in range(steps)]
         + [interval + 10, interval + 20, float("inf"),],
     )
+
+
+# ==============================================================================
 
 
 def main():
@@ -105,6 +112,10 @@ def main():
 
         logger.bind(duration=duration).info("Finished discovery round.")
         DURATION.observe(duration)
+
+        if duration > interval:
+            logger.bind(duration=duration).error("Discovery round took longer than the configured interval. Please investigate.")
+            INTERVAL_BREACHED.inc()
 
         time_left = max(interval - duration, 0)
         time.sleep(time_left)
