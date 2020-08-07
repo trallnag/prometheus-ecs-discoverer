@@ -18,3 +18,16 @@ def test_histogram():
     assert histogram._name.startswith(
         f"{s.PROMETHEUS_NAMESPACE}_{s.PROMETHEUS_SUBSYSTEM}"
     )
+
+
+def test_info_gauge():
+    dct = {
+        "foo": "bar",
+        "hello": "friend",
+    }
+
+    telemetry.info(dct, "test_info_gauge")
+
+    assert REGISTRY.get_sample_value(
+        f"{s.PROMETHEUS_NAMESPACE}_test_info_gauge", dct
+    ) == 1

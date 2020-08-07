@@ -29,6 +29,13 @@ def configure_logging():
 
         boto3.set_stream_logger(name="botocore")
 
+
+def expose_info() -> None:
+    telemetry.info({
+        "interval_seconds": str(s.INTERVAL),
+    })
+
+
 def get_interval_histogram(interval: int):
     steps = 10
     step_size = round(interval / steps, 0)
@@ -45,7 +52,8 @@ def main():
     output_dir = s.OUTPUT_DIRECTORY
     should_throttle = s.WARMUP_THROTTLE
 
-    conf.configure_logging()
+    configure_logging()
+    expose_info()
 
     logger.info("Welcome to PromED, the Prometheus ECS Discoverer.")
     logger.bind(settings=s.as_dict()).info("Here is the used configuration.")

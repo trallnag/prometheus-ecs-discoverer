@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Grafana Dashboards.
+* Add info gauge that exposes infos (currently only interval).
 
 ### Changed
 

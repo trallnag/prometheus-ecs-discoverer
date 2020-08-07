@@ -14,6 +14,5 @@ def test_config():
 
 
 def test_expose_info():
-    # Just ensure that it executes. Function itself already covered.
     run.expose_info()
     assert True

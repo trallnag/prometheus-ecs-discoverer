@@ -198,9 +198,7 @@ You can find the Grafana dashboard for PromED in
 [dashboard.json](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/documents/dashboard.json)
 and in the [Grafana Cloud](https://grafana.com/grafana/dashboards/12773).
 
-![dashboard-screenshot-1](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/dashboard-screenshot-1.png)
-
-![dashboard-screenshot-1](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/dashboard-screenshot-2.png)
+![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/dashboard-screenshot.png)
 
 ## Prerequesites
 

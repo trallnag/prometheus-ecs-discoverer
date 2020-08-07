@@ -43,7 +43,7 @@ def histogram(
     )
 
 
-def info(labels: Dict[str, str]) -> None:
+def info(labels: Dict[str, str], name: str = "info") -> None:
     """Creates a gauge with the given label value pairs.
 
     Use this function only once during run-time or else Prometheus client 
@@ -51,7 +51,7 @@ def info(labels: Dict[str, str]) -> None:
     """
 
     info_gauge = Gauge(
-        "info",
+        name,
         "Info.",
         labelnames=tuple(labels.keys()),
         namespace=s.PROMETHEUS_NAMESPACE,
