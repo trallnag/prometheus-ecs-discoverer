@@ -1,13 +1,19 @@
 import os
 
-from prometheus_ecs_discoverer import settings
+from prometheus_ecs_discoverer import s, run
 
 
 def test_config():
-    assert settings.BOTO3_DEBUG is False
+    assert s.BOTO3_DEBUG is False
 
     os.environ["DYNACONF_BOTO3_DEBUG"] = "true"
-    assert settings.BOTO3_DEBUG is False
+    assert s.BOTO3_DEBUG is False
 
-    settings["boto3_debug"] = True
-    assert settings.BOTO3_DEBUG is True
+    s["boto3_debug"] = True
+    assert s.BOTO3_DEBUG is True
+
+
+def test_expose_info():
+    # Just ensure that it executes. Function itself already covered.
+    run.expose_info()
+    assert True

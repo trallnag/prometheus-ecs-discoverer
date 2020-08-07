@@ -3,8 +3,7 @@ from typing import Dict, List, Type
 
 from loguru import logger
 
-from prometheus_ecs_discoverer import settings as s
-from prometheus_ecs_discoverer import toolbox
+from prometheus_ecs_discoverer import s, toolbox
 from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0

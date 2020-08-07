@@ -1,6 +1,6 @@
 import pytest
 
-from prometheus_ecs_discoverer import settings
+from prometheus_ecs_discoverer import s
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -14,4 +14,4 @@ def configure_logging():
     fmt = "<level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
     logger.add(sys.stderr, colorize=True, format=fmt, level="DEBUG")
 
-    settings["PRINT_STRUCTS"] = False
+    s["PRINT_STRUCTS"] = False

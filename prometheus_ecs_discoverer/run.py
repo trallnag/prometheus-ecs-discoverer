@@ -1,4 +1,5 @@
 import time
+import sys
 from timeit import default_timer
 
 import boto3
@@ -6,12 +7,27 @@ from botocore.config import Config
 from loguru import logger
 from prometheus_client import start_http_server
 
-from prometheus_ecs_discoverer import conf, discovery, fetching, marshalling
-from prometheus_ecs_discoverer import settings as s
+from prometheus_ecs_discoverer import s, discovery, fetching, marshalling
 from prometheus_ecs_discoverer import telemetry
 
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+
+def configure_logging():
+    logger.remove()
+
+    if s.LOG_JSON:
+        fmt = "{message}"
+        logger.add(sys.stderr, format=fmt, serialize=True, level=s.LOG_LEVEL)
+    else:
+        # <green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{name}:{function}:{line}</cyan> {message} <dim>{extra}</dim>
+        fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
+        logger.add(sys.stderr, colorize=True, format=fmt, level=s.LOG_LEVEL)
+
+    if settings.boto3_debug:
+        import boto3
+
+        boto3.set_stream_logger(name="botocore")
 
 def get_interval_histogram(interval: int):
     steps = 10

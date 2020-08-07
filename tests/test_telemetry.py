@@ -1,5 +1,6 @@
-from prometheus_ecs_discoverer import settings as s
-from prometheus_ecs_discoverer import telemetry
+from prometheus_client import REGISTRY
+
+from prometheus_ecs_discoverer import s, telemetry
 
 
 def test_gauge():

@@ -1,8 +1,8 @@
-from typing import Type
+from typing import Type, Dict
 
 from prometheus_client import Counter, Gauge, Histogram
 
-from prometheus_ecs_discoverer import settings as s
+from prometheus_ecs_discoverer import s
 
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
@@ -41,3 +41,21 @@ def histogram(
         subsystem=s.PROMETHEUS_SUBSYSTEM,
         buckets=buckets,
     )
+
+
+def info(labels: Dict[str, str]) -> None:
+    """Creates a gauge with the given label value pairs.
+
+    Use this function only once during run-time or else Prometheus client 
+    library will raise an exception.
+    """
+
+    info_gauge = Gauge(
+        "info",
+        "Info.",
+        labelnames=tuple(labels.keys()),
+        namespace=s.PROMETHEUS_NAMESPACE,
+        subsystem=s.PROMETHEUS_SUBSYSTEM,
+    )
+
+    info_gauge.labels(*labels.values()).set(1)
