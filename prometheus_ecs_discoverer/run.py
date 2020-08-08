@@ -31,7 +31,7 @@ def configure_logging():
         fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
         logger.add(sys.stderr, colorize=True, format=fmt, level=s.LOG_LEVEL)
 
-    if settings.boto3_debug:
+    if s.BOTO3_DEBUG:
         import boto3
 
         boto3.set_stream_logger(name="botocore")
