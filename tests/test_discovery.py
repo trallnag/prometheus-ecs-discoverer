@@ -1,7 +1,7 @@
 import pytest
 from loguru import logger
 
-from prometheus_ecs_discoverer import s, discovery
+from prometheus_ecs_discoverer import discovery, s
 
 # ==============================================================================
 # Tests
