@@ -1,7 +1,6 @@
 import os
 
-from prometheus_ecs_discoverer import s, discovery, marshalling
-from prometheus_ecs_discoverer import toolbox
+from prometheus_ecs_discoverer import discovery, marshalling, s, toolbox
 
 # ------------------------------------------------------------------------------
 # _extract_path_interval_pairs
