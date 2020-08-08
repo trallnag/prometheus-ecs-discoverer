@@ -131,6 +131,7 @@ jobs:
           repository: trallnag/prometheus_ecs_discoverer
           tags: latest,${{ env.PROJECT_VERSION }}
           add_git_labels: true
+          build_args: PYPI_VERSION=${{ env.PROJECT_VERSION }}
 
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v2
