@@ -17,6 +17,17 @@ TASK_INFOS = telemetry.gauge("task_infos", "Discovered and built task infos.")
 TARGETS = telemetry.gauge("targets", "Discovered and built targets.")
 TDEFINITIONS = telemetry.gauge("task_definitions", "Fetched task definitions.")
 
+TARGETS_MARKED = telemetry.gauge(
+    "targets_marked", "Discovered targets that are marked as Prometheus targets."
+)
+targets_marked_counter = 0  # Counter per round.
+
+TARGETS_MARKED_REJECTED = telemetry.gauge(
+    "targets_marked_rejected",
+    "Discovered targets marked as Prometheus targets that have been rejected.",
+)
+targets_marked_rejected_counter = 0  # Counter per round.
+
 # ==============================================================================
 
 
@@ -46,6 +57,8 @@ class TaskInfo:
 class PrometheusEcsDiscoverer:
     def __init__(self, fetcher: Type[CachedFetcher]):
         self.fetcher = fetcher
+        self.targets_marked_counter = 0
+        self.targets_marked_rejected_counter = 0
 
     def discover(self) -> List[Type[Target]]:
         targets = []
@@ -60,6 +73,12 @@ class PrometheusEcsDiscoverer:
                 target = self._build_target(container, task_info)
                 if target:
                     targets.append(target)
+
+        TARGETS_MARKED.set(self.targets_marked_counter)
+        TARGETS_MARKED_REJECTED.set(self.targets_marked_rejected_counter)
+
+        self.targets_marked_counter = 0
+        self.targets_marked_rejected_counter = 0
 
         TARGETS.set(len(targets))
         logger.info("Discovered {} targets.", len(targets))
@@ -140,6 +159,7 @@ class PrometheusEcsDiscoverer:
             _logger.debug("Prometheus env var NOT found. Reject container.")
             return
         else:
+            self.targets_marked_counter += 1
             _logger.debug("Prometheus env var found. Build target.")
 
         metrics_path = toolbox.extract_env_var(
@@ -161,6 +181,7 @@ class PrometheusEcsDiscoverer:
             _logger,
         ):
             self.fetcher.task_cache.current.pop(task_arn, None)
+            self.targets_marked_rejected_counter += 1
             return
 
         port = _extract_port(
@@ -172,6 +193,7 @@ class PrometheusEcsDiscoverer:
         )
         if port is None:
             _logger.warning("Does not expose port matching PROMETHEUS_CONTAINER_PORT.")
+            self.targets_marked_rejected_counter += 1
             return
 
         ip = _extract_ip(network_mode, network_interfaces, data.ec2_instance)

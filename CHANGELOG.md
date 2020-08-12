@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
+## [2.3.0] 2020-08-12
+
+### Added 
+
+* Two more metrics.
+    * targets_marked
+    * targets_marked_rejected
+
 ## [2.2.3] [2.2.2] [2.2.1] 2020-08-12
 
 ### Changed

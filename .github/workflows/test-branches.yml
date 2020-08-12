@@ -63,7 +63,7 @@ jobs:
 
     - name: Run isort
       if: matrix.python-version == 3.8
-      run: poetry run isort .
+      run: poetry run isort --profile black .
   
     - name: Recommit
       if: matrix.python-version == 3.8
