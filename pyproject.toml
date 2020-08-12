@@ -4,7 +4,7 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 name = "prometheus-ecs-discoverer"
-version = "2.2.2"
+version = "2.2.3"
 description = "Prometheus Service Discovery for AWS ECS"
 authors = ["Tim Schwenke <tim.schwenke+trallnag@protonmail.ch>"]
 license = "Apache-2.0"
