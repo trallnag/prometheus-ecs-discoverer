@@ -3,11 +3,20 @@ from typing import Dict, List, Type
 
 from loguru import logger
 
-from prometheus_ecs_discoverer import s, toolbox
+from prometheus_ecs_discoverer import s, toolbox, telemetry
 from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
 # Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+
+# ==============================================================================
+# Telemetry
+
+TASK_INFOS = telemetry.gauge("task_infos", "Discovered and built task infos.")
+TARGETS = telemetry.gauge("targets", "Discovered and built targets.")
+
+# ==============================================================================
 
 
 @dataclass
@@ -43,6 +52,7 @@ class PrometheusEcsDiscoverer:
         task_infos = []
         for cluster_arn in self.fetcher.get_cluster_arns():
             task_infos += self._discover_task_infos(cluster_arn)
+        TASK_INFOS.set(len(task_infos))
 
         for task_info in task_infos:
             for container in task_info.task["containers"]:
@@ -50,6 +60,7 @@ class PrometheusEcsDiscoverer:
                 if target:
                     targets.append(target)
 
+        TARGETS.set(len(targets))
         logger.info("Discovered {} targets.", len(targets))
 
         self.fetcher.flush_caches()
@@ -120,8 +131,10 @@ class PrometheusEcsDiscoverer:
                 container_definition = defi
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS") is None:
-            _logger.debug("Prometheus env var not found. Reject container.")
+            _logger.debug("Prometheus env var NOT found. Reject container.")
             return
+        else:
+            _logger.debug("Prometheus env var found. Build target.")
 
         metrics_path = toolbox.extract_env_var(
             container_definition, "PROMETHEUS_ENDPOINT"
@@ -247,14 +260,13 @@ def _has_proper_network(
     if network_mode == "host" and (prom_port or port_mappings):
         return True
 
-    if s.DEBUG:
-        scoped_logger.bind(
-            len_network_bindings=len(network_bindings),
-            len_network_interfaces=len(network_interfaces),
-            network_mode=network_mode,
-            prom_port=bool(prom_port),
-            port_mappings=bool(port_mappings),
-        ).warning("Has no network binding.")
+    scoped_logger.bind(
+        len_network_bindings=len(network_bindings),
+        len_network_interfaces=len(network_interfaces),
+        network_mode=network_mode,
+        prom_port=bool(prom_port),
+        port_mappings=bool(port_mappings),
+    ).warning("Has no network binding.")
 
     return False
 

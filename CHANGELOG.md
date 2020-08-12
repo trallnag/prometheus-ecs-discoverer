@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-* Nothing.
+### Added
+
+* Debug logging.
+* More metrics.
+    * clusters
+    * container_instances
+    * task_definitions
+    * tasks
+    * task_infos
+    * targets
+
+### Changed
+
+* Updated dependencies.
 
 ## [2.1.3] [2.1.2] [2.1.1] 2020-08-08
 

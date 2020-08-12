@@ -9,10 +9,19 @@ from prometheus_ecs_discoverer.caching import SlidingCache
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
 # Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+# Telemetry ====================================================================
 
+CLUSTERS = telemetry.gauge("clusters", "Fetched clusters.")
+CINSTANCES = telemetry.gauge(
+    "container_instances", "Fetched container instances.", ("cluster",)
+)
+TDEFINITIONS = telemetry.gauge("task_definitions", "Fetched task definitions.")
+TASKS = telemetry.gauge("tasks", "Fetched tasks.", ("cluster",))
 DURATION = telemetry.histogram(
     "api_requests_duration_seconds", "Duration of requests to the AWS API.", ("method",)
 )
+
+# ==============================================================================
 
 
 class CachedFetcher:
@@ -81,18 +90,26 @@ class CachedFetcher:
         return arns
 
     def get_cluster_arns(self) -> list:
-        return self.get_arns("list_clusters", "clusterArns")
+        arns = self.get_arns("list_clusters", "clusterArns")
+        CLUSTERS.set(len(arns))
+        return arns
 
     def get_container_instance_arns(self, cluster_arn: str) -> list:
-        return self.get_arns(
+        arns = self.get_arns(
             "list_container_instances", "containerInstanceArns", cluster=cluster_arn
         )
+        CINSTANCES.labels(cluster_arn).set(len(arns))
+        return arns
 
     def get_task_definition_arns(self) -> list:
-        return self.get_arns("list_task_definitions", "taskDefinitionArns")
+        arns = self.get_arns("list_task_definitions", "taskDefinitionArns")
+        TDEFINITIONS.set(len(arns))
+        return arns
 
     def get_task_arns(self, cluster_arn: str) -> list:
-        return self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
+        arns = self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
+        TASKS.labels(cluster_arn).set(len(arns))
+        return arns
 
     # ==========================================================================
 
