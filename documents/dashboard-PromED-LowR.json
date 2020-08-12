@@ -60,7 +60,7 @@
       }
     ]
   },
-  "description": "Prometheus ECS Discoverer. High Resolution.",
+  "description": "Prometheus ECS Discoverer. Low Resolution.",
   "editable": true,
   "gnetId": 12802,
   "graphTooltip": 1,
