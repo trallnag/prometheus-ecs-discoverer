@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+* Nothing.
+
+## [2.2.0] 2020-08-12
+
 ### Added
 
 * Debug logging.
@@ -65,3 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Initial re-release. Previous project - same name but different - removed.
+
+## [Unreleased]
+
+* Nothing.
