@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
-## [2.2.1] 2020-08-12
+## [2.2.2] [2.2.1] 2020-08-12
 
 ### Changed
 
 * Bugfix: Moved not-working metric task_definitions to correct location. The 
     method it was set previously is not used in many cases.
+* Improved release workflow: Sometimes after package is built and published to
+    PyPI repository the following docker build cannot find the new package. So 
+    I have added a loop that runs and sleeps until package is found.
 
 ## [2.2.0] 2020-08-12
 
