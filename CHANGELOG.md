@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
+## [2.2.1] 2020-08-12
+
+### Changed
+
+* Bugfix: Moved not-working metric task_definitions to correct location. The 
+    method it was set previously is not used in many cases.
+
 ## [2.2.0] 2020-08-12
 
 ### Added

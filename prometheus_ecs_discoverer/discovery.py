@@ -15,6 +15,7 @@ from prometheus_ecs_discoverer.fetching import CachedFetcher
 
 TASK_INFOS = telemetry.gauge("task_infos", "Discovered and built task infos.")
 TARGETS = telemetry.gauge("targets", "Discovered and built targets.")
+TDEFINITIONS = telemetry.gauge("task_definitions", "Fetched task definitions.")
 
 # ==============================================================================
 
@@ -85,8 +86,11 @@ class PrometheusEcsDiscoverer:
 
         tasks = self.fetcher.get_tasks(cluster_arn, task_arns)
 
+        task_definition_arns = set()
+
         for task_arn, task in tasks.items():
             task_definition_arn = task["taskDefinitionArn"]
+            task_definition_arns.add(task_definition_arn)
             task_definition = self.fetcher.get_task_definition(task_definition_arn)
 
             container_instance = None
@@ -98,6 +102,8 @@ class PrometheusEcsDiscoverer:
             task_infos.append(
                 TaskInfo(task, task_definition, container_instance, ec2_instance)
             )
+
+        TDEFINITIONS.set(len(task_definition_arns))
 
         logger.bind(
             cluster=cluster_arn,

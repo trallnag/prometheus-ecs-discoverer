@@ -15,7 +15,6 @@ CLUSTERS = telemetry.gauge("clusters", "Fetched clusters.")
 CINSTANCES = telemetry.gauge(
     "container_instances", "Fetched container instances.", ("cluster",)
 )
-TDEFINITIONS = telemetry.gauge("task_definitions", "Fetched task definitions.")
 TASKS = telemetry.gauge("tasks", "Fetched tasks.", ("cluster",))
 DURATION = telemetry.histogram(
     "api_requests_duration_seconds", "Duration of requests to the AWS API.", ("method",)
@@ -102,9 +101,7 @@ class CachedFetcher:
         return arns
 
     def get_task_definition_arns(self) -> list:
-        arns = self.get_arns("list_task_definitions", "taskDefinitionArns")
-        TDEFINITIONS.set(len(arns))
-        return arns
+        return self.get_arns("list_task_definitions", "taskDefinitionArns")
 
     def get_task_arns(self, cluster_arn: str) -> list:
         arns = self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
