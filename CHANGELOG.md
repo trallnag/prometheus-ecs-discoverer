@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
+## [2.3.1] 2020-08-13
+
+### Changed
+
+* Bugfix: If no proper network binding is found the task should be popped from 
+    the cache. Currently this is only done for the current cache. It is still 
+    in the next cache.
+
 ## [2.3.0] 2020-08-12
 
 ### Added 

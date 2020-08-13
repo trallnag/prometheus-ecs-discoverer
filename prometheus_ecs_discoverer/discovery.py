@@ -181,6 +181,7 @@ class PrometheusEcsDiscoverer:
             _logger,
         ):
             self.fetcher.task_cache.current.pop(task_arn, None)
+            self.fetcher.task_cache.next.pop(task_arn, None)
             self.targets_marked_rejected_counter += 1
             return
 
