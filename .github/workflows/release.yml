@@ -61,11 +61,11 @@ jobs:
     
     - name: Format style
       if: matrix.python-version == 3.8
-      run: format_style
+      run: make format_style
 
     - name: Format imports
       if: matrix.python-version == 3.8
-      run: format_imports
+      run: make format_imports
 
     - name: Freeze requirements (for dep graph)
       if: matrix.python-version == 3.8
