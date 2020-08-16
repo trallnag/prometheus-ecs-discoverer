@@ -6,8 +6,15 @@ from prometheus_ecs_discoverer import s
 
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+"""
+Helpful wrappers around Prometheus client library. Should be used exclusively 
+in this package to ensure consistent namespace / subsystem.
+"""
+
 
 def gauge(name: str, documentation: str, labels: tuple = ()) -> Type[Gauge]:
+    """Builds a gauge with configured namespace / subsystem."""
+
     return Gauge(
         name,
         documentation,
@@ -18,6 +25,8 @@ def gauge(name: str, documentation: str, labels: tuple = ()) -> Type[Gauge]:
 
 
 def counter(name: str, documentation: str, labels: tuple = ()) -> Type[Counter]:
+    """Builds a counter with configured namespace / subsystem."""
+
     return Counter(
         name,
         documentation,
@@ -33,6 +42,8 @@ def histogram(
     labels: tuple = (),
     buckets: tuple = Histogram.DEFAULT_BUCKETS,
 ) -> Type[Histogram]:
+    """Builds a histogram with configured namespace / subsystem."""
+
     return Histogram(
         name,
         documentation,
@@ -46,8 +57,7 @@ def histogram(
 def info(labels: Dict[str, str], name: str = "info") -> None:
     """Creates a gauge with the given label value pairs.
 
-    Use this function only once during run-time or else Prometheus client 
-    library will raise an exception.
+    Helps with exposing static info gauges.
     """
 
     info_gauge = Gauge(

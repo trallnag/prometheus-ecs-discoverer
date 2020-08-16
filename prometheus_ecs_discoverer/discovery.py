@@ -9,6 +9,12 @@ from prometheus_ecs_discoverer.fetching import CachedFetcher
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
 # Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+"""Contains most of the business logic of the Prometheus ECS discoverer.
+
+Queries the AWS API / cache and tries to build up a collection of target 
+objects that represent targets for Prometheus.
+"""
+
 
 # ==============================================================================
 # Telemetry
@@ -33,6 +39,8 @@ targets_marked_rejected_counter = 0  # Counter per round.
 
 @dataclass
 class Target:
+    """Data class with all information necessary to build a JSON target."""
+
     ip: str
     port: str
     p_instance: str
@@ -48,6 +56,8 @@ class Target:
 
 @dataclass
 class TaskInfo:
+    """Data class that wraps a few objects only used in discovery module."""
+
     task: dict
     task_definition: dict
     container_instance: dict = None
@@ -55,10 +65,36 @@ class TaskInfo:
 
 
 class PrometheusEcsDiscoverer:
+    """The disoverer.
+
+    Consists out of two main methods. One gets all the task infos and the 
+    second one takes these task infos and tries to build target objects from 
+    them.
+    """
+
     def __init__(self, fetcher: Type[CachedFetcher]):
+        """
+        Args:
+            fetcher: Fetcher to use.
+        """
+
         self.fetcher = fetcher
+        """Used fetcher."""
+
         self.targets_marked_counter = 0
+        """Instrumentation.
+
+        Counts the number of containers which have been marked in their 
+        container definitions as prometheus targets.
+        """
+
         self.targets_marked_rejected_counter = 0
+        """Instrumentation.
+        
+        Counts the number of containers which have been marked in their 
+        container definitions as prometheus targets but have been rejected, 
+        meaning they could not have been turned into target objects.
+        """
 
     def discover(self) -> List[Type[Target]]:
         targets = []

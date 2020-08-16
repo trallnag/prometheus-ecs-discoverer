@@ -11,8 +11,14 @@ from prometheus_ecs_discoverer.discovery import Target
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
 # Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+"""
+Contains functions that work on `Target` objects and are responsible for 
+turning these into JSON files that can be consued by Prometheus file service 
+discover.
+"""
 
-def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:
+
+def extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:
     """Extracts path intervals from given metrics path.
 
     Transforms a string like this `30s:/mymetrics1,/mymetrics2` into:
@@ -47,7 +53,7 @@ def _extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or 
     return path_interval
 
 
-def _get_filename(
+def get_filename(
     interval: str or None = None,
     filename_15s: str = s.FILENAME_15S,
     filename_30s: str = s.FILENAME_30S,
@@ -55,6 +61,14 @@ def _get_filename(
     filename_5m: str = s.FILENAME_5M,
     filename_generic: str = s.FILENAME_GENERIC,
 ) -> str:
+    """Gets the filename for given interval.
+
+    Exists to allow custom file names.
+
+    Returns:
+        str: File name to use.
+    """
+
     if interval == "15s":
         return filename_15s
     elif interval == "30s":
@@ -67,7 +81,7 @@ def _get_filename(
         return filename_generic
 
 
-def _marshall_targets(
+def marshall_targets(
     targets: List[Type[Target]],
     filename_15s: str = s.FILENAME_15S,
     filename_30s: str = s.FILENAME_30S,
@@ -122,7 +136,7 @@ def _marshall_targets(
     }
 
     for target in targets:
-        path_interval_pairs = _extract_path_interval_pairs(target.metrics_path)
+        path_interval_pairs = extract_path_interval_pairs(target.metrics_path)
         for path, interval in path_interval_pairs.items():
             labels = {}
 
@@ -146,7 +160,7 @@ def _marshall_targets(
 
             job = {"targets": [f"{target.ip}:{target.port}"], "labels": labels}
 
-            result[_get_filename(interval)].append(job)
+            result[get_filename(interval)].append(job)
 
     logger.bind(**result).info("Marshalled targets")
 
@@ -154,10 +168,20 @@ def _marshall_targets(
 
 
 def write_targets_to_file(targets: List[Type[Target]], output_directory: str) -> None:
+    """Writes targets to files.
+
+    Args:
+        targets: List of target objects.
+        output_directory: Path to directory where files should be written to.
+
+    Raises:
+        OSError: If the given directory is not valid.
+    """
+
     if not os.path.isdir(output_directory):
         raise OSError(f"Directory '{output_directory}' not found.")
 
-    for file_name, content in _marshall_targets(targets).items():
+    for file_name, content in marshall_targets(targets).items():
         file_path = f"{output_directory}/{file_name}"
         tmp_file_path = f"{file_path}.tmp"
         with open(tmp_file_path, "w") as file:

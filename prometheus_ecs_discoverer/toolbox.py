@@ -7,11 +7,17 @@ import prettyprinter
 builtins.pretty = prettyprinter.pprint
 builtins.cpretty = prettyprinter.cpprint
 
-
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+"""
+Contains a bunch of more or less generic functions that are used throughout 
+this project.
+"""
 
 
 def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
+    """Chunks given list into chunks of a given size."""
+
     return [
         list_to_chunk[i : i + chunk_size]
         for i in range(0, len(list_to_chunk), chunk_size)
@@ -38,12 +44,31 @@ def pstruct(structure, name: str = "generic structure") -> None:
 
 
 def validate_min_len(min_len: int, collections: list) -> None:
+    """Ensures a min length for all given lists.
+
+    Args:
+        min_len: Min length all lists should be.
+        collections: A collection of lists.
+
+    Raises:
+        ValueError: Will be raised if a list is shorter than `min_len`.
+    """
     for collection in collections:
         if len(collection) < min_len:
             raise ValueError(f"Collection must have min {min_len}.")
 
 
 def extract_env_var(container: dict, name: str) -> str or None:
+    """Extracts env var from container definition.
+
+    Args:
+        container: Container definition.
+        name: Name of the environment variable.
+
+    Returns:
+        Enviornment variable value or `None` if var is not found.
+    """
+
     for entry in container.get("environment", []):
         if entry["name"] == name:
             return entry["value"]
@@ -53,9 +78,11 @@ def extract_env_var(container: dict, name: str) -> str or None:
 def list_to_dict(lst: List[dict], key) -> dict:
     """Turns a list of dicts into a single dict.
 
-    :param key: The value of this key in every dict in the given list will be 
-        the key in the returned dict. Therefore the values must be unique or 
-        entries will be overwritten.
+    Args:
+        lst: List of dicts.
+        key: The key in every dict in `lst` that should be used as the key for 
+            the new dict. Therefore the values must be unique or entries will 
+            be overwritten.
 
     Example:
 

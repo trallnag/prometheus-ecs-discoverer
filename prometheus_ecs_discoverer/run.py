@@ -1,15 +1,21 @@
 import sys
 import time
+from typing import Type
 from timeit import default_timer
 
 import boto3
 from botocore.config import Config
 from loguru import logger
-from prometheus_client import start_http_server
+from prometheus_client import start_http_server, Histogram
 
 from prometheus_ecs_discoverer import discovery, fetching, marshalling, s, telemetry
 
 # Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+"""Entry module to PromED.
+
+Contains a lot of instrumentation and is responsible for looping the discovery.
+"""
 
 
 INTERVAL_BREACHED = telemetry.counter(
@@ -19,7 +25,9 @@ INTERVAL_BREACHED = telemetry.counter(
 INTERVAL_BREACHED.inc(0)
 
 
-def configure_logging():
+def configure_logging() -> None:
+    """Configures loguru logging. Does not influence other logging libs."""
+
     logger.remove()
 
     if s.LOG_JSON:
@@ -37,12 +45,19 @@ def configure_logging():
 
 
 def expose_info() -> None:
+    """Exposes a gauge with info label values."""
+
     telemetry.info(
         {"interval_seconds": str(s.INTERVAL),}
     )
 
 
-def get_interval_histogram(interval: int):
+def get_interval_histogram(interval: int) -> Type[Histogram]:
+    """Creates histogram with a buckets that fit the given interval.
+
+    10 buckets below the interval and two buckets with 10 second steps larger 
+    than the interval.
+    """
     steps = 10
     step_size = round(interval / steps, 0)
     return telemetry.histogram(
@@ -57,6 +72,14 @@ def get_interval_histogram(interval: int):
 
 
 def main():
+    """Main function.
+
+    - performs all the setup for PromED.
+    - Sets up a big chunk of instrumentation.
+    - Inits all parts of PromED.
+    - Orchestrates discovery.
+    """
+
     interval = s.INTERVAL
     output_dir = s.OUTPUT_DIRECTORY
     should_throttle = s.WARMUP_THROTTLE

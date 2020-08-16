@@ -9,6 +9,13 @@ from prometheus_ecs_discoverer.caching import SlidingCache
 # Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
 # Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
 
+"""
+The only place in this package that directly interacts with the AWS API.
+
+Contains the cached fetcher that ensures that expensive calls to the AWS API 
+are cached.
+"""
+
 # Telemetry ====================================================================
 
 CLUSTERS = telemetry.gauge("clusters", "Fetched clusters.")
@@ -59,6 +66,8 @@ class CachedFetcher:
         self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
 
     def flush_caches(self) -> None:
+        """Flushes all caches. Should be called at the end of a round."""
+
         self.task_cache.flush()
         self.task_definition_cache.flush()
         self.container_instance_cache.flush()
@@ -67,6 +76,16 @@ class CachedFetcher:
     # ==========================================================================
 
     def get_arns(self, method: str, key: str, **aws_api_parameters) -> list:
+        """Gets the ARNs with a given method and key.
+
+        Args:
+            method: AWS API method to use.
+            key: Key to extract from the response(s).
+
+        Returns:
+            list: List of ARNs.
+        """
+
         arns = []
 
         total_start_time = default_timer()
@@ -89,11 +108,15 @@ class CachedFetcher:
         return arns
 
     def get_cluster_arns(self) -> list:
+        """Get cluster ARNs."""
+
         arns = self.get_arns("list_clusters", "clusterArns")
         CLUSTERS.set(len(arns))
         return arns
 
     def get_container_instance_arns(self, cluster_arn: str) -> list:
+        """Get container instance ARNs for given cluster ARN."""
+
         arns = self.get_arns(
             "list_container_instances", "containerInstanceArns", cluster=cluster_arn
         )
@@ -101,9 +124,13 @@ class CachedFetcher:
         return arns
 
     def get_task_definition_arns(self) -> list:
+        """Get task definition ARNs."""
+
         return self.get_arns("list_task_definitions", "taskDefinitionArns")
 
     def get_task_arns(self, cluster_arn: str) -> list:
+        """Get task ARNs for given cluster ARN."""
+
         arns = self.get_arns("list_tasks", "taskArns", cluster=cluster_arn)
         TASKS.labels(cluster_arn).set(len(arns))
         return arns
@@ -111,6 +138,12 @@ class CachedFetcher:
     # ==========================================================================
 
     def get_tasks(self, cluster_arn: str, task_arns: list = None) -> dict:
+        """Get task descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the task ARNs, values the respective task descriptions.
+        """
+
         def uncached_fetch(task_arns: list) -> dict:
             logger.bind(cluster_arn=cluster_arn, task_arns=task_arns).debug(
                 "Fetch tasks from AWS with describe_tasks."
@@ -142,6 +175,13 @@ class CachedFetcher:
         return self.task_cache.get_multiple(task_arns, uncached_fetch)
 
     def get_task_definition(self, arn: str) -> dict:
+        """Get single task definition descriptions from cache / AWS API.
+
+        Returns:
+            dict: Key is the task definition ARN, value the task definition 
+                description.
+        """
+
         def uncached_fetch(arn: str) -> dict:
             logger.bind(arn=arn).debug(
                 "Fetch task definition from AWS with describe_task_definition."
@@ -166,6 +206,15 @@ class CachedFetcher:
         return self.task_definition_cache.get_single(arn, uncached_fetch)
 
     def get_task_definitions(self, arns: list = None) -> dict:
+        """Get task definition descriptions from cache / AWS API.
+
+        Every given ARN corresponds with a (cached) call.
+
+        Returns:
+            dict: Keys are the task definition ARNs, values the respective task 
+                definition descriptions.
+        """
+
         def uncached_fetch(arns: list) -> dict:
             logger.bind(arns=arns).debug(
                 "Fetch task definitions from AWS with describe_task_definition."
@@ -195,6 +244,13 @@ class CachedFetcher:
         return self.task_definition_cache.get_multiple(arns, uncached_fetch,)
 
     def get_container_instances(self, cluster_arn: str, arns: list = None) -> dict:
+        """Get container instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the container instance ARNs, values the respective 
+                container instance descriptions.
+        """
+
         def uncached_fetch(arns: list) -> dict:
             logger.bind(arns=arns).debug(
                 "Fetch container instances from AWS with describe_container_instances."
@@ -228,6 +284,13 @@ class CachedFetcher:
         return self.container_instance_cache.get_multiple(arns, uncached_fetch,)
 
     def get_ec2_instances(self, instance_ids: list) -> dict:
+        """Get EC2 instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the EC2 instance ARNs, values the respective 
+                EC2 instance descriptions.
+        """
+
         def uncached_fetch(instance_ids: list) -> dict:
             logger.bind(instance_ids=instance_ids).debug(
                 "Fetch EC2 instances from AWS with describe_instances."

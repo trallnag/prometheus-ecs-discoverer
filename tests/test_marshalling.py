@@ -8,7 +8,7 @@ from prometheus_ecs_discoverer import discovery, marshalling, s, toolbox
 
 def test_extract_path_interval_pairs_1():
     inp = "30s:/mymetrics1,/mymetrics2"
-    outp = marshalling._extract_path_interval_pairs(inp)
+    outp = marshalling.extract_path_interval_pairs(inp)
     toolbox.pstruct(outp, inp)
 
     assert outp == {"/mymetrics1": "30s", "/mymetrics2": None}
@@ -16,7 +16,7 @@ def test_extract_path_interval_pairs_1():
 
 def test_extract_path_interval_pairs_2():
     inp = "30s:/mymetrics1,5m:/mymetrics2"
-    outp = marshalling._extract_path_interval_pairs(inp)
+    outp = marshalling.extract_path_interval_pairs(inp)
     toolbox.pstruct(outp, inp)
 
     assert outp == {"/mymetrics1": "30s", "/mymetrics2": "5m"}
@@ -24,7 +24,7 @@ def test_extract_path_interval_pairs_2():
 
 def test_extract_path_interval_pairs_3():
     inp = None
-    outp = marshalling._extract_path_interval_pairs(inp)
+    outp = marshalling.extract_path_interval_pairs(inp)
     toolbox.pstruct(outp, inp)
 
     assert outp == {"/metrics": None}
@@ -32,7 +32,7 @@ def test_extract_path_interval_pairs_3():
 
 def test_extract_path_interval_pairs_4():
     inp = "31s:/mymetrics1,/mymetrics2"
-    outp = marshalling._extract_path_interval_pairs(inp)
+    outp = marshalling.extract_path_interval_pairs(inp)
     toolbox.pstruct(outp, inp)
 
     assert outp == {"/mymetrics1": None, "/mymetrics2": None}
@@ -43,15 +43,15 @@ def test_extract_path_interval_pairs_4():
 
 
 def test_get_filename_defaults():
-    assert marshalling._get_filename() == s.FILENAME_GENERIC
-    assert marshalling._get_filename(interval="15s") == s.FILENAME_15S
-    assert marshalling._get_filename(interval="30s") == s.FILENAME_30S
-    assert marshalling._get_filename(interval="1m") == s.FILENAME_1M
-    assert marshalling._get_filename(interval="5m") == s.FILENAME_5M
+    assert marshalling.get_filename() == s.FILENAME_GENERIC
+    assert marshalling.get_filename(interval="15s") == s.FILENAME_15S
+    assert marshalling.get_filename(interval="30s") == s.FILENAME_30S
+    assert marshalling.get_filename(interval="1m") == s.FILENAME_1M
+    assert marshalling.get_filename(interval="5m") == s.FILENAME_5M
 
 
 def test_get_filename_custom():
-    assert marshalling._get_filename(interval="15s", filename_15s="test") == "test"
+    assert marshalling.get_filename(interval="15s", filename_15s="test") == "test"
 
 
 # ------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ def test_marshalling_targets_nolabels():
         ),
     ]
 
-    result = marshalling._marshall_targets(targets)
+    result = marshalling.marshall_targets(targets)
 
     expected = {
         s.FILENAME_GENERIC: [
@@ -195,7 +195,7 @@ def test_marshalling_targets_labels():
         )
     ]
 
-    result = marshalling._marshall_targets(targets)
+    result = marshalling.marshall_targets(targets)
 
     expected = {
         s.FILENAME_GENERIC: [
