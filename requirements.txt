@@ -44,7 +44,7 @@ pathspec==0.8.0
 pluggy==0.13.1
 prettyprinter==0.18.0
 prometheus-client==0.8.0
--e git+https://github.com/trallnag/prometheus-ecs-discoverer@877a6ae30ae9a34858856a54319b171d0efd9eec#egg=prometheus_ecs_discoverer
+-e git+https://github.com/trallnag/prometheus-ecs-discoverer@4c5dfcf65a2606394bcece3b8391f9d0ba9793ef#egg=prometheus_ecs_discoverer
 py==1.9.0
 pyasn1==0.4.8
 pycodestyle==2.6.0
@@ -75,3 +75,4 @@ websocket-client==0.57.0
 Werkzeug==1.0.1
 wrapt==1.12.1
 xmltodict==0.12.0
+zipp==3.1.0

@@ -1,12 +1,12 @@
 import sys
 import time
-from typing import Type
 from timeit import default_timer
+from typing import Type
 
 import boto3
 from botocore.config import Config
 from loguru import logger
-from prometheus_client import start_http_server, Histogram
+from prometheus_client import Histogram, start_http_server
 
 from prometheus_ecs_discoverer import discovery, fetching, marshalling, s, telemetry
 
