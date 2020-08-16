@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* Makefile for development.
+
+### Changed
+
 * Rename Dynaconf env var prefix to `PROMED`.
 * Make prometheus target marker changable. Change default to `PROMETHEUS_TARGET`.
 * Marker must be `true` not just set.
