@@ -9,6 +9,8 @@ INTERVAL = 15
 # This dir fill contain all target files for Prometheus.
 OUTPUT_DIRECTORY = "/tmp"
 
+MARKER = "PROMETHEUS_TARGET"
+
 # ==============================================================================
 # Logging
 LOG_LEVEL = "INFO"
