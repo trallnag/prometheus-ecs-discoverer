@@ -64,7 +64,7 @@ Targets are setup via setting environment variables in the task definitions.
 
 #### Mark container as target
 
-Set `PROMETHEUS` to any value to make PromED consider the container. This 
+Set `PROMETHEUS_TARGET` to `true` to make PromED consider the container. This 
 by itself is already enough to make it work with the configured defaults.
 
 #### Specify metrics endpoint(s)
