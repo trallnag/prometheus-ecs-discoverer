@@ -51,6 +51,11 @@ def expose_info() -> None:
         {"interval_seconds": str(s.INTERVAL),}
     )
 
+    info_interval = telemetry.gauge(
+        "info_interval_seconds", "Configured interval in seconds."
+    )
+    info_interval.set(s.INTERVAL)
+
 
 def get_interval_histogram(interval: int) -> Type[Histogram]:
     """Creates histogram with a buckets that fit the given interval.
