@@ -44,7 +44,7 @@ pathspec==0.8.0
 pluggy==0.13.1
 prettyprinter==0.18.0
 prometheus-client==0.8.0
--e git+https://github.com/trallnag/prometheus-ecs-discoverer@4c5dfcf65a2606394bcece3b8391f9d0ba9793ef#egg=prometheus_ecs_discoverer
+-e git+https://github.com/trallnag/prometheus-ecs-discoverer@77ce7041504ca9ff8bc11ac98f18b4840adb08fa#egg=prometheus_ecs_discoverer
 py==1.9.0
 pyasn1==0.4.8
 pycodestyle==2.6.0
