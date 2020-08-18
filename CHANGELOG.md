@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
-## [3.1.0] 2020-08-17
+## [3.1.1] [3.1.0] 2020-08-17
 
 ### Added
 
