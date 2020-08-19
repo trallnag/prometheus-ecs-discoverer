@@ -72,7 +72,7 @@
   "gnetId": 12802,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1597248747882,
+  "iteration": 1597832136746,
   "links": [
     {
       "icon": "external link",
@@ -728,6 +728,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:109",
           "format": "s",
           "label": null,
           "logBase": 1,
@@ -736,6 +737,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:110",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1347,6 +1349,398 @@
       "type": "row"
     },
     {
+      "cards": {
+        "cardPadding": 0,
+        "cardRound": null
+      },
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateRdYlGn",
+        "exponent": 0.5,
+        "mode": "spectrum"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 27
+      },
+      "heatmap": {},
+      "hideZeroBuckets": true,
+      "highlightCards": true,
+      "id": 93,
+      "legend": {
+        "show": true
+      },
+      "pluginVersion": "7.1.0",
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "expr": "sum by (le) (increase(discoverer__round_duration_seconds_bucket{job=\"$job\", instance=\"$instance\"}[$__interval]))",
+          "format": "heatmap",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Discover Round Duration",
+      "tooltip": {
+        "show": true,
+        "showHistogram": false
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "xBucketNumber": null,
+      "xBucketSize": null,
+      "yAxis": {
+        "decimals": 0,
+        "format": "s",
+        "logBase": 1,
+        "max": null,
+        "min": null,
+        "show": true,
+        "splitFactor": null
+      },
+      "yBucketBound": "auto",
+      "yBucketNumber": null,
+      "yBucketSize": null
+    },
+    {
+      "aliasColors": {
+        "Value": "red",
+        "rejected": "red",
+        "successful": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "decimals": 0,
+      "description": "This is bad. A target marked as a Prometheus target was rejected. Please check the logs.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 8,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 27
+      },
+      "hiddenSeries": false,
+      "id": 84,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(avg_over_time(discoverer__targets_marked_rejected[$__interval]))",
+          "interval": "",
+          "legendFormat": "rejected",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(avg_over_time(discoverer__targets[$__interval]))",
+          "interval": "",
+          "legendFormat": "successful",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Marked Targets Successful vs Rejected",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:159",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:160",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {
+        "round duration": "blue"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 35
+      },
+      "hiddenSeries": false,
+      "id": 100,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {}
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(discoverer__round_duration_seconds_sum{job=\"$job\", instance=\"$instance\"}[$__interval])\n/\nrate(discoverer__round_duration_seconds_count{job=\"$job\", instance=\"$instance\"}[$__interval])",
+          "interval": "1m",
+          "intervalFactor": 1,
+          "legendFormat": "round duration",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Discoverer Round Duration Avg",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:109",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:110",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "decimals": 0,
+      "description": "Number of targets marked as Prometheus targets.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 35
+      },
+      "hiddenSeries": false,
+      "id": 83,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(avg_over_time(discoverer__targets_marked[$__interval]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Marked Targets",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:159",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:160",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -1360,13 +1754,13 @@
         },
         "overrides": []
       },
-      "fill": 4,
-      "fillGradient": 8,
+      "fill": 5,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 27
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 71,
@@ -1419,6 +1813,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:1521",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -1428,6 +1823,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:1522",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1455,13 +1851,13 @@
         },
         "overrides": []
       },
-      "fill": 4,
-      "fillGradient": 8,
+      "fill": 5,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 27
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 72,
@@ -1514,6 +1910,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:1673",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -1523,6 +1920,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:1674",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1550,108 +1948,13 @@
         },
         "overrides": []
       },
-      "fill": 4,
-      "fillGradient": 8,
+      "fill": 5,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 27
-      },
-      "hiddenSeries": false,
-      "id": 73,
-      "legend": {
-        "avg": false,
-        "current": true,
-        "max": true,
-        "min": true,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 2,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "sum(avg_over_time(discoverer__task_definitions[$__interval]))",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Task Definitions",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": 0,
-          "format": "short",
-          "label": "",
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "decimals": 0,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 4,
-      "fillGradient": 8,
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 34
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 74,
@@ -1704,6 +2007,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:435",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -1713,6 +2017,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:436",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1740,13 +2045,13 @@
         },
         "overrides": []
       },
-      "fill": 4,
-      "fillGradient": 8,
+      "fill": 5,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
-        "x": 8,
-        "y": 34
+        "x": 0,
+        "y": 50
       },
       "hiddenSeries": false,
       "id": 75,
@@ -1799,6 +2104,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:1825",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -1808,6 +2114,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:1826",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1835,16 +2142,113 @@
         },
         "overrides": []
       },
-      "fill": 4,
-      "fillGradient": 8,
+      "fill": 5,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 50
+      },
+      "hiddenSeries": false,
+      "id": 73,
+      "legend": {
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(avg_over_time(discoverer__task_definitions[$__interval]))",
+          "interval": "",
+          "legendFormat": "",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Task Definitions",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1902",
+          "decimals": 0,
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1903",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "decimals": 0,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 5,
+      "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 34
+        "y": 50
       },
       "hiddenSeries": false,
-      "id": 76,
+      "id": 86,
       "legend": {
         "avg": false,
         "current": true,
@@ -1894,6 +2298,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:2026",
           "decimals": 0,
           "format": "short",
           "label": "",
@@ -1903,6 +2308,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:2027",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1923,7 +2329,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 57
       },
       "id": 41,
       "panels": [
@@ -1968,7 +2374,7 @@
             "h": 11,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 58
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2056,7 +2462,7 @@
             "h": 9,
             "w": 6,
             "x": 0,
-            "y": 53
+            "y": 69
           },
           "heatmap": {},
           "hideZeroBuckets": true,
@@ -2152,18 +2558,18 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 53
+            "y": 69
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 77,
+          "id": 94,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2250,18 +2656,18 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 53
+            "y": 69
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 78,
+          "id": 95,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2348,18 +2754,18 @@
             "h": 9,
             "w": 6,
             "x": 18,
-            "y": 53
+            "y": 69
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 79,
+          "id": 96,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2446,18 +2852,18 @@
             "h": 9,
             "w": 6,
             "x": 0,
-            "y": 62
+            "y": 78
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 80,
+          "id": 97,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2544,18 +2950,18 @@
             "h": 9,
             "w": 6,
             "x": 6,
-            "y": 62
+            "y": 78
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 81,
+          "id": 98,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2642,18 +3048,18 @@
             "h": 9,
             "w": 6,
             "x": 12,
-            "y": 62
+            "y": 78
           },
           "heatmap": {},
           "hideZeroBuckets": true,
           "highlightCards": true,
-          "id": 82,
+          "id": 99,
           "legend": {
             "show": true
           },
           "pluginVersion": "7.1.0",
           "repeat": null,
-          "repeatIteration": 1597244421974,
+          "repeatIteration": 1597674964279,
           "repeatPanelId": 42,
           "reverseYBuckets": false,
           "scopedVars": {
@@ -2710,7 +3116,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 58
       },
       "id": 39,
       "panels": [
@@ -2733,7 +3139,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 43
+            "y": 59
           },
           "hiddenSeries": false,
           "id": 22,
@@ -2831,7 +3237,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 43
+            "y": 59
           },
           "hiddenSeries": false,
           "id": 27,
@@ -2937,7 +3343,7 @@
             "h": 8,
             "w": 8,
             "x": 16,
-            "y": 43
+            "y": 59
           },
           "hiddenSeries": false,
           "id": 28,
@@ -3039,7 +3445,7 @@
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 50
+            "y": 66
           },
           "hiddenSeries": false,
           "id": 25,
@@ -3133,7 +3539,7 @@
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 50
+            "y": 66
           },
           "hiddenSeries": false,
           "id": 24,
@@ -3232,7 +3638,7 @@
             "h": 3,
             "w": 8,
             "x": 16,
-            "y": 51
+            "y": 67
           },
           "id": 30,
           "options": {
@@ -3288,7 +3694,7 @@
             "h": 3,
             "w": 8,
             "x": 16,
-            "y": 54
+            "y": 70
           },
           "id": 31,
           "options": {
@@ -3331,7 +3737,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 59
       },
       "id": 57,
       "panels": [
@@ -3347,7 +3753,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 71
+            "y": 52
           },
           "id": 59,
           "options": {
@@ -3446,7 +3852,7 @@
         "current": {},
         "datasource": "${DS_PROMETHEUS}",
         "definition": "label_values(discoverer__api_requests_duration_seconds_count, method)",
-        "hide": 0,
+        "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": false,
@@ -3466,7 +3872,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {
@@ -3485,5 +3891,5 @@
   "timezone": "",
   "title": "PromED HighR",
   "uid": "vq1ilC4Gko",
-  "version": 10
+  "version": 19
 }
