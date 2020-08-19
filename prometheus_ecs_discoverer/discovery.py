@@ -194,6 +194,9 @@ class PrometheusEcsDiscoverer:
         if toolbox.extract_env_var(container_definition, s.MARKER) == "true":
             self.targets_marked_counter += 1
             _logger.debug("Prometheus marker true. Build target.")
+        else:
+            _logger.debug("Prometheus marker not found / not 'true'. Reject.")
+            return
 
         metrics_path = toolbox.extract_env_var(
             container_definition, "PROMETHEUS_ENDPOINT"
