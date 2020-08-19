@@ -191,10 +191,7 @@ class PrometheusEcsDiscoverer:
             if container_name == defi["name"]:
                 container_definition = defi
 
-        if toolbox.extract_env_var(container_definition, s.MARKER) != "true":
-            _logger.debug("Prometheus marker not true. Reject container.")
-            return
-        else:
+        if toolbox.extract_env_var(container_definition, s.MARKER) == "true":
             self.targets_marked_counter += 1
             _logger.debug("Prometheus marker true. Build target.")
 
