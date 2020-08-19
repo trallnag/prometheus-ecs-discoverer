@@ -194,8 +194,7 @@ prefix. All supported settings together with their default values can be found
 
 ## Grafana Dashboard
 
-You can find the Grafana dashboards for PromED in the documents folder 
-and in the Grafana cloud.
+You can find the Grafana dashboards for PromED in the documents folder.
 
 ![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/screenshot-dashboard-PromED-HighR.png)
 
