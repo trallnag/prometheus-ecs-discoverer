@@ -67,8 +67,8 @@ class TaskInfo:
 class PrometheusEcsDiscoverer:
     """The disoverer.
 
-    Consists out of two main methods. One gets all the task infos and the 
-    second one takes these task infos and tries to build target objects from 
+    Consists out of two main methods. One gets all the task infos and the
+    second one takes these task infos and tries to build target objects from
     them.
     """
 
@@ -184,7 +184,9 @@ class PrometheusEcsDiscoverer:
         task_arn = data.task["taskArn"]
 
         _logger = logger.bind(
-            container=container_name, task_definition=task_definition_arn, task=task_arn,
+            container=container_name,
+            task_definition=task_definition_arn,
+            task=task_arn,
         )
 
         for defi in data.task_definition["containerDefinitions"]:

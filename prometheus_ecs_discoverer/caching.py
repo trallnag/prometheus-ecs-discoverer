@@ -25,8 +25,8 @@ NEXT_CACHE_ENTRIES = telemetry.gauge(
 class SlidingCache:
     """Cache consisting out of two slots with a sliding window.
 
-    Data is a nested dictionary. Works by taking a list of keys and first 
-    checking the cached dict for corresponding entries. Keys without matching 
+    Data is a nested dictionary. Works by taking a list of keys and first
+    checking the cached dict for corresponding entries. Keys without matching
     entries are passed on to a fetch function. Other data is thrown away.
 
     How to use:
@@ -60,7 +60,7 @@ class SlidingCache:
 
     def __init__(self, name: str = "generic"):
         """
-        :param name: Should describe the content / use of the cache. Used for 
+        :param name: Should describe the content / use of the cache. Used for
             more informative logging and metrics. Defaults to "generic".
         """
 
@@ -78,11 +78,13 @@ class SlidingCache:
         self._NEXT_CACHE_ENTRIES = NEXT_CACHE_ENTRIES.labels(self.name)
 
     def get_multiple(
-        self, keys: List[str], fetch: Callable[[List[str]], List[str]],
+        self,
+        keys: List[str],
+        fetch: Callable[[List[str]], List[str]],
     ) -> dict:
         """Get entries from cache and update if missing.
 
-        Important: Don't forget the `flush()` method. Without using it the 
+        Important: Don't forget the `flush()` method. Without using it the
         cache will never remove old data and eat up more and more memory.
 
         :param keys: Keys to retrieve from cache.
@@ -108,7 +110,9 @@ class SlidingCache:
 
         if s.DEBUG:
             logger.bind(cache=self.name, missing_keys=missing).debug(
-                "{} hits. {} misses.", self.last_hits, self.last_misses,
+                "{} hits. {} misses.",
+                self.last_hits,
+                self.last_misses,
             )
 
         fetched = fetch(missing) if missing else {}
@@ -120,10 +124,14 @@ class SlidingCache:
         toolbox.pstruct(result) if s.PRINT_STRUCTS else None
         return result
 
-    def get_single(self, key: str, fetch: Callable[[str], dict],) -> dict:
+    def get_single(
+        self,
+        key: str,
+        fetch: Callable[[str], dict],
+    ) -> dict:
         """Get entry from cache and update if missing.
 
-        Important: Don't forget the `flush()` method. Without using it the 
+        Important: Don't forget the `flush()` method. Without using it the
         cache will never remove old data and eat up more and more memory.
 
         :param key: Key to retrieve from cache.

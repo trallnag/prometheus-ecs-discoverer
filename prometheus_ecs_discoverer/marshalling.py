@@ -18,7 +18,9 @@ discover.
 """
 
 
-def extract_path_interval_pairs(metrics_path: str = None,) -> Dict[str, str or None]:
+def extract_path_interval_pairs(
+    metrics_path: str = None,
+) -> Dict[str, str or None]:
     """Extracts path intervals from given metrics path.
 
     Transforms a string like this `30s:/mymetrics1,/mymetrics2` into:

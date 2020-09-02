@@ -80,8 +80,8 @@ def list_to_dict(lst: List[dict], key) -> dict:
 
     Args:
         lst: List of dicts.
-        key: The key in every dict in `lst` that should be used as the key for 
-            the new dict. Therefore the values must be unique or entries will 
+        key: The key in every dict in `lst` that should be used as the key for
+            the new dict. Therefore the values must be unique or entries will
             be overwritten.
 
     Example:

@@ -48,7 +48,9 @@ def expose_info() -> None:
     """Exposes a gauge with info label values."""
 
     telemetry.info(
-        {"interval_seconds": str(s.INTERVAL),}
+        {
+            "interval_seconds": str(s.INTERVAL),
+        }
     )
 
     info_interval = telemetry.gauge(
@@ -60,7 +62,7 @@ def expose_info() -> None:
 def get_interval_histogram(interval: int) -> Type[Histogram]:
     """Creates histogram with a buckets that fit the given interval.
 
-    10 buckets below the interval and two buckets with 10 second steps larger 
+    10 buckets below the interval and two buckets with 10 second steps larger
     than the interval.
     """
     steps = 10
@@ -69,7 +71,11 @@ def get_interval_histogram(interval: int) -> Type[Histogram]:
         "round_duration_seconds",
         "Histogram for duration",
         buckets=[x * step_size for x in range(steps)]
-        + [interval + 10, interval + 20, float("inf"),],
+        + [
+            interval + 10,
+            interval + 20,
+            float("inf"),
+        ],
     )
 
 

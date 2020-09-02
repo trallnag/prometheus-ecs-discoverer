@@ -191,7 +191,10 @@ def test_marshalling_targets_labels():
             task_id="task_id",
             container_id="container_id",
             instance_id="instance_id",
-            custom_labels={"custom_label1": "value", "custom_label2": "value",},  # noqa
+            custom_labels={
+                "custom_label1": "value",
+                "custom_label2": "value",
+            },  # noqa
         )
     ]
 
@@ -242,7 +245,10 @@ def test_write_targets_to_file(tmp_path):
             task_id="task_id",
             container_id="container_id",
             instance_id="instance_id",
-            custom_labels={"custom_label1": "value", "custom_label2": "value",},  # noqa
+            custom_labels={
+                "custom_label1": "value",
+                "custom_label2": "value",
+            },  # noqa
         )
     ]
 

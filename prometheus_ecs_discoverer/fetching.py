@@ -33,7 +33,7 @@ DURATION = telemetry.histogram(
 class CachedFetcher:
     """Works with the AWS API and leverages a sliding cache.
 
-    Reduces the amount of request made to the AWS API helping to stay below the 
+    Reduces the amount of request made to the AWS API helping to stay below the
     request limits. Only implements necessary methods. So not a generic class.
 
     Rember to flush all caches with `flush_caches()` after every "full round".
@@ -49,9 +49,9 @@ class CachedFetcher:
         """
         :param ecs_client: Boto3 ECS client.
         :param ec2_client: Boto3 EC2 client.
-        :param throttle_interval_seconds: Time to sleep after every single 
+        :param throttle_interval_seconds: Time to sleep after every single
             request made to the AWS API.
-        :param should_throttle: If process should go to sleep after a request 
+        :param should_throttle: If process should go to sleep after a request
             made to the AWS API.
         """
 
@@ -178,7 +178,7 @@ class CachedFetcher:
         """Get single task definition descriptions from cache / AWS API.
 
         Returns:
-            dict: Key is the task definition ARN, value the task definition 
+            dict: Key is the task definition ARN, value the task definition
                 description.
         """
 
@@ -211,7 +211,7 @@ class CachedFetcher:
         Every given ARN corresponds with a (cached) call.
 
         Returns:
-            dict: Keys are the task definition ARNs, values the respective task 
+            dict: Keys are the task definition ARNs, values the respective task
                 definition descriptions.
         """
 
@@ -241,13 +241,16 @@ class CachedFetcher:
         if arns is None:
             arns = self.get_task_definition_arns()
 
-        return self.task_definition_cache.get_multiple(arns, uncached_fetch,)
+        return self.task_definition_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
 
     def get_container_instances(self, cluster_arn: str, arns: list = None) -> dict:
         """Get container instance descriptions from cache / AWS API.
 
         Returns:
-            dict: Keys are the container instance ARNs, values the respective 
+            dict: Keys are the container instance ARNs, values the respective
                 container instance descriptions.
         """
 
@@ -281,13 +284,16 @@ class CachedFetcher:
         if arns is None:
             arns = self.get_container_instance_arns(cluster_arn)
 
-        return self.container_instance_cache.get_multiple(arns, uncached_fetch,)
+        return self.container_instance_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
 
     def get_ec2_instances(self, instance_ids: list) -> dict:
         """Get EC2 instance descriptions from cache / AWS API.
 
         Returns:
-            dict: Keys are the EC2 instance ARNs, values the respective 
+            dict: Keys are the EC2 instance ARNs, values the respective
                 EC2 instance descriptions.
         """
 
@@ -318,4 +324,7 @@ class CachedFetcher:
 
             return dct
 
-        return self.ec2_instance_cache.get_multiple(instance_ids, uncached_fetch,)
+        return self.ec2_instance_cache.get_multiple(
+            instance_ids,
+            uncached_fetch,
+        )
