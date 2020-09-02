@@ -33,6 +33,8 @@ jsonpointer==2.0
 jsonschema==3.2.0
 junit-xml==1.9
 loguru==0.5.1
+Mako==1.1.3
+Markdown==3.2.2
 MarkupSafe==1.1.1
 mccabe==0.6.1
 mock==4.0.2
@@ -41,10 +43,11 @@ moto==1.3.14
 networkx==2.4
 packaging==20.4
 pathspec==0.8.0
+pdoc3==0.9.1
 pluggy==0.13.1
 prettyprinter==0.18.0
 prometheus-client==0.8.0
--e git+https://github.com/trallnag/prometheus-ecs-discoverer@8aa0bf8c6307269c74e80c29e8fd2be7acba1648#egg=prometheus_ecs_discoverer
+-e git+https://github.com/trallnag/prometheus-ecs-discoverer@5d944ad70e76fef024c0f1194913bf87f77f024a#egg=prometheus_ecs_discoverer
 py==1.9.0
 pyasn1==0.4.8
 pycodestyle==2.6.0
@@ -75,3 +78,4 @@ websocket-client==0.57.0
 Werkzeug==1.0.1
 wrapt==1.12.1
 xmltodict==0.12.0
+zipp==3.1.0
