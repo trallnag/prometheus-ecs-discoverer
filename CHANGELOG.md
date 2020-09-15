@@ -9,6 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
+## [3.2.1] 2020-09-15
+
+### Fixed
+
+* PROMETHEUS_CONTAINER_PORT not being correctly detected. Raised on 2020-08-27 
+    by @splodgemcroo 
+    <https://github.com/trallnag/prometheus-ecs-discoverer/issues/5>. 
+    Fixed by @splodgemcroo  
+    <https://github.com/trallnag/prometheus-ecs-discoverer/pull/4>.
+
+### Added
+
+* Testcase covering bug 
+    <https://github.com/trallnag/prometheus-ecs-discoverer/issues/5>.
+
+### Changed
+
+* Overhauled Grafana dashboards. Only supports 7.2 upwards due to the use of
+    `$__rate_interval`.
+
 ## [3.2.0] 2020-08-19
 
 ### Added
