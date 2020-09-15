@@ -169,6 +169,20 @@ def test_extract_port():
             prom_port=None,
             prom_container_port="123",
             port_mappings=[],
+            network_bindings=[
+                {"containerPort": 124, "hostPort": 101},
+                {"containerPort": 123, "hostPort": 100},
+            ],
+        )
+        == "100"
+    )
+
+    assert (
+        discovery._extract_port(
+            network_mode="bridge",
+            prom_port=None,
+            prom_container_port="123",
+            port_mappings=[],
             network_bindings=[{"containerPort": 124, "hostPort": 100}],
         )
         is None
