@@ -226,7 +226,7 @@ class PrometheusEcsDiscoverer:
         port = _extract_port(
             network_mode,
             prom_port,
-            toolbox.extract_env_var(container, "PROMETHEUS_CONTAINER_PORT"),
+            toolbox.extract_env_var(container_definition, "PROMETHEUS_CONTAINER_PORT"),
             port_mappings,
             network_bindings,
         )
