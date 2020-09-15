@@ -196,15 +196,9 @@ prefix. All supported settings together with their default values can be found
 
 You can find the Grafana dashboards for PromED in the documents folder.
 
-![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/screenshot-dashboard-PromED-HighR.png)
+![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/screenshot-dashboard-PromED.png)
 
-There are two dashboards available. One always draws data with the highest 
-possible resolution (PromED HighR). This dashboard is recommended for close-up
-interactions on a narrow time range. PromED LowR draws data with a larger 
-resolution that tends to average out more. Can be used for wide time ranges 
-and trend discovery. 
-
-A third dashboard contains panels with Grafana Alerts enabled.
+A second dashboard contains panels with Grafana Alerts enabled.
 
 ![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/screenshot-dashboard-PromED-Alerting.png)
 

@@ -11,10 +11,16 @@
   ],
   "__requires": [
     {
+      "type": "panel",
+      "id": "alertlist",
+      "name": "Alert list",
+      "version": ""
+    },
+    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.1.3"
+      "version": "7.3.0-9add7feapre"
     },
     {
       "type": "panel",
@@ -64,305 +70,18 @@
   ],
   "panels": [
     {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                0.1
-              ],
-              "type": "lt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "A",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "alerting",
-        "for": "0m",
-        "frequency": "5m",
-        "handler": 1,
-        "message": "The discoverer could not be reached by Prometheus in the last 5m.\n\nRule:\n\nEvaluate `avg_over_time(up[5m])` every `5m`. When `avg()` of `query(A, 5m, now)` is below `0.1`.",
-        "name": "PromED: Down in the last 5m",
-        "noDataState": "alerting",
-        "notifications": [
-          {
-            "uid": "y3Y-ikNMk"
-          }
-        ]
-      },
-      "aliasColors": {
-        "{instance=\"discovery:8080\", job=\"discovery\"}": "yellow"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
+      "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 8,
+        "h": 1,
+        "w": 24,
         "x": 0,
         "y": 0
       },
-      "hiddenSeries": false,
-      "id": 31,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 2,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1790",
-          "alias": "up",
-          "color": "#E0B400"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "avg_over_time(up{instance=\"discovery:8080\", job=\"discovery\"}[5m])",
-          "interval": "",
-          "legendFormat": "up",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:2821",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "lt",
-          "value": 0.1,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Down in the last 5m",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1532",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1533",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                250000000
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "A",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "keep_state",
-        "for": "0m",
-        "frequency": "5m",
-        "handler": 1,
-        "message": "The resident memory of the discoverer is exceeded 250 MB over a 10m average. \n\nThis should not happen. Check for Python memory leakage and consider restarting PromED.\n\nIf this occurs frequently it might make sense to add a long term stability mode to PromED that restarts the process every few hours / days. \n\nOpen a issue on the GitHub [project](https://github.com/trallnag/prometheus-ecs-discoverer).\n\nRule:\n\nEvaluate `avg_over_time(process_resident_memory_bytes[10m])` every `5m`. Fire when `avg()` of `query(5m, now)` is above `250 MB`.",
-        "name": "PromED: Resident Memory exceeded 250 MB",
-        "noDataState": "keep_state",
-        "notifications": [
-          {
-            "uid": "y3Y-ikNMk"
-          }
-        ]
-      },
-      "aliasColors": {
-        "resident memory": "dark-yellow"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 0
-      },
-      "hiddenSeries": false,
-      "id": 25,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 2,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "avg_over_time(process_resident_memory_bytes{instance=\"discovery:8080\", job=\"discovery\"}[10m])",
-          "interval": "",
-          "legendFormat": "resident memory",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:2947",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 250000000,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Resident Memory > 250 MB",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:697",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:698",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
+      "id": 37,
+      "panels": [],
+      "title": "Alerts",
+      "type": "row"
     },
     {
       "alert": {
@@ -394,14 +113,341 @@
         ],
         "executionErrorState": "keep_state",
         "for": "0m",
-        "frequency": "5m",
+        "frequency": "4m",
         "handler": 1,
-        "message": "The number of discovery rounds per 10 minutes dipped below one single round at least once during the last 5 minutes. \n\nPlease make sure that this is a singular occurrence. A single round per 10 minutes is not sufficient and not recommended.\n\nRule:\n\n```\nsum(\n  increase(discoverer__round_duration_seconds_count{instance=\"discovery:8080\", job=\"discovery\"}[10m])\n)\n```\n\nEvaluate `rule` every `5m`. Fire when `min()` of `query(5m, now)` is below `1`.",
-        "name": "PromED: Less than 1 discovery round in the last 10 minutes",
+        "message": "The discoverer could not be reached by Prometheus in the last 5m for at least some time.",
+        "name": "PromED: Down in the last 5m",
         "noDataState": "keep_state",
         "notifications": [
           {
             "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
+          }
+        ]
+      },
+      "aliasColors": {
+        "{instance=\"discovery:8080\", job=\"discovery\"}": "yellow"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 31,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1790",
+          "alias": "up",
+          "color": "#5794F2"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(\n  avg_over_time(up{instance=\"discovery:8080\", job=\"discovery\"}[1m])\n   or on() vector(0)\n)",
+          "interval": "",
+          "legendFormat": "up",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "lt",
+          "value": 1
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Up Status",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1532",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1533",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                500000000
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "0m",
+        "frequency": "4m",
+        "handler": 1,
+        "message": "The resident memory of the discoverer has exceeded 500 MB over a 5m average. \n\nThis should not happen. Check for Python memory leakage and consider restarting PromED.\n\nIf this occurs frequently it might make sense to add a long term stability mode to PromED that restarts the process every few hours / days. \n\nOpen a issue on the GitHub [project](https://github.com/trallnag/prometheus-ecs-discoverer).",
+        "name": "PromED: Resident Memory exceeded 500 MB",
+        "noDataState": "keep_state",
+        "notifications": [
+          {
+            "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
+          }
+        ]
+      },
+      "aliasColors": {
+        "resident memory": "dark-yellow"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 4,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 1
+      },
+      "hiddenSeries": false,
+      "id": 25,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 2,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:915",
+          "alias": "resident memory",
+          "color": "#5794F2"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg_over_time(process_resident_memory_bytes{instance=\"discovery:8080\", job=\"discovery\"}[1m])",
+          "interval": "",
+          "legendFormat": "resident memory",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 500000000
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Resident Memory",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:697",
+          "decimals": null,
+          "format": "decbytes",
+          "label": null,
+          "logBase": 1,
+          "max": "600000000",
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:698",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                4
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "min"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "0m",
+        "frequency": "4m",
+        "handler": 1,
+        "message": "The number of discovery rounds per 5 minutes dipped below one single round at least once during the last 5 minutes. \n\nPlease make sure that this is a singular occurrence. A single round per 10 minutes is not sufficient and not recommended.",
+        "name": "PromED: Less than 4 discovery rounds in the last 5 minutes",
+        "noDataState": "keep_state",
+        "notifications": [
+          {
+            "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
           }
         ]
       },
@@ -419,13 +465,13 @@
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 0
+        "y": 1
       },
       "hiddenSeries": false,
       "id": 23,
@@ -441,8 +487,11 @@
       "lines": true,
       "linewidth": 2,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.0-9add7feapre",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -450,8 +499,7 @@
         {
           "$$hashKey": "object:1163",
           "alias": "rounds",
-          "color": "#E0B400",
-          "fill": 1
+          "color": "#5794F2"
         }
       ],
       "spaceLength": 10,
@@ -459,7 +507,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(\n  increase(discoverer__round_duration_seconds_count{instance=\"discovery:8080\", job=\"discovery\"}[10m])\n)",
+          "expr": "sum(increase(discoverer__round_duration_seconds_count{instance=\"discovery:8080\", job=\"discovery\"}[5m]))",
           "interval": "1m",
           "intervalFactor": 1,
           "legendFormat": "rounds",
@@ -468,19 +516,17 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:3229",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 1,
-          "yaxis": "left"
+          "value": 4
         }
       ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Discovery Rounds per 10m < 1",
+      "title": "Discovery Rounds per 5m < 1",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -549,14 +595,20 @@
         ],
         "executionErrorState": "keep_state",
         "for": "0m",
-        "frequency": "5m",
+        "frequency": "4m",
         "handler": 1,
-        "message": "At least one discovery round took longer than the configured interval. \n\nIf this occurs very frequently consider increasing discover round interval. Or switch to a service discovery that does not rely on AWS API.\n\nRule: \n\nEvaluate `rate(discoverer__execution_breaches_total[5m]) * 60` every `5m`. Fire when `max()` of `query(A, 5m, now)` is above `0`.",
+        "message": "At least one discovery round took longer than the configured interval. \n\nIf this occurs very frequently consider increasing discover round interval. Or switch to a service discovery that does not rely on AWS API.",
         "name": "PromED: Discovery round execution breach in the last 5m",
         "noDataState": "keep_state",
         "notifications": [
           {
             "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
           }
         ]
       },
@@ -567,20 +619,20 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "${DS_PROMETHEUS}",
-      "description": "Rate per minute of discovery rounds that took longer than the configured discovery interval.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {}
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 0,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 8
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 2,
@@ -594,40 +646,47 @@
         "values": true
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 2,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.0-9add7feapre",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:652",
+          "alias": "Value",
+          "color": "#5794F2"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(discoverer__execution_breaches_total{instance=\"discovery:8080\", job=\"discovery\"}[5m]) * 60",
-          "interval": "1m",
+          "expr": "sum(\n  rate(discoverer__execution_breaches_total{instance=\"discovery:8080\", job=\"discovery\"}[1m]) * 60\n  or on() vector(0)\n)",
+          "interval": "",
           "legendFormat": "",
           "refId": "A"
         }
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:2733",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0,
-          "yaxis": "left"
+          "value": 0
         }
       ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Discovery Round Execution Breaches (per 1m over 2m)",
+      "title": "Discovery Round Execution Breaches per Minute",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -697,594 +756,7 @@
         ],
         "executionErrorState": "keep_state",
         "for": "0m",
-        "frequency": "5m",
-        "handler": 1,
-        "message": "The bucket p100 latency is above the ( configured discovery interval * 2/3 ). \n\nWhat does this mean? The discovery latency is / was close to the configured interval.",
-        "name": "PromED: ( Discovery round ) > ( Configured Discovery Interval * 2/3 )",
-        "noDataState": "keep_state",
-        "notifications": [
-          {
-            "uid": "y3Y-ikNMk"
-          }
-        ]
-      },
-      "aliasColors": {
-        "Calc": "red",
-        "Limit": "green",
-        "Value": "green"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 10,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 2,
-        "w": 8,
-        "x": 8,
-        "y": 8
-      },
-      "hiddenSeries": false,
-      "id": 16,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 0,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1675",
-          "alias": "Calc",
-          "zindex": 3
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
-      "targets": [
-        {
-          "expr": "(\n  histogram_quantile(1.0,\n    sum by (le) (\n      rate(discoverer__round_duration_seconds_bucket[5m])\n    )\n  )\n  > bool avg(discoverer__info_interval_seconds) * 2/3\n)\nand\n(\n  histogram_quantile(1.0,\n    sum by (le) (\n      rate(discoverer__round_duration_seconds_bucket[5m])\n    )\n  )\n  < bool avg(discoverer__info_interval_seconds)\n)",
-          "interval": "1m",
-          "legendFormat": "Calc",
-          "refId": "C"
-        },
-        {
-          "expr": "1",
-          "interval": "",
-          "legendFormat": "Limit",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:3139",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 0,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "( Bucket Latency p100 ) > ( Configured Discovery Interval * 2/3 )",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": false,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1682",
-          "decimals": 0,
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": "1",
-          "min": "0",
-          "show": false
-        },
-        {
-          "$$hashKey": "object:1683",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                0
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "max"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "keep_state",
-        "for": "0m",
-        "frequency": "5m",
-        "handler": 1,
-        "message": "The average service discovery round in the last minute took longer than the ( configured discovery interval * 0.5 ).",
-        "name": "PromED: ( Avg 5m Discovery Round Duration ) > ( Configured Discovery Interval * 0.5 )",
-        "noDataState": "keep_state",
-        "notifications": [
-          {
-            "uid": "y3Y-ikNMk"
-          }
-        ]
-      },
-      "aliasColors": {
-        "Calc": "red",
-        "Limit": "green",
-        "Value": "green"
-      },
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 10,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 2,
-        "w": 8,
-        "x": 16,
-        "y": 8
-      },
-      "hiddenSeries": false,
-      "id": 11,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 0,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1840",
-          "alias": "Calc",
-          "zindex": 3
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": true,
-      "targets": [
-        {
-          "expr": "(\n  (\n    rate(discoverer__round_duration_seconds_sum[5m])\n    /\n    rate(discoverer__round_duration_seconds_count[5m])\n  )\n  > bool discoverer__info_interval_seconds * 0.5\n)\nand\n(\n  (\n    rate(discoverer__round_duration_seconds_sum[5m])\n    /\n    rate(discoverer__round_duration_seconds_count[5m])\n  )\n  < bool discoverer__info_interval_seconds\n)",
-          "interval": "1m",
-          "legendFormat": "Calc",
-          "refId": "C"
-        },
-        {
-          "expr": "1",
-          "interval": "",
-          "legendFormat": "Limit",
-          "refId": "D"
-        }
-      ],
-      "thresholds": [
-        {
-          "$$hashKey": "object:3309",
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 0,
-          "yaxis": "left"
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "( Discovery Round Duration ) > ( Configured Discovery Interval * 0.5 )",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": false,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1847",
-          "decimals": 0,
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": "1",
-          "min": "0",
-          "show": false
-        },
-        {
-          "$$hashKey": "object:1848",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 8,
-        "y": 10
-      },
-      "hiddenSeries": false,
-      "id": 15,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1585",
-          "alias": "Configured Discovery Interval",
-          "color": "#C4162A",
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "$$hashKey": "object:1586",
-          "alias": "Configured Discovery Interval 2/3",
-          "color": "#C4162A",
-          "dashes": true,
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "$$hashKey": "object:1587",
-          "alias": "Bucket latency p100",
-          "color": "#E0B400",
-          "linewidth": 2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "histogram_quantile(1.0,\n  sum by (le) (\n    rate(discoverer__round_duration_seconds_bucket[5m])\n  )\n)",
-          "hide": false,
-          "interval": "1m",
-          "legendFormat": "Bucket latency p100",
-          "refId": "A"
-        },
-        {
-          "expr": "discoverer__info_interval_seconds",
-          "interval": "",
-          "legendFormat": "Configured Discovery Interval",
-          "refId": "C"
-        },
-        {
-          "expr": "discoverer__info_interval_seconds * 2/3",
-          "interval": "",
-          "legendFormat": "Configured Discovery Interval 2/3",
-          "refId": "B"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:1618",
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:1619",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "${DS_PROMETHEUS}",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 10
-      },
-      "hiddenSeries": false,
-      "id": 6,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": false,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.3",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:750",
-          "alias": "Configured Discovery Interval",
-          "color": "#C4162A",
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "$$hashKey": "object:751",
-          "alias": "Configured Discovery Interval 0.5",
-          "color": "#C4162A",
-          "dashes": true,
-          "fill": 0,
-          "linewidth": 2
-        },
-        {
-          "$$hashKey": "object:752",
-          "alias": "Discovery Round Duration",
-          "color": "#E0B400",
-          "linewidth": 2
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "expr": "rate(discoverer__round_duration_seconds_sum[5m])\n/\nrate(discoverer__round_duration_seconds_count[5m])",
-          "hide": false,
-          "interval": "1m",
-          "legendFormat": "Discovery Round Duration",
-          "refId": "A"
-        },
-        {
-          "expr": "discoverer__info_interval_seconds",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "Configured Discovery Interval",
-          "refId": "B"
-        },
-        {
-          "expr": "discoverer__info_interval_seconds * 0.5",
-          "interval": "",
-          "legendFormat": "Configured Discovery Interval 0.5",
-          "refId": "C"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:783",
-          "format": "s",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:784",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                0
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "C",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "max"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "keep_state",
-        "for": "0m",
-        "frequency": "5m",
+        "frequency": "4m",
         "handler": 1,
         "message": "The discovery round latency was detected to be above the configured discovery interval.",
         "name": "PromED: ( Discovery round ) > ( Configured Discovery Interval )",
@@ -1292,6 +764,12 @@
         "notifications": [
           {
             "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
           }
         ]
       },
@@ -1317,7 +795,7 @@
         "h": 2,
         "w": 8,
         "x": 8,
-        "y": 19
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 17,
@@ -1333,8 +811,11 @@
       "lines": true,
       "linewidth": 0,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.0-9add7feapre",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1364,13 +845,11 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:3389",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0,
-          "yaxis": "left"
+          "value": 0
         }
       ],
       "timeFrom": null,
@@ -1446,14 +925,20 @@
         ],
         "executionErrorState": "keep_state",
         "for": "0m",
-        "frequency": "5m",
+        "frequency": "4m",
         "handler": 1,
         "message": "The average service discovery round in the last minute took longer than the configured discovery interval.",
-        "name": "PromED: ( Avg 5m Discovery Round Duration ) > ( Configured Discovery Interval ) alert",
+        "name": "PromED: ( Avg 5m Discovery Round Duration ) > ( Configured Discovery Interval )",
         "noDataState": "keep_state",
         "notifications": [
           {
             "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
           }
         ]
       },
@@ -1479,7 +964,7 @@
         "h": 2,
         "w": 8,
         "x": 16,
-        "y": 19
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 13,
@@ -1495,8 +980,11 @@
       "lines": true,
       "linewidth": 0,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.3",
+      "pluginVersion": "7.3.0-9add7feapre",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1526,13 +1014,11 @@
       ],
       "thresholds": [
         {
-          "$$hashKey": "object:3469",
           "colorMode": "critical",
           "fill": true,
           "line": true,
           "op": "gt",
-          "value": 0,
-          "yaxis": "left"
+          "value": 0
         }
       ],
       "timeFrom": null,
@@ -1579,17 +1065,622 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "0m",
+        "frequency": "4m",
+        "handler": 1,
+        "message": "The bucket p100 latency is above the ( configured discovery interval * 2/3 ). \n\nWhat does this mean? The discovery latency is / was close to the configured interval.",
+        "name": "PromED: ( Discovery round ) > ( Configured Discovery Interval * 2/3 )",
+        "noDataState": "keep_state",
+        "notifications": [
+          {
+            "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
+          }
+        ]
+      },
+      "aliasColors": {
+        "Calc": "red",
+        "Limit": "green",
+        "Value": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 10,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 2,
+        "w": 8,
+        "x": 8,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 16,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1675",
+          "alias": "Calc",
+          "zindex": 3
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "expr": "(\n  histogram_quantile(1.0,\n    sum by (le) (\n      rate(discoverer__round_duration_seconds_bucket[5m])\n    )\n  )\n  > bool avg(discoverer__info_interval_seconds) * 2/3\n)\nand\n(\n  histogram_quantile(1.0,\n    sum by (le) (\n      rate(discoverer__round_duration_seconds_bucket[5m])\n    )\n  )\n  < bool avg(discoverer__info_interval_seconds)\n)",
+          "interval": "1m",
+          "legendFormat": "Calc",
+          "refId": "C"
+        },
+        {
+          "expr": "1",
+          "interval": "",
+          "legendFormat": "Limit",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "( Bucket Latency p100 ) > ( Configured Discovery Interval * 2/3 )",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": false,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1682",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": false
+        },
+        {
+          "$$hashKey": "object:1683",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "0m",
+        "frequency": "4m",
+        "handler": 1,
+        "message": "The average service discovery round in the last minute took longer than the ( configured discovery interval * 0.5 ).",
+        "name": "PromED: ( Avg 5m Discovery Round Duration ) > ( Configured Discovery Interval * 0.5 )",
+        "noDataState": "keep_state",
+        "notifications": [
+          {
+            "uid": "y3Y-ikNMk"
+          },
+          {
+            "uid": "KsTGxvHGz"
+          },
+          {
+            "uid": "NllCYlNGk"
+          }
+        ]
+      },
+      "aliasColors": {
+        "Calc": "red",
+        "Limit": "green",
+        "Value": "green"
+      },
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 10,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 2,
+        "w": 8,
+        "x": 16,
+        "y": 11
+      },
+      "hiddenSeries": false,
+      "id": 11,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 0,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1840",
+          "alias": "Calc",
+          "zindex": 3
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "expr": "(\n  (\n    rate(discoverer__round_duration_seconds_sum[5m])\n    /\n    rate(discoverer__round_duration_seconds_count[5m])\n  )\n  > bool discoverer__info_interval_seconds * 0.5\n)\nand\n(\n  (\n    rate(discoverer__round_duration_seconds_sum[5m])\n    /\n    rate(discoverer__round_duration_seconds_count[5m])\n  )\n  < bool discoverer__info_interval_seconds\n)",
+          "interval": "1m",
+          "legendFormat": "Calc",
+          "refId": "C"
+        },
+        {
+          "expr": "1",
+          "interval": "",
+          "legendFormat": "Limit",
+          "refId": "D"
+        }
+      ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 0
+        }
+      ],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "( Discovery Round Duration ) > ( Configured Discovery Interval * 0.5 )",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": false,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1847",
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": "1",
+          "min": "0",
+          "show": false
+        },
+        {
+          "$$hashKey": "object:1848",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 13
+      },
+      "hiddenSeries": false,
+      "id": 15,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1585",
+          "alias": "Configured Discovery Interval",
+          "color": "#C4162A",
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:1586",
+          "alias": "Configured Discovery Interval 2/3",
+          "color": "#C4162A",
+          "dashes": true,
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:1587",
+          "alias": "Bucket latency p100",
+          "color": "#5794F2",
+          "linewidth": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(1.0,\n  sum by (le) (\n    rate(discoverer__round_duration_seconds_bucket[5m])\n  )\n)",
+          "hide": false,
+          "interval": "1m",
+          "legendFormat": "Bucket latency p100",
+          "refId": "A"
+        },
+        {
+          "expr": "discoverer__info_interval_seconds",
+          "interval": "1m",
+          "legendFormat": "Configured Discovery Interval",
+          "refId": "C"
+        },
+        {
+          "expr": "discoverer__info_interval_seconds * 2/3",
+          "interval": "1m",
+          "legendFormat": "Configured Discovery Interval 2/3",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:1618",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "$$hashKey": "object:1619",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "${DS_PROMETHEUS}",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 13
+      },
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": false,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.0-9add7feapre",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:750",
+          "alias": "Configured Discovery Interval",
+          "color": "#C4162A",
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:751",
+          "alias": "Configured Discovery Interval 0.5",
+          "color": "#C4162A",
+          "dashes": true,
+          "fill": 0,
+          "linewidth": 2
+        },
+        {
+          "$$hashKey": "object:752",
+          "alias": "Discovery Round Duration",
+          "color": "#5794F2",
+          "linewidth": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "rate(discoverer__round_duration_seconds_sum[5m])\n/\nrate(discoverer__round_duration_seconds_count[5m])",
+          "hide": false,
+          "interval": "1m",
+          "legendFormat": "Discovery Round Duration",
+          "refId": "A"
+        },
+        {
+          "expr": "discoverer__info_interval_seconds",
+          "hide": false,
+          "interval": "1m",
+          "legendFormat": "Configured Discovery Interval",
+          "refId": "B"
+        },
+        {
+          "expr": "discoverer__info_interval_seconds * 0.5",
+          "interval": "1m",
+          "legendFormat": "Configured Discovery Interval 0.5",
+          "refId": "C"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:783",
+          "format": "s",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:784",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": "${DS_PROMETHEUS}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 22
       },
       "id": 21,
       "panels": [],
-      "title": "Meta-Information",
+      "title": "Meta",
       "type": "row"
     },
     {
@@ -1603,13 +1694,13 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 11,
+        "w": 8,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 4,
       "options": {
-        "content": "# Info\n\nNotice that Grafana does not support variables in queries used for alerting.\n\nSo if advanced alerting is necessary, take a look at Alertmanager or other specialized services.\n\nTo adapt the dashboard to your discoverer, open the JSON of this dashboard and search / replace all instances of it. This is necessary because Grafana Alerting does not support variables. If you require more advanced alerting either add more metrics manually or take a look at solutions like Alertmanager.\n\nTODO:\n\n* durch highr gehen und mal schauen was ich\nsonst noch zu alert verarbeiten kann\n* einen alert so konfigurieren dass er \nvon sich aus auch wirklich mal feuert\n* ggf alert anpassen damit klar ist \nwoher der alert kommt\n",
+        "content": "* This dashboard is NOT suitable for interactive discovery. For example if you zoom out far enough you might underfetch and miss data.",
         "mode": "markdown"
       },
       "pluginVersion": "7.1.0",
@@ -1617,6 +1708,36 @@
       "timeShift": null,
       "title": "",
       "type": "text"
+    },
+    {
+      "dashboardFilter": "",
+      "dashboardTags": [],
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "folderId": null,
+      "gridPos": {
+        "h": 16,
+        "w": 10,
+        "x": 8,
+        "y": 23
+      },
+      "id": 33,
+      "limit": 10,
+      "nameFilter": "promed",
+      "onlyAlertsOnDashboard": false,
+      "pluginVersion": "7.1.3",
+      "show": "current",
+      "sortOrder": 1,
+      "stateFilter": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Panel Title",
+      "type": "alertlist"
     }
   ],
   "refresh": "30s",
@@ -1626,14 +1747,13 @@
     "external",
     "promed",
     "alerting",
-    "provisioned",
-    "promql"
+    "provisioned"
   ],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-12h",
     "to": "now"
   },
   "timepicker": {
@@ -1651,7 +1771,7 @@
     ]
   },
   "timezone": "",
-  "title": "PromED Alerting",
+  "title": "PromED / Alerting",
   "uid": "-nTB0EIGk",
-  "version": 29
+  "version": 19
 }
