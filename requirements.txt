@@ -49,7 +49,7 @@ pdoc3==0.9.1
 pluggy==0.13.1
 prettyprinter==0.18.0
 prometheus-client==0.8.0
--e git+https://github.com/trallnag/prometheus-ecs-discoverer@8f9a02d110e11294cfd6778f5c231febd0d5297b#egg=prometheus_ecs_discoverer
+-e git+https://github.com/trallnag/prometheus-ecs-discoverer@b7360ef1f5d954df716adf3f319f49b1b1fe9ff6#egg=prometheus_ecs_discoverer
 py==1.9.0
 pyasn1==0.4.8
 pycodestyle==2.6.0
@@ -71,7 +71,6 @@ rope==0.17.0
 rsa==4.6
 s3transfer==0.3.3
 six==1.15.0
-sshpubkeys==3.1.0
 toml==0.10.1
 typed-ast==1.4.1
 typing-extensions==3.7.4.3
