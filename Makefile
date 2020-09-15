@@ -21,8 +21,8 @@ test:
 docs:
 	rm -rf docs/*; \
 	mkdir -p docs; \
-	poetry run pdoc --output-dir /tmp/pfi_docs --html prometheus_fastapi_instrumentator; \
-	mv /tmp/pfi_docs/prometheus_fastapi_instrumentator/* docs/; 
+	poetry run pdoc --output-dir /tmp/pfi_docs --html prometheus_ecs_discoverer; \
+	mv /tmp/pfi_docs/prometheus_ecs_discoverer/* docs/; 
 
 .PHONY: requirements
 requirements:

@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.1" />
+<title>prometheus_ecs_discoverer.fetching API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>prometheus_ecs_discoverer.fetching</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import time
+from timeit import default_timer
+
+from loguru import logger
+
+from prometheus_ecs_discoverer import s, telemetry, toolbox
+from prometheus_ecs_discoverer.caching import SlidingCache
+
+# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
+# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
+
+&#34;&#34;&#34;
+The only place in this package that directly interacts with the AWS API.
+
+Contains the cached fetcher that ensures that expensive calls to the AWS API 
+are cached.
+&#34;&#34;&#34;
+
+# Telemetry ====================================================================
+
+CLUSTERS = telemetry.gauge(&#34;clusters&#34;, &#34;Fetched clusters.&#34;)
+CINSTANCES = telemetry.gauge(
+    &#34;container_instances&#34;, &#34;Fetched container instances.&#34;, (&#34;cluster&#34;,)
+)
+TASKS = telemetry.gauge(&#34;tasks&#34;, &#34;Fetched tasks.&#34;, (&#34;cluster&#34;,))
+DURATION = telemetry.histogram(
+    &#34;api_requests_duration_seconds&#34;, &#34;Duration of requests to the AWS API.&#34;, (&#34;method&#34;,)
+)
+
+# ==============================================================================
+
+
+class CachedFetcher:
+    &#34;&#34;&#34;Works with the AWS API and leverages a sliding cache.
+
+    Reduces the amount of request made to the AWS API helping to stay below the
+    request limits. Only implements necessary methods. So not a generic class.
+
+    Rember to flush all caches with `flush_caches()` after every &#34;full round&#34;.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        ecs_client,
+        ec2_client,
+        throttle_interval_seconds: float = 0.1,
+        should_throttle: bool = False,
+    ):
+        &#34;&#34;&#34;
+        :param ecs_client: Boto3 ECS client.
+        :param ec2_client: Boto3 EC2 client.
+        :param throttle_interval_seconds: Time to sleep after every single
+            request made to the AWS API.
+        :param should_throttle: If process should go to sleep after a request
+            made to the AWS API.
+        &#34;&#34;&#34;
+
+        self.ecs = ecs_client
+        self.ec2 = ec2_client
+        self.throttle_interval_seconds = throttle_interval_seconds
+        self.should_throttle = should_throttle
+
+        self.task_cache = SlidingCache(name=&#34;task_cache&#34;)
+        self.task_definition_cache = SlidingCache(name=&#34;task_definition_cache&#34;)
+        self.container_instance_cache = SlidingCache(name=&#34;container_instance_cache&#34;)
+        self.ec2_instance_cache = SlidingCache(name=&#34;ec2_instance_cache&#34;)
+
+    def flush_caches(self) -&gt; None:
+        &#34;&#34;&#34;Flushes all caches. Should be called at the end of a round.&#34;&#34;&#34;
+
+        self.task_cache.flush()
+        self.task_definition_cache.flush()
+        self.container_instance_cache.flush()
+        self.ec2_instance_cache.flush()
+
+    # ==========================================================================
+
+    def get_arns(self, method: str, key: str, **aws_api_parameters) -&gt; list:
+        &#34;&#34;&#34;Gets the ARNs with a given method and key.
+
+        Args:
+            method: AWS API method to use.
+            key: Key to extract from the response(s).
+
+        Returns:
+            list: List of ARNs.
+        &#34;&#34;&#34;
+
+        arns = []
+
+        total_start_time = default_timer()
+        start_time = total_start_time
+
+        for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
+            DURATION.labels(method).observe(max(default_timer() - start_time, 0))
+            arns += page.get(key, [])
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+            start_time = default_timer()
+
+        if s.DEBUG:
+            logger.bind(**aws_api_parameters).debug(&#34;{} {}.&#34;, method, key)
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(arns, f&#34;{key} {method}&#34;)
+
+        return arns
+
+    def get_cluster_arns(self) -&gt; list:
+        &#34;&#34;&#34;Get cluster ARNs.&#34;&#34;&#34;
+
+        arns = self.get_arns(&#34;list_clusters&#34;, &#34;clusterArns&#34;)
+        CLUSTERS.set(len(arns))
+        return arns
+
+    def get_container_instance_arns(self, cluster_arn: str) -&gt; list:
+        &#34;&#34;&#34;Get container instance ARNs for given cluster ARN.&#34;&#34;&#34;
+
+        arns = self.get_arns(
+            &#34;list_container_instances&#34;, &#34;containerInstanceArns&#34;, cluster=cluster_arn
+        )
+        CINSTANCES.labels(cluster_arn).set(len(arns))
+        return arns
+
+    def get_task_definition_arns(self) -&gt; list:
+        &#34;&#34;&#34;Get task definition ARNs.&#34;&#34;&#34;
+
+        return self.get_arns(&#34;list_task_definitions&#34;, &#34;taskDefinitionArns&#34;)
+
+    def get_task_arns(self, cluster_arn: str) -&gt; list:
+        &#34;&#34;&#34;Get task ARNs for given cluster ARN.&#34;&#34;&#34;
+
+        arns = self.get_arns(&#34;list_tasks&#34;, &#34;taskArns&#34;, cluster=cluster_arn)
+        TASKS.labels(cluster_arn).set(len(arns))
+        return arns
+
+    # ==========================================================================
+
+    def get_tasks(self, cluster_arn: str, task_arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get task descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the task ARNs, values the respective task descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(task_arns: list) -&gt; dict:
+            logger.bind(cluster_arn=cluster_arn, task_arns=task_arns).debug(
+                &#34;Fetch tasks from AWS with describe_tasks.&#34;
+            ) if s.DEBUG else None
+
+            tasks = []
+            chunked_task_arns = toolbox.chunk_list(task_arns, 100)
+
+            for task_arns_chunk in chunked_task_arns:
+                start_time = default_timer()
+                tasks += self.ecs.describe_tasks(
+                    cluster=cluster_arn, tasks=task_arns_chunk
+                )[&#34;tasks&#34;]
+                DURATION.labels(&#34;describe_tasks&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(tasks, &#34;describe_tasks&#34;)
+
+            return toolbox.list_to_dict(tasks, &#34;taskArn&#34;)
+
+        if task_arns is None:
+            task_arns = self.get_task_arns(cluster_arn)
+
+        return self.task_cache.get_multiple(task_arns, uncached_fetch)
+
+    def get_task_definition(self, arn: str) -&gt; dict:
+        &#34;&#34;&#34;Get single task definition descriptions from cache / AWS API.
+
+        Returns:
+            dict: Key is the task definition ARN, value the task definition
+                description.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arn: str) -&gt; dict:
+            logger.bind(arn=arn).debug(
+                &#34;Fetch task definition from AWS with describe_task_definition.&#34;
+            ) if s.DEBUG else None
+
+            start_time = default_timer()
+            task_definition = self.ecs.describe_task_definition(taskDefinition=arn)[
+                &#34;taskDefinition&#34;
+            ]
+            DURATION.labels(&#34;describe_task_definition&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(task_definition, &#34;fetched task definition&#34;)
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+            return task_definition
+
+        return self.task_definition_cache.get_single(arn, uncached_fetch)
+
+    def get_task_definitions(self, arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get task definition descriptions from cache / AWS API.
+
+        Every given ARN corresponds with a (cached) call.
+
+        Returns:
+            dict: Keys are the task definition ARNs, values the respective task
+                definition descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arns: list) -&gt; dict:
+            logger.bind(arns=arns).debug(
+                &#34;Fetch task definitions from AWS with describe_task_definition.&#34;
+            ) if s.DEBUG else None
+
+            descriptions = {}
+            for arn in arns:
+                start_time = default_timer()
+                response = self.ecs.describe_task_definition(taskDefinition=arn)
+                DURATION.labels(&#34;describe_task_definition&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+                response_arn = response[&#34;taskDefinition&#34;][&#34;taskDefinitionArn&#34;]
+                descriptions[response_arn] = response[&#34;taskDefinition&#34;]
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(descriptions, &#34;fetched task definitions&#34;)
+
+            return descriptions
+
+        if arns is None:
+            arns = self.get_task_definition_arns()
+
+        return self.task_definition_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
+
+    def get_container_instances(self, cluster_arn: str, arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get container instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the container instance ARNs, values the respective
+                container instance descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arns: list) -&gt; dict:
+            logger.bind(arns=arns).debug(
+                &#34;Fetch container instances from AWS with describe_container_instances.&#34;
+            ) if s.DEBUG else None
+
+            lst = []
+            arns_chunks = toolbox.chunk_list(arns, 100)
+
+            for arns_chunk in arns_chunks:
+                start_time = default_timer()
+                lst += self.ecs.describe_container_instances(
+                    cluster=cluster_arn, containerInstances=arns_chunk
+                )[&#34;containerInstances&#34;]
+                DURATION.labels(&#34;describe_container_instances&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            dct = toolbox.list_to_dict(lst, &#34;containerInstanceArn&#34;)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(dct, &#34;describe_container_instances&#34;)
+
+            return dct
+
+        if arns is None:
+            arns = self.get_container_instance_arns(cluster_arn)
+
+        return self.container_instance_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
+
+    def get_ec2_instances(self, instance_ids: list) -&gt; dict:
+        &#34;&#34;&#34;Get EC2 instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the EC2 instance ARNs, values the respective
+                EC2 instance descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(instance_ids: list) -&gt; dict:
+            logger.bind(instance_ids=instance_ids).debug(
+                &#34;Fetch EC2 instances from AWS with describe_instances.&#34;
+            ) if s.DEBUG else None
+
+            instances_list = []
+            ids_chunks = toolbox.chunk_list(instance_ids, 100)
+
+            for ids_chunk in ids_chunks:
+                start_time = default_timer()
+                response = self.ec2.describe_instances(InstanceIds=ids_chunk)
+                for reservation in response[&#34;Reservations&#34;]:
+                    instances_list += reservation[&#34;Instances&#34;]
+                DURATION.labels(&#34;describe_instances&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            dct = toolbox.list_to_dict(instances_list, &#34;InstanceId&#34;)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(dct, &#34;ec2.describe_instances&#34;)
+
+            return dct
+
+        return self.ec2_instance_cache.get_multiple(
+            instance_ids,
+            uncached_fetch,
+        )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher"><code class="flex name class">
+<span>class <span class="ident">CachedFetcher</span></span>
+<span>(</span><span>ecs_client, ec2_client, throttle_interval_seconds: float = 0.1, should_throttle: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Works with the AWS API and leverages a sliding cache.</p>
+<p>Reduces the amount of request made to the AWS API helping to stay below the
+request limits. Only implements necessary methods. So not a generic class.</p>
+<p>Rember to flush all caches with <code>flush_caches()</code> after every "full round".</p>
+<p>:param ecs_client: Boto3 ECS client.
+:param ec2_client: Boto3 EC2 client.
+:param throttle_interval_seconds: Time to sleep after every single
+request made to the AWS API.
+:param should_throttle: If process should go to sleep after a request
+made to the AWS API.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class CachedFetcher:
+    &#34;&#34;&#34;Works with the AWS API and leverages a sliding cache.
+
+    Reduces the amount of request made to the AWS API helping to stay below the
+    request limits. Only implements necessary methods. So not a generic class.
+
+    Rember to flush all caches with `flush_caches()` after every &#34;full round&#34;.
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        ecs_client,
+        ec2_client,
+        throttle_interval_seconds: float = 0.1,
+        should_throttle: bool = False,
+    ):
+        &#34;&#34;&#34;
+        :param ecs_client: Boto3 ECS client.
+        :param ec2_client: Boto3 EC2 client.
+        :param throttle_interval_seconds: Time to sleep after every single
+            request made to the AWS API.
+        :param should_throttle: If process should go to sleep after a request
+            made to the AWS API.
+        &#34;&#34;&#34;
+
+        self.ecs = ecs_client
+        self.ec2 = ec2_client
+        self.throttle_interval_seconds = throttle_interval_seconds
+        self.should_throttle = should_throttle
+
+        self.task_cache = SlidingCache(name=&#34;task_cache&#34;)
+        self.task_definition_cache = SlidingCache(name=&#34;task_definition_cache&#34;)
+        self.container_instance_cache = SlidingCache(name=&#34;container_instance_cache&#34;)
+        self.ec2_instance_cache = SlidingCache(name=&#34;ec2_instance_cache&#34;)
+
+    def flush_caches(self) -&gt; None:
+        &#34;&#34;&#34;Flushes all caches. Should be called at the end of a round.&#34;&#34;&#34;
+
+        self.task_cache.flush()
+        self.task_definition_cache.flush()
+        self.container_instance_cache.flush()
+        self.ec2_instance_cache.flush()
+
+    # ==========================================================================
+
+    def get_arns(self, method: str, key: str, **aws_api_parameters) -&gt; list:
+        &#34;&#34;&#34;Gets the ARNs with a given method and key.
+
+        Args:
+            method: AWS API method to use.
+            key: Key to extract from the response(s).
+
+        Returns:
+            list: List of ARNs.
+        &#34;&#34;&#34;
+
+        arns = []
+
+        total_start_time = default_timer()
+        start_time = total_start_time
+
+        for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
+            DURATION.labels(method).observe(max(default_timer() - start_time, 0))
+            arns += page.get(key, [])
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+            start_time = default_timer()
+
+        if s.DEBUG:
+            logger.bind(**aws_api_parameters).debug(&#34;{} {}.&#34;, method, key)
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(arns, f&#34;{key} {method}&#34;)
+
+        return arns
+
+    def get_cluster_arns(self) -&gt; list:
+        &#34;&#34;&#34;Get cluster ARNs.&#34;&#34;&#34;
+
+        arns = self.get_arns(&#34;list_clusters&#34;, &#34;clusterArns&#34;)
+        CLUSTERS.set(len(arns))
+        return arns
+
+    def get_container_instance_arns(self, cluster_arn: str) -&gt; list:
+        &#34;&#34;&#34;Get container instance ARNs for given cluster ARN.&#34;&#34;&#34;
+
+        arns = self.get_arns(
+            &#34;list_container_instances&#34;, &#34;containerInstanceArns&#34;, cluster=cluster_arn
+        )
+        CINSTANCES.labels(cluster_arn).set(len(arns))
+        return arns
+
+    def get_task_definition_arns(self) -&gt; list:
+        &#34;&#34;&#34;Get task definition ARNs.&#34;&#34;&#34;
+
+        return self.get_arns(&#34;list_task_definitions&#34;, &#34;taskDefinitionArns&#34;)
+
+    def get_task_arns(self, cluster_arn: str) -&gt; list:
+        &#34;&#34;&#34;Get task ARNs for given cluster ARN.&#34;&#34;&#34;
+
+        arns = self.get_arns(&#34;list_tasks&#34;, &#34;taskArns&#34;, cluster=cluster_arn)
+        TASKS.labels(cluster_arn).set(len(arns))
+        return arns
+
+    # ==========================================================================
+
+    def get_tasks(self, cluster_arn: str, task_arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get task descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the task ARNs, values the respective task descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(task_arns: list) -&gt; dict:
+            logger.bind(cluster_arn=cluster_arn, task_arns=task_arns).debug(
+                &#34;Fetch tasks from AWS with describe_tasks.&#34;
+            ) if s.DEBUG else None
+
+            tasks = []
+            chunked_task_arns = toolbox.chunk_list(task_arns, 100)
+
+            for task_arns_chunk in chunked_task_arns:
+                start_time = default_timer()
+                tasks += self.ecs.describe_tasks(
+                    cluster=cluster_arn, tasks=task_arns_chunk
+                )[&#34;tasks&#34;]
+                DURATION.labels(&#34;describe_tasks&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(tasks, &#34;describe_tasks&#34;)
+
+            return toolbox.list_to_dict(tasks, &#34;taskArn&#34;)
+
+        if task_arns is None:
+            task_arns = self.get_task_arns(cluster_arn)
+
+        return self.task_cache.get_multiple(task_arns, uncached_fetch)
+
+    def get_task_definition(self, arn: str) -&gt; dict:
+        &#34;&#34;&#34;Get single task definition descriptions from cache / AWS API.
+
+        Returns:
+            dict: Key is the task definition ARN, value the task definition
+                description.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arn: str) -&gt; dict:
+            logger.bind(arn=arn).debug(
+                &#34;Fetch task definition from AWS with describe_task_definition.&#34;
+            ) if s.DEBUG else None
+
+            start_time = default_timer()
+            task_definition = self.ecs.describe_task_definition(taskDefinition=arn)[
+                &#34;taskDefinition&#34;
+            ]
+            DURATION.labels(&#34;describe_task_definition&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(task_definition, &#34;fetched task definition&#34;)
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+            return task_definition
+
+        return self.task_definition_cache.get_single(arn, uncached_fetch)
+
+    def get_task_definitions(self, arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get task definition descriptions from cache / AWS API.
+
+        Every given ARN corresponds with a (cached) call.
+
+        Returns:
+            dict: Keys are the task definition ARNs, values the respective task
+                definition descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arns: list) -&gt; dict:
+            logger.bind(arns=arns).debug(
+                &#34;Fetch task definitions from AWS with describe_task_definition.&#34;
+            ) if s.DEBUG else None
+
+            descriptions = {}
+            for arn in arns:
+                start_time = default_timer()
+                response = self.ecs.describe_task_definition(taskDefinition=arn)
+                DURATION.labels(&#34;describe_task_definition&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+                response_arn = response[&#34;taskDefinition&#34;][&#34;taskDefinitionArn&#34;]
+                descriptions[response_arn] = response[&#34;taskDefinition&#34;]
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(descriptions, &#34;fetched task definitions&#34;)
+
+            return descriptions
+
+        if arns is None:
+            arns = self.get_task_definition_arns()
+
+        return self.task_definition_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
+
+    def get_container_instances(self, cluster_arn: str, arns: list = None) -&gt; dict:
+        &#34;&#34;&#34;Get container instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the container instance ARNs, values the respective
+                container instance descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(arns: list) -&gt; dict:
+            logger.bind(arns=arns).debug(
+                &#34;Fetch container instances from AWS with describe_container_instances.&#34;
+            ) if s.DEBUG else None
+
+            lst = []
+            arns_chunks = toolbox.chunk_list(arns, 100)
+
+            for arns_chunk in arns_chunks:
+                start_time = default_timer()
+                lst += self.ecs.describe_container_instances(
+                    cluster=cluster_arn, containerInstances=arns_chunk
+                )[&#34;containerInstances&#34;]
+                DURATION.labels(&#34;describe_container_instances&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            dct = toolbox.list_to_dict(lst, &#34;containerInstanceArn&#34;)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(dct, &#34;describe_container_instances&#34;)
+
+            return dct
+
+        if arns is None:
+            arns = self.get_container_instance_arns(cluster_arn)
+
+        return self.container_instance_cache.get_multiple(
+            arns,
+            uncached_fetch,
+        )
+
+    def get_ec2_instances(self, instance_ids: list) -&gt; dict:
+        &#34;&#34;&#34;Get EC2 instance descriptions from cache / AWS API.
+
+        Returns:
+            dict: Keys are the EC2 instance ARNs, values the respective
+                EC2 instance descriptions.
+        &#34;&#34;&#34;
+
+        def uncached_fetch(instance_ids: list) -&gt; dict:
+            logger.bind(instance_ids=instance_ids).debug(
+                &#34;Fetch EC2 instances from AWS with describe_instances.&#34;
+            ) if s.DEBUG else None
+
+            instances_list = []
+            ids_chunks = toolbox.chunk_list(instance_ids, 100)
+
+            for ids_chunk in ids_chunks:
+                start_time = default_timer()
+                response = self.ec2.describe_instances(InstanceIds=ids_chunk)
+                for reservation in response[&#34;Reservations&#34;]:
+                    instances_list += reservation[&#34;Instances&#34;]
+                DURATION.labels(&#34;describe_instances&#34;).observe(
+                    max(default_timer() - start_time, 0)
+                )
+
+                if self.should_throttle:
+                    time.sleep(self.throttle_interval_seconds)
+
+            dct = toolbox.list_to_dict(instances_list, &#34;InstanceId&#34;)
+
+            if s.PRINT_STRUCTS:
+                toolbox.pstruct(dct, &#34;ec2.describe_instances&#34;)
+
+            return dct
+
+        return self.ec2_instance_cache.get_multiple(
+            instance_ids,
+            uncached_fetch,
+        )</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.flush_caches"><code class="name flex">
+<span>def <span class="ident">flush_caches</span></span>(<span>self) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Flushes all caches. Should be called at the end of a round.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def flush_caches(self) -&gt; None:
+    &#34;&#34;&#34;Flushes all caches. Should be called at the end of a round.&#34;&#34;&#34;
+
+    self.task_cache.flush()
+    self.task_definition_cache.flush()
+    self.container_instance_cache.flush()
+    self.ec2_instance_cache.flush()</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_arns"><code class="name flex">
+<span>def <span class="ident">get_arns</span></span>(<span>self, method: str, key: str, **aws_api_parameters) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets the ARNs with a given method and key.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>method</code></strong></dt>
+<dd>AWS API method to use.</dd>
+<dt><strong><code>key</code></strong></dt>
+<dd>Key to extract from the response(s).</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>list</code></dt>
+<dd>List of ARNs.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_arns(self, method: str, key: str, **aws_api_parameters) -&gt; list:
+    &#34;&#34;&#34;Gets the ARNs with a given method and key.
+
+    Args:
+        method: AWS API method to use.
+        key: Key to extract from the response(s).
+
+    Returns:
+        list: List of ARNs.
+    &#34;&#34;&#34;
+
+    arns = []
+
+    total_start_time = default_timer()
+    start_time = total_start_time
+
+    for page in self.ecs.get_paginator(method).paginate(**aws_api_parameters):
+        DURATION.labels(method).observe(max(default_timer() - start_time, 0))
+        arns += page.get(key, [])
+
+        if self.should_throttle:
+            time.sleep(self.throttle_interval_seconds)
+
+        start_time = default_timer()
+
+    if s.DEBUG:
+        logger.bind(**aws_api_parameters).debug(&#34;{} {}.&#34;, method, key)
+    if s.PRINT_STRUCTS:
+        toolbox.pstruct(arns, f&#34;{key} {method}&#34;)
+
+    return arns</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_cluster_arns"><code class="name flex">
+<span>def <span class="ident">get_cluster_arns</span></span>(<span>self) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get cluster ARNs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cluster_arns(self) -&gt; list:
+    &#34;&#34;&#34;Get cluster ARNs.&#34;&#34;&#34;
+
+    arns = self.get_arns(&#34;list_clusters&#34;, &#34;clusterArns&#34;)
+    CLUSTERS.set(len(arns))
+    return arns</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instance_arns"><code class="name flex">
+<span>def <span class="ident">get_container_instance_arns</span></span>(<span>self, cluster_arn: str) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get container instance ARNs for given cluster ARN.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_container_instance_arns(self, cluster_arn: str) -&gt; list:
+    &#34;&#34;&#34;Get container instance ARNs for given cluster ARN.&#34;&#34;&#34;
+
+    arns = self.get_arns(
+        &#34;list_container_instances&#34;, &#34;containerInstanceArns&#34;, cluster=cluster_arn
+    )
+    CINSTANCES.labels(cluster_arn).set(len(arns))
+    return arns</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instances"><code class="name flex">
+<span>def <span class="ident">get_container_instances</span></span>(<span>self, cluster_arn: str, arns: list = None) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get container instance descriptions from cache / AWS API.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Keys are the container instance ARNs, values the respective
+container instance descriptions.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_container_instances(self, cluster_arn: str, arns: list = None) -&gt; dict:
+    &#34;&#34;&#34;Get container instance descriptions from cache / AWS API.
+
+    Returns:
+        dict: Keys are the container instance ARNs, values the respective
+            container instance descriptions.
+    &#34;&#34;&#34;
+
+    def uncached_fetch(arns: list) -&gt; dict:
+        logger.bind(arns=arns).debug(
+            &#34;Fetch container instances from AWS with describe_container_instances.&#34;
+        ) if s.DEBUG else None
+
+        lst = []
+        arns_chunks = toolbox.chunk_list(arns, 100)
+
+        for arns_chunk in arns_chunks:
+            start_time = default_timer()
+            lst += self.ecs.describe_container_instances(
+                cluster=cluster_arn, containerInstances=arns_chunk
+            )[&#34;containerInstances&#34;]
+            DURATION.labels(&#34;describe_container_instances&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+        dct = toolbox.list_to_dict(lst, &#34;containerInstanceArn&#34;)
+
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(dct, &#34;describe_container_instances&#34;)
+
+        return dct
+
+    if arns is None:
+        arns = self.get_container_instance_arns(cluster_arn)
+
+    return self.container_instance_cache.get_multiple(
+        arns,
+        uncached_fetch,
+    )</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_ec2_instances"><code class="name flex">
+<span>def <span class="ident">get_ec2_instances</span></span>(<span>self, instance_ids: list) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get EC2 instance descriptions from cache / AWS API.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Keys are the EC2 instance ARNs, values the respective
+EC2 instance descriptions.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ec2_instances(self, instance_ids: list) -&gt; dict:
+    &#34;&#34;&#34;Get EC2 instance descriptions from cache / AWS API.
+
+    Returns:
+        dict: Keys are the EC2 instance ARNs, values the respective
+            EC2 instance descriptions.
+    &#34;&#34;&#34;
+
+    def uncached_fetch(instance_ids: list) -&gt; dict:
+        logger.bind(instance_ids=instance_ids).debug(
+            &#34;Fetch EC2 instances from AWS with describe_instances.&#34;
+        ) if s.DEBUG else None
+
+        instances_list = []
+        ids_chunks = toolbox.chunk_list(instance_ids, 100)
+
+        for ids_chunk in ids_chunks:
+            start_time = default_timer()
+            response = self.ec2.describe_instances(InstanceIds=ids_chunk)
+            for reservation in response[&#34;Reservations&#34;]:
+                instances_list += reservation[&#34;Instances&#34;]
+            DURATION.labels(&#34;describe_instances&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+        dct = toolbox.list_to_dict(instances_list, &#34;InstanceId&#34;)
+
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(dct, &#34;ec2.describe_instances&#34;)
+
+        return dct
+
+    return self.ec2_instance_cache.get_multiple(
+        instance_ids,
+        uncached_fetch,
+    )</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_arns"><code class="name flex">
+<span>def <span class="ident">get_task_arns</span></span>(<span>self, cluster_arn: str) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get task ARNs for given cluster ARN.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_arns(self, cluster_arn: str) -&gt; list:
+    &#34;&#34;&#34;Get task ARNs for given cluster ARN.&#34;&#34;&#34;
+
+    arns = self.get_arns(&#34;list_tasks&#34;, &#34;taskArns&#34;, cluster=cluster_arn)
+    TASKS.labels(cluster_arn).set(len(arns))
+    return arns</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition"><code class="name flex">
+<span>def <span class="ident">get_task_definition</span></span>(<span>self, arn: str) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get single task definition descriptions from cache / AWS API.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Key is the task definition ARN, value the task definition
+description.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_definition(self, arn: str) -&gt; dict:
+    &#34;&#34;&#34;Get single task definition descriptions from cache / AWS API.
+
+    Returns:
+        dict: Key is the task definition ARN, value the task definition
+            description.
+    &#34;&#34;&#34;
+
+    def uncached_fetch(arn: str) -&gt; dict:
+        logger.bind(arn=arn).debug(
+            &#34;Fetch task definition from AWS with describe_task_definition.&#34;
+        ) if s.DEBUG else None
+
+        start_time = default_timer()
+        task_definition = self.ecs.describe_task_definition(taskDefinition=arn)[
+            &#34;taskDefinition&#34;
+        ]
+        DURATION.labels(&#34;describe_task_definition&#34;).observe(
+            max(default_timer() - start_time, 0)
+        )
+
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(task_definition, &#34;fetched task definition&#34;)
+
+        if self.should_throttle:
+            time.sleep(self.throttle_interval_seconds)
+
+        return task_definition
+
+    return self.task_definition_cache.get_single(arn, uncached_fetch)</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition_arns"><code class="name flex">
+<span>def <span class="ident">get_task_definition_arns</span></span>(<span>self) ‑> list</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get task definition ARNs.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_definition_arns(self) -&gt; list:
+    &#34;&#34;&#34;Get task definition ARNs.&#34;&#34;&#34;
+
+    return self.get_arns(&#34;list_task_definitions&#34;, &#34;taskDefinitionArns&#34;)</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definitions"><code class="name flex">
+<span>def <span class="ident">get_task_definitions</span></span>(<span>self, arns: list = None) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get task definition descriptions from cache / AWS API.</p>
+<p>Every given ARN corresponds with a (cached) call.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Keys are the task definition ARNs, values the respective task
+definition descriptions.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_task_definitions(self, arns: list = None) -&gt; dict:
+    &#34;&#34;&#34;Get task definition descriptions from cache / AWS API.
+
+    Every given ARN corresponds with a (cached) call.
+
+    Returns:
+        dict: Keys are the task definition ARNs, values the respective task
+            definition descriptions.
+    &#34;&#34;&#34;
+
+    def uncached_fetch(arns: list) -&gt; dict:
+        logger.bind(arns=arns).debug(
+            &#34;Fetch task definitions from AWS with describe_task_definition.&#34;
+        ) if s.DEBUG else None
+
+        descriptions = {}
+        for arn in arns:
+            start_time = default_timer()
+            response = self.ecs.describe_task_definition(taskDefinition=arn)
+            DURATION.labels(&#34;describe_task_definition&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+            response_arn = response[&#34;taskDefinition&#34;][&#34;taskDefinitionArn&#34;]
+            descriptions[response_arn] = response[&#34;taskDefinition&#34;]
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(descriptions, &#34;fetched task definitions&#34;)
+
+        return descriptions
+
+    if arns is None:
+        arns = self.get_task_definition_arns()
+
+    return self.task_definition_cache.get_multiple(
+        arns,
+        uncached_fetch,
+    )</code></pre>
+</details>
+</dd>
+<dt id="prometheus_ecs_discoverer.fetching.CachedFetcher.get_tasks"><code class="name flex">
+<span>def <span class="ident">get_tasks</span></span>(<span>self, cluster_arn: str, task_arns: list = None) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get task descriptions from cache / AWS API.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>dict</code></dt>
+<dd>Keys are the task ARNs, values the respective task descriptions.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_tasks(self, cluster_arn: str, task_arns: list = None) -&gt; dict:
+    &#34;&#34;&#34;Get task descriptions from cache / AWS API.
+
+    Returns:
+        dict: Keys are the task ARNs, values the respective task descriptions.
+    &#34;&#34;&#34;
+
+    def uncached_fetch(task_arns: list) -&gt; dict:
+        logger.bind(cluster_arn=cluster_arn, task_arns=task_arns).debug(
+            &#34;Fetch tasks from AWS with describe_tasks.&#34;
+        ) if s.DEBUG else None
+
+        tasks = []
+        chunked_task_arns = toolbox.chunk_list(task_arns, 100)
+
+        for task_arns_chunk in chunked_task_arns:
+            start_time = default_timer()
+            tasks += self.ecs.describe_tasks(
+                cluster=cluster_arn, tasks=task_arns_chunk
+            )[&#34;tasks&#34;]
+            DURATION.labels(&#34;describe_tasks&#34;).observe(
+                max(default_timer() - start_time, 0)
+            )
+
+            if self.should_throttle:
+                time.sleep(self.throttle_interval_seconds)
+
+        if s.PRINT_STRUCTS:
+            toolbox.pstruct(tasks, &#34;describe_tasks&#34;)
+
+        return toolbox.list_to_dict(tasks, &#34;taskArn&#34;)
+
+    if task_arns is None:
+        task_arns = self.get_task_arns(cluster_arn)
+
+    return self.task_cache.get_multiple(task_arns, uncached_fetch)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="prometheus_ecs_discoverer" href="index.html">prometheus_ecs_discoverer</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher" href="#prometheus_ecs_discoverer.fetching.CachedFetcher">CachedFetcher</a></code></h4>
+<ul class="">
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.flush_caches" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.flush_caches">flush_caches</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_arns" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_arns">get_arns</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_cluster_arns" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_cluster_arns">get_cluster_arns</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instance_arns" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instance_arns">get_container_instance_arns</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instances" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_container_instances">get_container_instances</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_ec2_instances" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_ec2_instances">get_ec2_instances</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_arns" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_arns">get_task_arns</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition">get_task_definition</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition_arns" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definition_arns">get_task_definition_arns</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definitions" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_task_definitions">get_task_definitions</a></code></li>
+<li><code><a title="prometheus_ecs_discoverer.fetching.CachedFetcher.get_tasks" href="#prometheus_ecs_discoverer.fetching.CachedFetcher.get_tasks">get_tasks</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
+</footer>
+</body>
+</html>
