@@ -66,6 +66,9 @@ Targets are setup via setting environment variables in the task definitions.
 
 Set `PROMETHEUS_TARGET` to `true` to make PromED consider the container. This 
 by itself is already enough to make it work with the configured defaults.
+Alternatively you can use the `dockerLabels` in the container definition. For 
+this you have to set the PromED setting `MARKER_TYPE` to `dockerLabels` 
+instead of the default `environment`.
 
 #### Specify metrics endpoint(s)
 

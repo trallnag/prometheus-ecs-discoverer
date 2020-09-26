@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Nothing.
 
+## [3.3.0] 2020-09-26
+
+### added
+
+* It is now possible to mark containers as targets not only by using the 
+    `environment` variables in the ECS container definition, but also the 
+    `dockerLabels` attribute. This can make it easier to have the same set of 
+    labels across PromED targets and stuff like Cadvisor. Configured with the 
+    `MARKER_TYPE` setting. Defaults have not been changed.
+
 ## [3.2.1] 2020-09-15
 
 ### Fixed
