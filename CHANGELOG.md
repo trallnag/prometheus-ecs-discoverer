@@ -11,13 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.3.0] 2020-09-26
 
-### added
+### Added
 
 * It is now possible to mark containers as targets not only by using the 
     `environment` variables in the ECS container definition, but also the 
     `dockerLabels` attribute. This can make it easier to have the same set of 
     labels across PromED targets and stuff like Cadvisor. Configured with the 
     `MARKER_TYPE` setting. Defaults have not been changed.
+* It is also possible to extract additional custom labels to be added to all 
+    targets from the `dockerLabels` attribute. The default key PromED is 
+    looking for is `CUSTOM_LABELS_KEY`. The actual labels are all contained in 
+    this label. PromED separates them into key value pairs. Check the docs.
 
 ## [3.2.1] 2020-09-15
 

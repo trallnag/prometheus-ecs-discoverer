@@ -92,10 +92,27 @@ Sometimes you might want to add additonal labels to targets to group them.
 For example by the used API type (REST vs. GraphQL). This can be done by adding 
 environment variables to the container definition in the respective task 
 definition with the  `PROMETHEUS_LABEL_` prefix. For example 
-`PROMETHEUS_LABEL_api_type` or `PROMETHEUS_LABEL_foo`.
+`PROMETHEUS_LABEL_api_type` or `PROMETHEUS_LABEL_foo`. Environment variables 
+set from within the container are not visible to PromED and are ignored.
 
-Environment variables set from within the container are not visible to PromED 
-and are ignored.
+```text
+environment : [
+  { name : "PROMETHEUS_LABEL_foo", value : "bar" },
+  { name : "PROMETHEUS_LABEL_high", value : "fi" },
+]
+```
+
+There is an alternative for this using the `dockerLabels` attribute instead. 
+PromED always checks both locations. Unlike with the environment variables, 
+the additional target labels are all contained in one string. You can configure 
+the label PromED should look for by setting `CUSTOM_LABELS_KEY`. It works like 
+this:
+
+```text
+dockerLabels : {
+  promed.custom_labels : "foo=bar, high=fi,what=ever"
+}
+```
 
 #### Customize networking
 
