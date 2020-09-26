@@ -1513,6 +1513,7 @@ describe_task_definition_responses = [
                     "portMappings": [
                         {"containerPort": 80, "hostPort": 0, "protocol": "tcp"}
                     ],
+                    "dockerLabels": {"promed.custom_labels": "foo=bar, high=fi"},
                     "essential": True,
                     "environment": [
                         {

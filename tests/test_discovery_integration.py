@@ -82,6 +82,6 @@ def test_discovery_full():
     assert target.task_id == "550b823c-288a-4f31-b3e1-69f9ea15060d"
     assert target.container_id == "213d21d5-4718-4b7f-9f7d-a1b3a8e57ad8"
     assert target.instance_id == "i-0b967c2479dd4f5af"
-    assert target.custom_labels == {}
+    assert target.custom_labels == {"foo": "bar", "high": "fi"}
 
     toolbox.pstruct(targets, "targets")

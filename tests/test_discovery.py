@@ -259,3 +259,25 @@ def test_extract_port():
         )
         == "100"
     )
+
+
+# ==============================================================================
+# _extract_custom_labels_from_dockerlabels
+
+
+def test_extract_custom_labels_from_dockerlabels():
+    dockerlabels = {"randomkey": "name=value, foo=bar,zoom=fi"}
+
+    assert discovery._extract_custom_labels_from_dockerlabels(dockerlabels, custom_labels_key="randomkey") == {"name": "value", "foo": "bar", "zoom": "fi"}
+
+
+def test_extract_custom_labels_from_dockerlabels_custom():
+    dockerlabels = {"randomkey": "name!value+foo!bar+zoom!fi"}
+
+    assert discovery._extract_custom_labels_from_dockerlabels(dockerlabels, custom_labels_key="randomkey", separator="+", equalizer="!") == {"name": "value", "foo": "bar", "zoom": "fi"}
+
+
+def test_extract_custom_labels_from_dockerlabels_default():
+    dockerlabels = {"promed.custom_labels": "name=value, foo=bar,zoom=fi"}
+
+    assert discovery._extract_custom_labels_from_dockerlabels(dockerlabels) == {"name": "value", "foo": "bar", "zoom": "fi"}
