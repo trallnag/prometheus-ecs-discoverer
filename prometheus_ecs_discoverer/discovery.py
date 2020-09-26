@@ -193,7 +193,7 @@ class PrometheusEcsDiscoverer:
             if container_name == defi["name"]:
                 container_definition = defi
 
-        if toolbox.extract_env_var(container_definition, s.MARKER) == "true":
+        if _is_marked_as_target(container_definition):
             self.targets_marked_counter += 1
             _logger.debug("Prometheus marker true. Build target.")
         else:
@@ -276,6 +276,41 @@ class PrometheusEcsDiscoverer:
             container_id=container_id,
             custom_labels=custom_labels,
         )
+
+
+def _is_marked_as_target(
+    container_definition: dict,
+    marker_type: str = s.MARKER_TYPE,
+    marker: str = s.MARKER,
+) -> bool:
+    """Determines if the given container is a target.
+
+    Args:
+        container_definition (`dict`): Container definition matching the API.
+
+        marker_type (`str`, optional): Where is the marker located? Defaults to
+            `s.MARKER_TYPE`, can be set through settings.
+
+        marker (`str`, optional): The key name to look up. Must be `true`
+            string to count as marked. Defaults to `s.MARKER`, can be set
+            through settings.
+
+    Returns:
+        `bool`: Self explanatory.
+    """
+
+    if (
+        marker_type == "environment"
+        and toolbox.extract_env_var(container_definition, marker) == "true"
+    ):
+        return True
+    elif (
+        marker_type == "dockerLabels"
+        and container_definition.get("dockerLabels", {}).get(marker, None) == "true"
+    ):
+        return True
+    else:
+        return False
 
 
 def _extract_port(

@@ -9,6 +9,13 @@ INTERVAL = 15
 # This dir fill contain all target files for Prometheus.
 OUTPUT_DIRECTORY = "/tmp"
 
+
+# Decides where PromED looks for <MARKER> that determines if the container is 
+# a target for Prometheus. Current options are:
+#     - 'dockerLabels' only checks docker labels added with the task definition.
+#     - 'environment' only the env vars added with the task definition.
+MARKER_TYPE = "environment"
+
 MARKER = "PROMETHEUS_TARGET"
 
 # ==============================================================================
