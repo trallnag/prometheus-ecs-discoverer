@@ -243,7 +243,8 @@ class PrometheusEcsDiscoverer:
 
         custom_labels.update(
             _extract_custom_labels_from_dockerlabels(
-                container_definition.get("dockerLabels", {}))
+                container_definition.get("dockerLabels", {})
+            )
         )
 
         task_name = data.task["taskDefinitionArn"].split(":")[5].split("/")[-1]
