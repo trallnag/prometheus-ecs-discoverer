@@ -60,6 +60,9 @@ def test_validate_min_len():
     assert True
 
 
+# ------------------------------------------------------------------------------
+
+
 def test_extract_env_var():
     container = {
         "random": {"random": "random"},
@@ -71,6 +74,17 @@ def test_extract_env_var():
 
     assert "80" == toolbox.extract_env_var(container, "PROMETHEUS_PORT")
     assert None is toolbox.extract_env_var(container, "does not exist")
+
+
+def test_extract_env_var_no_env():
+    container = {
+        "random": {"random": "random"},
+    }
+
+    assert None is toolbox.extract_env_var(container, "PROMETHEUS_PORT")
+
+
+# ------------------------------------------------------------------------------
 
 
 def test_extract_env_var_no_environment():

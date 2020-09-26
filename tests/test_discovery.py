@@ -29,7 +29,68 @@ def test_extract_custom_labels():
     assert labels["test_label"] == "WHATEVER"
 
 
-# ------------------------------------------------------------------------------
+# ==============================================================================
+# _is_marked_as_target
+
+
+def test_is_marked_as_target_default_true():
+    c = {"environment": [{"name": "PROMETHEUS_TARGET", "value": "true"}]}
+
+    assert discovery._is_marked_as_target(c) is True
+
+
+def test_is_marked_as_target_default_false():
+    c = {"environment": [{"name": "PROMETHEUS_TARGET", "value": "fsfs"}]}
+
+    assert discovery._is_marked_as_target(c) is False
+
+
+def test_is_marked_as_target_from_env_true():
+    c = {"environment": [{"name": "IS_TARGET", "value": "true"}]}
+
+    assert (
+        discovery._is_marked_as_target(c, marker_type="environment", marker="IS_TARGET")
+        is True
+    )
+
+
+def test_is_marked_as_target_from_env_false():
+    c = {"environment": [{"name": "IS_TARGET", "value": "false"}]}
+
+    assert (
+        discovery._is_marked_as_target(c, marker_type="environment", marker="IS_TARGET")
+        is False
+    )
+
+
+def test_is_marked_as_target_from_env_no_env():
+    c = {"environmfdfdent": [{"name": "IS_TARGET", "value": "false"}]}
+
+    assert (
+        discovery._is_marked_as_target(c, marker_type="environment", marker="IS_TARGET")
+        is False
+    )
+
+
+def test_is_marked_as_target_from_labels_true():
+    c = {"dockerLabels": {"target": "true"}}
+
+    assert (
+        discovery._is_marked_as_target(c, marker_type="dockerLabels", marker="target")
+        is True
+    )
+
+
+def test_is_marked_as_target_from_labels_missing():
+    c = {"gegegege": {"target": "true"}}
+
+    assert (
+        discovery._is_marked_as_target(c, marker_type="dockerLabels", marker="target")
+        is False
+    )
+
+
+# ==============================================================================
 
 
 def test_has_proper_network_binding():
