@@ -64,5 +64,9 @@ MAX_RETRY_ATTEMPTS = 8
 # Environment variables with this prefix are added as custom labels to targets.
 CUSTOM_LABEL_PREFIX = "PROMETHEUS_LABEL_"
 
+# Key in `dockerLabels` PromED will retrieve and extract custom labels to add 
+# to all metrics. Format must follow this scheme: "name=value,name1=value".
+CUSTOM_LABELS_KEY = "promed.custom_labels"
+
 # If no endpoint is given in the respective env var, this will be used.
 FALLBACK_METRICS_ENDPOINT = "/metrics"

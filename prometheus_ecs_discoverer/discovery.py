@@ -241,6 +241,11 @@ class PrometheusEcsDiscoverer:
             env=container_definition.get("environment", [])
         )
 
+        custom_labels.update(
+            _extract_custom_labels_from_dockerlabels(
+                container_definition.get("dockerLabels", {}))
+        )
+
         task_name = data.task["taskDefinitionArn"].split(":")[5].split("/")[-1]
 
         if toolbox.extract_env_var(container_definition, "PROMETHEUS_NOLABELS"):
@@ -379,4 +384,22 @@ def _extract_custom_labels(env: List[Dict[str, str]] or List) -> Dict[str, str]:
         name = envvar["name"]
         if name.startswith(s.CUSTOM_LABEL_PREFIX):
             labels[name[len(s.CUSTOM_LABEL_PREFIX) :].lower()] = envvar["value"]
+    return labels
+
+
+def _extract_custom_labels_from_dockerlabels(
+    docker_labels: Dict[str, str],
+    custom_labels_key: str = s.CUSTOM_LABELS_KEY,
+    separator: str = ",",
+    equalizer: str = "=",
+) -> Dict[str, str]:
+    labels = {}
+    list_of_labels = docker_labels.get(custom_labels_key, None)
+
+    if list_of_labels:
+        elements = list_of_labels.split(separator)
+        for element in elements:
+            key, value = element.split(equalizer)
+            labels[key.strip()] = value.strip()
+
     return labels
