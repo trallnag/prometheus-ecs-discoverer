@@ -390,6 +390,7 @@ def _extract_custom_labels(env: List[Dict[str, str]] or List) -> Dict[str, str]:
 
 def _extract_custom_labels_from_dockerlabels(
     docker_labels: Dict[str, str],
+    with_docker_labels: List[str] = s.WITH_DOCKER_LABELS,
     custom_labels_key: str = s.CUSTOM_LABELS_KEY,
     separator: str = ",",
     equalizer: str = "=",
@@ -402,5 +403,10 @@ def _extract_custom_labels_from_dockerlabels(
         for element in elements:
             key, value = element.split(equalizer)
             labels[key.strip()] = value.strip()
+
+    for label in with_docker_labels:
+        value = docker_labels.get(label, None)
+        if value:
+            labels[label.replace(".", "_").replace("-", "_")] = value
 
     return labels

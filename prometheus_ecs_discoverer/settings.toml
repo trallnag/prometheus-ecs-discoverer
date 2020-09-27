@@ -68,5 +68,9 @@ CUSTOM_LABEL_PREFIX = "PROMETHEUS_LABEL_"
 # to all metrics. Format must follow this scheme: "name=value,name1=value".
 CUSTOM_LABELS_KEY = "promed.custom_labels"
 
+# A list of docker labels (only the ones defined in the definition) that should 
+# be mapped 1:1 to target labels. Dots / Dashes are replaced with underscores.
+WITH_DOCKER_LABELS = []
+
 # If no endpoint is given in the respective env var, this will be used.
 FALLBACK_METRICS_ENDPOINT = "/metrics"

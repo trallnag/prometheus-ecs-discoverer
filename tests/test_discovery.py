@@ -289,3 +289,20 @@ def test_extract_custom_labels_from_dockerlabels_default():
         "foo": "bar",
         "zoom": "fi",
     }
+
+
+def test_extract_custom_labels_with_dockerlabels():
+    assert (
+        discovery._extract_custom_labels_from_dockerlabels(
+            {
+                "randomkey": "name=value, foo=bar,zoom=fi",
+                "foo.bar": "value=-",
+                "fefe-fe-f": "value",
+            },
+            with_docker_labels=["foo.bar", "fefe-fe-f"],
+        )
+        == {"foo_bar": "value=-", "fefe_fe_f": "value"}
+    )
+
+
+# ==============================================================================
