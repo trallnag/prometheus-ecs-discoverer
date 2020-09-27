@@ -95,10 +95,10 @@ definition with the  `PROMETHEUS_LABEL_` prefix. For example
 `PROMETHEUS_LABEL_api_type` or `PROMETHEUS_LABEL_foo`. Environment variables 
 set from within the container are not visible to PromED and are ignored.
 
-```text
-environment : [
-  { name : "PROMETHEUS_LABEL_foo", value : "bar" },
-  { name : "PROMETHEUS_LABEL_high", value : "fi" },
+```json
+"environment": [
+  { "name": "PROMETHEUS_LABEL_foo", "value": "bar" },
+  { "name": "PROMETHEUS_LABEL_high", "value": "fi" },
 ]
 ```
 
@@ -108,11 +108,32 @@ the additional target labels are all contained in one string. You can configure
 the label PromED should look for by setting `CUSTOM_LABELS_KEY`. It works like 
 this:
 
-```text
-dockerLabels : {
-  promed.custom_labels : "foo=bar, high=fi,what=ever"
+```json
+"dockerLabels": {
+  "promed.custom_labels": "foo=bar, high=fi,what=ever"
 }
 ```
+
+The third option is to use the `WITH_DOCKER_LABELS` setting to give PromED an 
+array of labels it should always try to map from `dockerLabels` to target 
+labels. The PromED config could look like this (notice the config prefix):
+
+```json
+"environment": {
+  "PROMED_WITH_DOCKER_LABELS": "['com.company.namespace', 'com.company.alias']"
+}
+```
+
+A container that uses these labels:
+
+```json
+"dockerLabels": {
+  "com.company.namespace": "whatever",
+  "com-company-alias": "zoomzoom"
+}
+```
+
+PromED translates it to `com_company_namespace` and `com_company_alias`.
 
 #### Customize networking
 
@@ -208,7 +229,7 @@ PromED uses [Dynconf](https://www.dynaconf.com/) for config management. There
 are two main ways you can configure the application. Either by providing a 
 custom settings file with the env var `SETTINGS_FILES_FOR_DYNACONF` (see 
 [here](https://www.dynaconf.com/configuration/#on-environment-options)) 
-or directly setting the respective values via env vars with the `DYNACONF_` 
+or directly setting the respective values via env vars with the `PROMED_` 
 prefix. All supported settings together with their default values can be found 
 [`settings.toml` (click me)](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/prometheus_ecs_discoverer/settings.toml).
 

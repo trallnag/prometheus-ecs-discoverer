@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     targets from the `dockerLabels` attribute. The default key PromED is 
     looking for is `CUSTOM_LABELS_KEY`. The actual labels are all contained in 
     this label. PromED separates them into key value pairs. Check the docs.
+* With `WITH_DOCKER_LABELS` you can define a set of labels that will be mapped 
+    from `dockerLabels` to target labels 1:1 while replacing dots ad dashes 
+    with underscores. Check the docs.
 
 ## [3.2.1] 2020-09-15
 
