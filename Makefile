@@ -19,10 +19,10 @@ test:
 
 .PHONY: docs
 docs:
-	rm -rf pdoc3/*; \
-	mkdir -p pdoc3; \
-	poetry run pdoc --output-dir /tmp/pdoc3 --html prometheus_ecs_discoverer; \
-	mv /tmp/pdoc3/prometheus_ecs_discoverer/* pdoc3/; 
+	rm -rf docs/*; \
+	mkdir -p docs; \
+	poetry run pdoc --output-dir /tmp/docs --html prometheus_ecs_discoverer; \
+	mv /tmp/docs/prometheus_ecs_discoverer/* docs/; 
 
 .PHONY: requirements
 requirements:
