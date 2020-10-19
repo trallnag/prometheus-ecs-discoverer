@@ -232,7 +232,7 @@ class SlidingCache:
 checking the cached dict for corresponding entries. Keys without matching
 entries are passed on to a fetch function. Other data is thrown away.</p>
 <p>How to use:</p>
-<pre><code class="python">cache = SlidingCache()
+<pre><code class="language-python">cache = SlidingCache()
 
 # Fetcher is used for all keys.
 data = cache.get([&quot;my&quot;, &quot;keys&quot;], fetch_func)

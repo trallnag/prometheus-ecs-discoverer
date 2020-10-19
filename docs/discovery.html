@@ -221,7 +221,7 @@ class PrometheusEcsDiscoverer:
             if container_name == defi[&#34;name&#34;]:
                 container_definition = defi
 
-        if toolbox.extract_env_var(container_definition, s.MARKER) == &#34;true&#34;:
+        if _is_marked_as_target(container_definition):
             self.targets_marked_counter += 1
             _logger.debug(&#34;Prometheus marker true. Build target.&#34;)
         else:
@@ -269,6 +269,12 @@ class PrometheusEcsDiscoverer:
             env=container_definition.get(&#34;environment&#34;, [])
         )
 
+        custom_labels.update(
+            _extract_custom_labels_from_dockerlabels(
+                container_definition.get(&#34;dockerLabels&#34;, {})
+            )
+        )
+
         task_name = data.task[&#34;taskDefinitionArn&#34;].split(&#34;:&#34;)[5].split(&#34;/&#34;)[-1]
 
         if toolbox.extract_env_var(container_definition, &#34;PROMETHEUS_NOLABELS&#34;):
@@ -304,6 +310,41 @@ class PrometheusEcsDiscoverer:
             container_id=container_id,
             custom_labels=custom_labels,
         )
+
+
+def _is_marked_as_target(
+    container_definition: dict,
+    marker_type: str = s.MARKER_TYPE,
+    marker: str = s.MARKER,
+) -&gt; bool:
+    &#34;&#34;&#34;Determines if the given container is a target.
+
+    Args:
+        container_definition (`dict`): Container definition matching the API.
+
+        marker_type (`str`, optional): Where is the marker located? Defaults to
+            `s.MARKER_TYPE`, can be set through settings.
+
+        marker (`str`, optional): The key name to look up. Must be `true`
+            string to count as marked. Defaults to `s.MARKER`, can be set
+            through settings.
+
+    Returns:
+        `bool`: Self explanatory.
+    &#34;&#34;&#34;
+
+    if (
+        marker_type == &#34;environment&#34;
+        and toolbox.extract_env_var(container_definition, marker) == &#34;true&#34;
+    ):
+        return True
+    elif (
+        marker_type == &#34;dockerLabels&#34;
+        and container_definition.get(&#34;dockerLabels&#34;, {}).get(marker, None) == &#34;true&#34;
+    ):
+        return True
+    else:
+        return False
 
 
 def _extract_port(
@@ -372,6 +413,30 @@ def _extract_custom_labels(env: List[Dict[str, str]] or List) -&gt; Dict[str, st
         name = envvar[&#34;name&#34;]
         if name.startswith(s.CUSTOM_LABEL_PREFIX):
             labels[name[len(s.CUSTOM_LABEL_PREFIX) :].lower()] = envvar[&#34;value&#34;]
+    return labels
+
+
+def _extract_custom_labels_from_dockerlabels(
+    docker_labels: Dict[str, str],
+    with_docker_labels: List[str] = s.WITH_DOCKER_LABELS,
+    custom_labels_key: str = s.CUSTOM_LABELS_KEY,
+    separator: str = &#34;,&#34;,
+    equalizer: str = &#34;=&#34;,
+) -&gt; Dict[str, str]:
+    labels = {}
+    list_of_labels = docker_labels.get(custom_labels_key, None)
+
+    if list_of_labels:
+        elements = list_of_labels.split(separator)
+        for element in elements:
+            key, value = element.split(equalizer)
+            labels[key.strip()] = value.strip()
+
+    for label in with_docker_labels:
+        value = docker_labels.get(label, None)
+        if value:
+            labels[label.replace(&#34;.&#34;, &#34;_&#34;).replace(&#34;-&#34;, &#34;_&#34;)] = value
+
     return labels</code></pre>
 </details>
 </section>
@@ -531,7 +596,7 @@ them.</p>
             if container_name == defi[&#34;name&#34;]:
                 container_definition = defi
 
-        if toolbox.extract_env_var(container_definition, s.MARKER) == &#34;true&#34;:
+        if _is_marked_as_target(container_definition):
             self.targets_marked_counter += 1
             _logger.debug(&#34;Prometheus marker true. Build target.&#34;)
         else:
@@ -577,6 +642,12 @@ them.</p>
 
         custom_labels = _extract_custom_labels(
             env=container_definition.get(&#34;environment&#34;, [])
+        )
+
+        custom_labels.update(
+            _extract_custom_labels_from_dockerlabels(
+                container_definition.get(&#34;dockerLabels&#34;, {})
+            )
         )
 
         task_name = data.task[&#34;taskDefinitionArn&#34;].split(&#34;:&#34;)[5].split(&#34;/&#34;)[-1]
@@ -685,7 +756,8 @@ meaning they could not have been turned into target objects.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class Target:
+<pre><code class="python">@dataclass
+class Target:
     &#34;&#34;&#34;Data class with all information necessary to build a JSON target.&#34;&#34;&#34;
 
     ip: str
@@ -758,7 +830,8 @@ meaning they could not have been turned into target objects.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class TaskInfo:
+<pre><code class="python">@dataclass
+class TaskInfo:
     &#34;&#34;&#34;Data class that wraps a few objects only used in discovery module.&#34;&#34;&#34;
 
     task: dict
