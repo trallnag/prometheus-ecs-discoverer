@@ -3,6 +3,7 @@
 [![PyPI version](https://badge.fury.io/py/prometheus-ecs-discoverer.svg)](https://pypi.python.org/pypi/prometheus-ecs-discoverer/)
 [![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![downloads](https://img.shields.io/pypi/dm/prometheus-ecs-discoverer)](https://pypi.org/project/prometheus-ecs-discoverer/)
+[![docs](https://img.shields.io/badge/docs-here-blue)](https://trallnag.github.io/prometheus-ecs-discoverer/)
 
 ![release](https://github.com/trallnag/prometheus-ecs-discoverer/workflows/release/badge.svg)
 ![test branches](https://github.com/trallnag/prometheus-ecs-discoverer/workflows/test%20branches/badge.svg)
@@ -35,6 +36,16 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
     Dashboard already included and ready to use.
 * Extensive testing with high coverage ensures functionality.
 * More configuration options. For example structured logs.
+
+---
+
+> Don't hesitate to open an issue if you have questions or ideas regarding 
+    PromED. Since I'm currently using it in production I'm (still) motivated 
+    to work on it :wink:
+>  
+> -- <cite>trallnag</cite>
+
+---
 
 ---
 
