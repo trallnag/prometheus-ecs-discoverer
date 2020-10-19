@@ -1,0 +1,31 @@
+name: pdoc3
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  docs:        
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout repositry
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    
+    - name: Install dependencies
+      run: pip install pdoc3
+
+    - name: Build docs
+      run: make docs
+
+    - name: Recommit docs
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: bot: update docs [skip ci]
+        file_pattern: ./docs/*
+        commit_user_name: trallnag-bot
+        commit_user_email: tim.and.trallnag+code@gmail.com
