@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7, 3.9]
 
     steps:
     
@@ -19,7 +19,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Retrieve version from pyproject.toml
-      run: echo ::set-env name=PROJECT_VERSION::$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+      run: |
+        x=$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+        echo "PROJECT_VERSION=$x" >> $GITHUB_ENV
 
     - name: tag-exists-action
       uses: mukunku/tag-exists-action@v1.0.0
@@ -50,7 +52,7 @@ jobs:
       run: make test
 
     - name: Code Coverage
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
       uses: codecov/codecov-action@v1
       with:
         file: ./coverage.xml
@@ -60,25 +62,25 @@ jobs:
         fail_ci_if_error: false
     
     - name: Format style
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
       run: make format_style
 
     - name: Format imports
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
       run: make format_imports
 
     - name: Freeze requirements (for dep graph)
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
       run: make requirements
   
     - name: Recommit
-      if: matrix.python-version == 3.8
+      if: matrix.python-version == 3.9
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: Apply auto stuff [skip ci]
+        commit_message: 'bot: apply auto stuff [skip ci]'
         file_pattern: ./*.py requirements.txt
-        commit_user_name: My GitHub Actions Bot
-        commit_user_email: tim.schwenke+github@protonmail.ch
+        commit_user_name: trallnag-bot
+        commit_user_email: tim.and.trallnag+code@gmail.com
 
     - name: Build package
       run: poetry build
@@ -95,10 +97,10 @@ jobs:
       - name: Checkout repositry
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
 
       - name: Install Poetry and setup cache
         uses: Gr1N/setup-poetry@v2
@@ -125,7 +127,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Retrieve version
-        run: echo ::set-env name=PROJECT_VERSION::$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+        run: |
+          x=$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+          echo "PROJECT_VERSION=$x" >> $GITHUB_ENV
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v1
@@ -158,14 +162,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Retrieve version
-        run: echo ::set-env name=PROJECT_VERSION::$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+        run: |
+          x=$(awk '/^version/{print $NF}' pyproject.toml | tr -d '"' | tr -d "'")
+          echo "PROJECT_VERSION=$x" >> $GITHUB_ENV
 
       - name: Retrieve change
         run: awk '/\[${{ env.PROJECT_VERSION }}\]/{flag=1; next} /\[.*\]/{flag=0} flag' CHANGELOG.md > github-release-body.md
 
       - name: Retrieve date
-        run: echo "::set-env name=NOW::$(date +'%Y-%m-%d')"
-
+        run: |
+          x=$(date +'%Y-%m-%d')
+          echo "NOW=$x" >> $GITHUB_ENV
+        
       - name: Create Release
         uses: actions/create-release@v1
         env:
