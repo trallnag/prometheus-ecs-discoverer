@@ -48,7 +48,7 @@ pdoc3 @ file:///home/runner/.cache/pypoetry/artifacts/43/5f/bb/af12039c6e59eb586
 pluggy @ file:///home/runner/.cache/pypoetry/artifacts/29/58/fc/ed8b7451d3ef91a6465024f5656141da996e7aafd4d41a1659629a75e7/pluggy-0.13.1-py2.py3-none-any.whl
 prettyprinter @ file:///home/runner/.cache/pypoetry/artifacts/25/a3/36/74037e64c5a10845d68cfd08c612a056d5c49ace810d4a77f626f405a2/prettyprinter-0.18.0-py2.py3-none-any.whl
 prometheus-client @ file:///home/runner/.cache/pypoetry/artifacts/d0/75/a6/131cc55ee78275651b169b94943cf70d2249567e1d074186974b6e2adf/prometheus_client-0.8.0-py2.py3-none-any.whl
-prometheus-ecs-discoverer==3.3.0
+prometheus-ecs-discoverer==3.3.1
 py @ file:///home/runner/.cache/pypoetry/artifacts/8b/d2/99/c011698bd549f30497b27bee2731848753a014313ed783267c74b6dcde/py-1.9.0-py2.py3-none-any.whl
 pyasn1 @ file:///home/runner/.cache/pypoetry/artifacts/7b/3a/54/42ce43b579bda01b9d79022fb733811594441e7a32e9f9a5a98f672bdc/pyasn1-0.4.8-py2.py3-none-any.whl
 pycodestyle @ file:///home/runner/.cache/pypoetry/artifacts/00/8e/03/5dd26ed1283fc5849fa141c87a1d99659b252d7a2105d6ec509c6de6cd/pycodestyle-2.6.0-py2.py3-none-any.whl
