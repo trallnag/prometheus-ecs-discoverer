@@ -52,8 +52,8 @@ jobs:
       run: make test
 
     - name: Code Coverage
+      uses: codecov/codecov-action@v1.0.14
       if: matrix.python-version == 3.9
-      uses: codecov/codecov-action@v1
       with:
         file: ./coverage.xml
         flags: unittests
