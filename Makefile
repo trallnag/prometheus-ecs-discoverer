@@ -21,7 +21,7 @@ test:
 docs:
 	rm -rf docs/*; \
 	mkdir -p docs; \
-	pdoc --output-dir /tmp/docs --html prometheus_ecs_discoverer; \
+	poetry run pdoc --output-dir /tmp/docs --html prometheus_ecs_discoverer; \
 	mv /tmp/docs/prometheus_ecs_discoverer/* docs/; 
 
 .PHONY: requirements
