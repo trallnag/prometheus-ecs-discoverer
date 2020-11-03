@@ -190,7 +190,7 @@ info. Please see [Configuration](#configuration) for more info.
 #### Using Docker image
 
 The image `trallnag/prometheus_ecs_discoverer` can be found 
-[here](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer).
+[here](https://hub.docker.com/r/trallnag/prometheus_ecs_discoverer).
 The recommended way for configuring the image is to use environment variables.
 
 You will probably want to run the discoverer in ECS. Here, you don't have to 
