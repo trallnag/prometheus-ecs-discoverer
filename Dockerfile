@@ -1,6 +1,6 @@
 FROM bitnami/python:3.8-prod
 
-LABEL MAINTAINER="tim.schwenke+trallnag@protonmail.ch"
+LABEL MAINTAINER="tim.and.trallnag+code@gmail.com"
 
 ARG PYPI_VERSION
 
