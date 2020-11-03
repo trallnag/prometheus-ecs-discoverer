@@ -71,7 +71,7 @@ rsa @ file:///home/runner/.cache/pypoetry/artifacts/a3/a6/ae/a916537d0d9101d1b2d
 s3transfer @ file:///home/runner/.cache/pypoetry/artifacts/d6/87/6f/737966d0cf57a8804151f9f4c4f364026070c0e507a324080f5c4a090f/s3transfer-0.3.3-py2.py3-none-any.whl
 six @ file:///home/runner/.cache/pypoetry/artifacts/dd/1c/65/ad0dea11136f5a869f072890a0eea955aa8fc35b90c85c55249fd3abfe/six-1.15.0-py2.py3-none-any.whl
 toml @ file:///home/runner/.cache/pypoetry/artifacts/3d/8f/67/dc22f474a5f8c86f8cd209deb4a2c2907c85e2f87ea5cf21876497646a/toml-0.10.1-py2.py3-none-any.whl
-typed-ast @ file:///home/runner/.cache/pypoetry/artifacts/44/e5/97/1cd95a5a800919651bc67dd7345b9dbbfcbff9d00de821c58fe653c56e/typed_ast-1.4.1.tar.gz
+typed-ast @ file:///home/runner/.cache/pypoetry/artifacts/77/fa/a4/dd517a46bc874f9a087e375f02c99be12ad7979679b8591a4d579ecbd3/typed_ast-1.4.1-cp39-cp39-manylinux1_x86_64.whl
 typing-extensions @ file:///home/runner/.cache/pypoetry/artifacts/ab/c3/72/446cb2c521f10fc837619e8a7c68ed3c3bd74859bd625b7d74f38a159b/typing_extensions-3.7.4.3-py3-none-any.whl
 urllib3 @ file:///home/runner/.cache/pypoetry/artifacts/d8/4b/3f/9e8027e7f15b2f99244ad505328c3cf87912ad87446c1c8e89efacf731/urllib3-1.25.11-py2.py3-none-any.whl
 websocket-client @ file:///home/runner/.cache/pypoetry/artifacts/83/d9/33/524e1bb12489c6d0573175851ad9e59b936282ac76e7a2c4f0308e1406/websocket_client-0.57.0-py2.py3-none-any.whl
