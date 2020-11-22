@@ -9,6 +9,10 @@ specification.
 
 ## [Unreleased]
 
+* Nothing
+
+## [3.3.2] 2020-11-22
+
 ### Changed
 
 * Run `poetry update`.
