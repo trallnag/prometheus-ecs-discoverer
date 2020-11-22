@@ -9,7 +9,11 @@ specification.
 
 ## [Unreleased]
 
-* Nothing.
+### Changed
+
+* Run `poetry update`.
+* Rename labelname `name` to `cache_name` of metrics `cache_hits`, `cache_misses`
+    `current_cache_entries`, and `next_cache_entries`.    
 
 ## [3.3.1] 2020-10-20
 

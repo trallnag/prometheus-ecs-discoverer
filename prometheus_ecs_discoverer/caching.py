@@ -9,16 +9,16 @@ from prometheus_ecs_discoverer import s, telemetry, toolbox
 
 
 HITS = telemetry.gauge(
-    "cache_hits", "Number of cache hits just before moving window.", ("name",)
+    "cache_hits", "Number of cache hits just before moving window.", ("cache_name",)
 )
 MISSES = telemetry.gauge(
-    "cache_misses", "Number of cache misses just before moving window.", ("name",)
+    "cache_misses", "Number of cache misses just before moving window.", ("cache_name",)
 )
 CURRENT_CACHE_ENTRIES = telemetry.gauge(
-    "current_cache_entries", "Number of current cache entries.", ("name",)
+    "current_cache_entries", "Number of current cache entries.", ("cache_name",)
 )
 NEXT_CACHE_ENTRIES = telemetry.gauge(
-    "next_cache_entries", "Number of next cache entries.", ("name",)
+    "next_cache_entries", "Number of next cache entries.", ("cache_name",)
 )
 
 
