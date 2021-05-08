@@ -189,17 +189,6 @@ jobs:
           body_path: github-release-body.md
           draft: false
           prerelease: false
-        
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: releases/${{ env.PROJECT_VERSION }}
-          release_name: "[${{ env.PROJECT_VERSION }}] ${{ env.NOW }}"
-          body_path: github-release-body.md
-          draft: false
-          prerelease: false
 
 
   # ============================================================================
