@@ -42,13 +42,13 @@ jobs:
       run: poetry install
 
     - name: Lint
-      run: make lint
+      run: bash run.sh lint
 
     - name: Test
-      run: make test
+      run: bash run.sh test
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v1.0.14
+      uses: codecov/codecov-action@v1
       if: matrix.python-version == 3.9
       with:
         file: ./coverage.xml
@@ -59,15 +59,15 @@ jobs:
 
     - name: Format style
       if: matrix.python-version == 3.9
-      run: make format_style
+      run: bash run.sh format_style
 
     - name: Format imports
       if: matrix.python-version == 3.9
-      run: make format_imports
+      run: bash run.sh format_imports
 
     - name: Freeze requirements (for dep graph)
       if: matrix.python-version == 3.9
-      run: make requirements
+      run: bash run.sh requirements
   
     - name: Recommit
       if: matrix.python-version == 3.9

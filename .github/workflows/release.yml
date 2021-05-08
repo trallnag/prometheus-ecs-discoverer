@@ -5,7 +5,9 @@ on:
     
 jobs:
 
+
   # ============================================================================
+
 
   test:    
     runs-on: ubuntu-latest
@@ -46,13 +48,13 @@ jobs:
       run: poetry install
     
     - name: Lint
-      run: make lint
+      run: bash run.sh lint
 
     - name: Test
-      run: make test
+      run: bash run.sh test
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v1.0.14
+      uses: codecov/codecov-action@v1
       if: matrix.python-version == 3.9
       with:
         file: ./coverage.xml
@@ -63,15 +65,15 @@ jobs:
     
     - name: Format style
       if: matrix.python-version == 3.9
-      run: make format_style
+      run: bash run.sh format_style
 
     - name: Format imports
       if: matrix.python-version == 3.9
-      run: make format_imports
+      run: bash run.sh format_imports
 
     - name: Freeze requirements (for dep graph)
       if: matrix.python-version == 3.9
-      run: make requirements
+      run: bash run.sh requirements
   
     - name: Recommit
       if: matrix.python-version == 3.9
@@ -82,10 +84,9 @@ jobs:
         commit_user_name: trallnag-bot
         commit_user_email: tim.and.trallnag+code@gmail.com
 
-    - name: Build package
-      run: poetry build
 
   # ============================================================================
+
 
   release-to-pypi:
     needs: test
@@ -114,7 +115,9 @@ jobs:
       - name: Release
         run: poetry publish -u __token__ -p ${{ secrets.PYPI_TOKEN }}
 
+
   # ============================================================================
+
 
   release-to-dockerhub:
     needs: release-to-pypi
@@ -149,7 +152,9 @@ jobs:
           DOCKERHUB_REPOSITORY: trallnag/prometheus_ecs_discoverer
           README_FILEPATH: ./README.md
 
+
   # ============================================================================
+
 
   create-github-release:
     needs: release-to-dockerhub
@@ -173,6 +178,17 @@ jobs:
         run: |
           x=$(date +'%Y-%m-%d')
           echo "NOW=$x" >> $GITHUB_ENV
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: releases/${{ env.PROJECT_VERSION }}
+          name: "[${{ env.PROJECT_VERSION }}] ${{ env.NOW }}"
+          body_path: github-release-body.md
+          draft: false
+          prerelease: false
         
       - name: Create Release
         uses: actions/create-release@v1
@@ -184,3 +200,6 @@ jobs:
           body_path: github-release-body.md
           draft: false
           prerelease: false
+
+
+  # ============================================================================
