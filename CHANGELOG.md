@@ -9,6 +9,12 @@ specification.
 
 ## [Unreleased]
 
+* Nothing.
+
+## [3.3.3] 2021-05-08
+
+### Changed
+
 * Run `poetry update`.
 * Replace `Makefile` with `run.sh`. 
 
