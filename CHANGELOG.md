@@ -10,6 +10,7 @@ specification.
 ## [Unreleased]
 
 * Run `poetry update`.
+* Replace `Makefile` with `run.sh`. 
 
 ## [3.3.2] 2020-11-22
 
