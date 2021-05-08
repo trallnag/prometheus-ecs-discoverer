@@ -1,10 +1,13 @@
 name: test branches
 
 on:
+  workflow_dispatch:
   push:
     branches: 
       - dev
       - master
+  schedule:
+    - cron: "0 18 * * 5"
 
 jobs:
 
