@@ -47,19 +47,6 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 
 ---
 
----
-
-Contents: **[Setup](#setup)** |
-[Prepare targets](#perpare-targets) | 
-[Deploy PromED](#deploy-promed) |
-[Configure Prometheus](#configure-prometheus) | 
-**[Configuration](#configuration)** |
-**[Grafana Dashboard](#grafana-dashboard)** |
-**[Prerequesites](#prerequesites)** |
-**[Development](#development)**
-
----
-
 ## Setup
 
 As this project is based on 
