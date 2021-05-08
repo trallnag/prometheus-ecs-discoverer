@@ -35,7 +35,7 @@ junit-xml @ file:///home/runner/.cache/pypoetry/artifacts/c5/2c/8f/f3fda2901a5bb
 loguru @ file:///home/runner/.cache/pypoetry/artifacts/86/46/fb/57abc2a88da92cb957a6f2c96bd3e58662eede7ebc1adce938a5ea46c4/loguru-0.5.3-py3-none-any.whl
 Mako @ file:///home/runner/.cache/pypoetry/artifacts/38/16/1c/9e6888eb0e0979dff05cbf56b4d9e1d40fd097afc8cc8105f8c7de420c/Mako-1.1.3-py2.py3-none-any.whl
 Markdown @ file:///home/runner/.cache/pypoetry/artifacts/ca/eb/43/498a700301e8a67b3aa294ce3652633fcca599f7ad716339d7fb8ac626/Markdown-3.3.3-py3-none-any.whl
-MarkupSafe @ file:///home/runner/.cache/pypoetry/artifacts/c6/26/82/e9526c4f85d19499c8a7a0573deea20f6320a3388ef8afdae5cfecbbfe/MarkupSafe-1.1.1.tar.gz
+MarkupSafe @ file:///home/runner/.cache/pypoetry/artifacts/a4/78/86/1bb0a788648c202bcaa2e95a65f75ad0939c3d4fe432ce5b720eb424d3/MarkupSafe-1.1.1-cp39-cp39-manylinux2010_x86_64.whl
 mccabe @ file:///home/runner/.cache/pypoetry/artifacts/96/5e/5f/21ae5296697ca7f94de4da6e21d4936d74029c352a35202e4c339a4253/mccabe-0.6.1-py2.py3-none-any.whl
 mock @ file:///home/runner/.cache/pypoetry/artifacts/df/86/52/59a212e3d23f2bcf5a7a34c81e80626fdfe268717d8d3406200c47fc40/mock-4.0.2-py3-none-any.whl
 more-itertools @ file:///home/runner/.cache/pypoetry/artifacts/7d/18/5b/12afd5e33694faf95db51e22aa54cfa3d1bafccb3829da451c61f5147a/more_itertools-8.6.0-py3-none-any.whl
