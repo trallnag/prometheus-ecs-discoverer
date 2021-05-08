@@ -37,16 +37,6 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 * Extensive testing with high coverage ensures functionality.
 * More configuration options. For example structured logs.
 
----
-
-> Don't hesitate to open an issue if you have questions or ideas regarding 
-    PromED. Since I'm currently using it in production I'm (still) motivated 
-    to work on it :wink:
->  
-> -- <cite>trallnag</cite>
-
----
-
 ## Setup
 
 As this project is based on 
