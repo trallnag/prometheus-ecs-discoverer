@@ -154,9 +154,10 @@ class CachedFetcher:
 
             for task_arns_chunk in chunked_task_arns:
                 start_time = default_timer()
-                tasks += self.ecs.describe_tasks(
+                _t = self.ecs.describe_tasks(
                     cluster=cluster_arn, tasks=task_arns_chunk
                 )["tasks"]
+                tasks += list(filter(lambda x:x.get('lastStatus', None) == 'RUNNING', _t))
                 DURATION.labels("describe_tasks").observe(
                     max(default_timer() - start_time, 0)
                 )
