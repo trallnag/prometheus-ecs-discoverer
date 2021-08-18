@@ -1,7 +1,20 @@
 [flake8]
 exclude = .git
-ignore = E501,E203,W291,W293,F821,W503,E231
-max-complexity = 10
-max-line-length = 90
+
+ignore =
+    # Line break after binary operator. <https://www.flake8rules.com/rules/W504.html>.
+    W504,
+    # Line break occurred before a binary operator. <https://www.flake8rules.com/rules/W503.html>.
+    W503,
+    # Whitespace before ':'. <https://www.flake8rules.com/rules/E203.html>.
+    E203,
+    # Line too long. <https://www.flake8rules.com/rules/E501.html>.
+    E501,
+    # Continuation line over-indented for hanging indent. <https://www.flake8rules.com/rules/E126.html>.
+    E126,
+    # Visually indented line with same indent as next logical line. <https://www.flake8rules.com/rules/E129.html>.
+    E129
+
 per-file-ignores =
-    tests/*:E402
+    # Module level import not at top of file. <https://www.flake8rules.com/rules/E402.html>.
+    tests/test_fetching.py:E402

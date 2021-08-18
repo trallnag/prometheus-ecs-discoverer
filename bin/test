@@ -1,0 +1,26 @@
+#!/bin/sh
+
+usage() {
+    cat <<EOF
+Run tests.
+EOF
+}
+
+case $1 in -h|--help) usage && exit ;; esac
+
+# Get source dir of script. <https://stackoverflow.com/a/29835459/7391331>.
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+project_dir="$(dirname "$script_dir")"
+
+. "$script_dir/log.sh"
+. "$script_dir/main.sh"
+
+# ==============================================================================
+
+set -eu
+
+poetry run pytest \
+  --cov=./$package \
+  --cov-report=xml:coverage.xml \
+  --cov-report=term-missing \
+  tests

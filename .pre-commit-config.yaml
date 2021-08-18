@@ -1,0 +1,89 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+
+  # ============================================================================
+  # Remote
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.0.1"
+    hooks:
+      - id: check-ast
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+        args:
+          - --allow-multiple-documents
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
+      - id: trailing-whitespace
+
+  # ============================================================================
+  # Local
+
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        language: system
+        types: [python]
+        require_serial: true
+        entry: poetry run flake8
+
+  - repo: local
+    hooks:
+      - id: black
+        name: black
+        language: system
+        types: [python]
+        require_serial: true
+        entry: poetry run black
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        language: system
+        types: [python]
+        require_serial: true
+        pass_filenames: false
+        entry: poetry run mypy .
+
+  - repo: local
+    hooks:
+      - id: pdoc
+        name: pdoc
+        language: script
+        types: [python]
+        pass_filenames: false
+        require_serial: true
+        exclude: ^tests/
+        entry: bin/pdoc
+
+  - repo: local
+    hooks:
+      - id: requirements
+        name: requirements
+        language: system
+        files: "^poetry.lock$"
+        pass_filenames: false
+        entry: >-
+          poetry export
+          --format "requirements.txt"
+          --output "requirements.txt"
+          --without-hashes
+
+  # ============================================================================
+
+exclude: |
+  (?x)(
+    ^docs/|
+    ^coverage.xml$|
+    ^poetry.lock$|
+    ^CHANGELOG.md$|
+    ^requirements.txt$
+  )
