@@ -1,6 +1,6 @@
 import os
 
-from prometheus_ecs_discoverer import run, s
+from prometheus_ecs_discoverer import main, s
 
 
 def test_config():
@@ -14,5 +14,5 @@ def test_config():
 
 
 def test_expose_info():
-    run.expose_info()
+    main.expose_info()
     assert True

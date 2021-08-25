@@ -1,3 +1,10 @@
+"""
+The only place in this package that directly interacts with the AWS API.
+
+Contains the cached fetcher that ensures that expensive calls to the AWS API
+are cached.
+"""
+
 import time
 from timeit import default_timer
 
@@ -5,16 +12,6 @@ from loguru import logger
 
 from prometheus_ecs_discoverer import s, telemetry, toolbox
 from prometheus_ecs_discoverer.caching import SlidingCache
-
-# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
-# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
-"""
-The only place in this package that directly interacts with the AWS API.
-
-Contains the cached fetcher that ensures that expensive calls to the AWS API 
-are cached.
-"""
 
 # Telemetry ====================================================================
 
@@ -31,12 +28,12 @@ DURATION = telemetry.histogram(
 
 
 class CachedFetcher:
-    """Works with the AWS API and leverages a sliding cache.
+    """Work with the AWS API leveraging a sliding cache.
 
     Reduces the amount of request made to the AWS API helping to stay below the
     request limits. Only implements necessary methods. So not a generic class.
 
-    Rember to flush all caches with `flush_caches()` after every "full round".
+    Rember to flush all caches with `flush_caches` after every "full round".
     """
 
     def __init__(
@@ -66,7 +63,7 @@ class CachedFetcher:
         self.ec2_instance_cache = SlidingCache(name="ec2_instance_cache")
 
     def flush_caches(self) -> None:
-        """Flushes all caches. Should be called at the end of a round."""
+        """Flush all caches. Should be called at the end of a round."""
 
         self.task_cache.flush()
         self.task_definition_cache.flush()
@@ -76,7 +73,7 @@ class CachedFetcher:
     # ==========================================================================
 
     def get_arns(self, method: str, key: str, **aws_api_parameters) -> list:
-        """Gets the ARNs with a given method and key.
+        """Get the ARNs with a given method and key.
 
         Args:
             method: AWS API method to use.
@@ -188,7 +185,7 @@ class CachedFetcher:
             ) if s.DEBUG else None
 
             start_time = default_timer()
-            task_definition = self.ecs.describe_task_definition(taskDefinition=arn)[
+            task_definition: dict = self.ecs.describe_task_definition(taskDefinition=arn)[
                 "taskDefinition"
             ]
             DURATION.labels("describe_task_definition").observe(

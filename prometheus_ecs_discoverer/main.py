@@ -1,7 +1,11 @@
+"""
+Entry to PromED. Contains a lot of instrumentation and is responsible for
+looping the discovery. It daemonizes the functionality.
+"""
+
 import sys
 import time
 from timeit import default_timer
-from typing import Type
 
 import boto3
 from botocore.config import Config
@@ -10,23 +14,15 @@ from prometheus_client import Histogram, start_http_server
 
 from prometheus_ecs_discoverer import discovery, fetching, marshalling, s, telemetry
 
-# Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
-"""Entry module to PromED.
-
-Contains a lot of instrumentation and is responsible for looping the discovery.
-"""
-
-
-INTERVAL_BREACHED = telemetry.counter(
+INTERVAL_BREACHED_COUNTER = telemetry.counter(
     "execution_breaches_total",
     "Number of times the discovery round took longer than the configured interval.",
 )
-INTERVAL_BREACHED.inc(0)
+INTERVAL_BREACHED_COUNTER.inc(0)
 
 
 def configure_logging() -> None:
-    """Configures loguru logging. Does not influence other logging libs."""
+    """Configure Loguru logging."""
 
     logger.remove()
 
@@ -34,7 +30,6 @@ def configure_logging() -> None:
         fmt = "{message}"
         logger.add(sys.stderr, format=fmt, serialize=True, level=s.LOG_LEVEL)
     else:
-        # <green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{name}:{function}:{line}</cyan> {message} <dim>{extra}</dim>
         fmt = "<green>{time:HH:mm:ss}</green> <level>{level}</level> <cyan>{function}</cyan> {message} <dim>{extra}</dim>"
         logger.add(sys.stderr, colorize=True, format=fmt, level=s.LOG_LEVEL)
 
@@ -45,7 +40,7 @@ def configure_logging() -> None:
 
 
 def expose_info() -> None:
-    """Exposes a gauge with info label values."""
+    """Expose a gauge with info label values."""
 
     telemetry.info(
         {
@@ -53,47 +48,45 @@ def expose_info() -> None:
         }
     )
 
-    info_interval = telemetry.gauge(
+    INTERVAL_INFO = telemetry.gauge(
         "info_interval_seconds", "Configured interval in seconds."
     )
-    info_interval.set(s.INTERVAL)
+    INTERVAL_INFO.set(s.INTERVAL)
 
 
-def get_interval_histogram(interval: int) -> Type[Histogram]:
-    """Creates histogram with a buckets that fit the given interval.
+def get_interval_histogram(interval: int) -> Histogram:
+    """Create histogram with buckets that fit the given interval.
 
     10 buckets below the interval and two buckets with 10 second steps larger
     than the interval.
+
+    Args:
+        interval (int): Interval PromED is running at.
+
+    Returns:
+        Histogram: Prometheus Histogram object.
     """
+
     steps = 10
     step_size = round(interval / steps, 0)
     return telemetry.histogram(
         "round_duration_seconds",
         "Histogram for duration",
-        buckets=[x * step_size for x in range(steps)]
-        + [
-            interval + 10,
-            interval + 20,
-            float("inf"),
-        ],
+        buckets=tuple(
+            [x * step_size for x in range(steps)]
+            + [
+                interval + 10,
+                interval + 20,
+                float("inf"),
+            ]
+        ),
     )
 
 
-# ==============================================================================
-
-
 def main():
-    """Main function.
-
-    - performs all the setup for PromED.
-    - Sets up a big chunk of instrumentation.
-    - Inits all parts of PromED.
-    - Orchestrates discovery.
-    """
-
-    interval = s.INTERVAL
-    output_dir = s.OUTPUT_DIRECTORY
-    should_throttle = s.WARMUP_THROTTLE
+    interval: int = s.INTERVAL
+    output_dir: str = s.OUTPUT_DIRECTORY
+    should_throttle: bool = s.WARMUP_THROTTLE
 
     configure_logging()
     expose_info()
@@ -101,7 +94,7 @@ def main():
     logger.info("Welcome to PromED, the Prometheus ECS Discoverer.")
     logger.bind(settings=s.as_dict()).info("Here is the used configuration.")
 
-    DURATION = get_interval_histogram(interval)
+    DURATION_HISTOGRAM = get_interval_histogram(interval)
 
     if s.PROMETHEUS_START_HTTP_SERVER:
         port = s.PROMETHEUS_SERVER_PORT
@@ -147,13 +140,13 @@ def main():
         duration = max(default_timer() - start_time, 0)
 
         logger.bind(duration=duration).info("Finished discovery round.")
-        DURATION.observe(duration)
+        DURATION_HISTOGRAM.observe(duration)
 
         if duration > interval:
-            logger.bind(duration=duration).error(
+            logger.bind(duration=duration).warning(
                 "Discovery round took longer than the configured interval. Please investigate."
             )
-            INTERVAL_BREACHED.inc()
+            INTERVAL_BREACHED_COUNTER.inc()
 
         time_left = max(interval - duration, 0)
         time.sleep(time_left)

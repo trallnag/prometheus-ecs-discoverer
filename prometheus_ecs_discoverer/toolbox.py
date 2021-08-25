@@ -1,22 +1,16 @@
-import builtins
-import sys
-from typing import List
-
-import prettyprinter
-
-builtins.pretty = prettyprinter.pprint
-builtins.cpretty = prettyprinter.cpprint
-
-# Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
 """
-Contains a bunch of more or less generic functions that are used throughout 
+Contains a bunch of more or less generic functions that are used throughout
 this project.
 """
 
+import sys
+from typing import Dict, List, Optional
+
+from prettyprinter import pprint  # type: ignore
+
 
 def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
-    """Chunks given list into chunks of a given size."""
+    """Chunk given list into chunks of a given size."""
 
     return [
         list_to_chunk[i : i + chunk_size]
@@ -25,7 +19,7 @@ def chunk_list(list_to_chunk: list, chunk_size: int) -> list:
 
 
 def extract_set(root: dict, nested_key_to_extract) -> set:
-    """Extracts value for given key from every dict in root."""
+    """Extract value for given key from every dict in root."""
 
     extract = set()
     for root_key in root:
@@ -38,13 +32,13 @@ def pstruct(structure, name: str = "generic structure") -> None:
 
     sys.stdout = sys.stderr
     print(f"{name}".center(80, "-"))
-    pretty(structure, indent=2)
+    pprint(structure, indent=2)
     print(" ")
     sys.stdout = sys.__stdout__
 
 
 def validate_min_len(min_len: int, collections: list) -> None:
-    """Ensures a min length for all given lists.
+    """Ensure a min length for all given lists.
 
     Args:
         min_len: Min length all lists should be.
@@ -58,8 +52,10 @@ def validate_min_len(min_len: int, collections: list) -> None:
             raise ValueError(f"Collection must have min {min_len}.")
 
 
-def extract_env_var(container: dict, name: str) -> str or None:
-    """Extracts env var from container definition.
+def extract_env_var(
+    container: Dict[str, List[Dict[str, str]]], name: str
+) -> Optional[str]:
+    """Extract env var from container definition.
 
     Args:
         container: Container definition.
@@ -76,7 +72,7 @@ def extract_env_var(container: dict, name: str) -> str or None:
 
 
 def list_to_dict(lst: List[dict], key) -> dict:
-    """Turns a list of dicts into a single dict.
+    """Turn a list of dicts into a single dict.
 
     Args:
         lst: List of dicts.
@@ -110,6 +106,7 @@ def list_to_dict(lst: List[dict], key) -> dict:
     }
     ```
     """
+
     dct = {}
     for item in lst:
         dct[item[key]] = item

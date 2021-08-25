@@ -1,3 +1,7 @@
+"""
+Configure test environment.
+"""
+
 import pytest
 
 from prometheus_ecs_discoverer import s

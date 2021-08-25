@@ -4,10 +4,6 @@ from loguru import logger
 
 from prometheus_ecs_discoverer import s, telemetry, toolbox
 
-# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
-# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
-
 HITS = telemetry.gauge(
     "cache_hits", "Number of cache hits just before moving window.", ("cache_name",)
 )
@@ -29,7 +25,7 @@ class SlidingCache:
     checking the cached dict for corresponding entries. Keys without matching
     entries are passed on to a fetch function. Other data is thrown away.
 
-    How to use:
+    Examples:
 
     ```python
     cache = SlidingCache()
@@ -53,19 +49,18 @@ class SlidingCache:
     # Now the cache only holds the "my" key.
     # Only stuff that has been cached after the last flush.
     ```
-
-    Attribution:
-
     """
 
     def __init__(self, name: str = "generic"):
         """
-        :param name: Should describe the content / use of the cache. Used for
-            more informative logging and metrics. Defaults to "generic".
+        Args:
+            name (str, optional): Should describe the content / use of the
+            cache. Used for more informative logging and metrics.
+            Defaults to "generic".
         """
 
-        self.current = {}
-        self.next = {}
+        self.current: dict = {}
+        self.next: dict = {}
         self.total_hits = 0
         self.total_misses = 0
         self.last_hits = 0
@@ -80,16 +75,20 @@ class SlidingCache:
     def get_multiple(
         self,
         keys: List[str],
-        fetch: Callable[[List[str]], List[str]],
+        fetch: Callable[[List[str]], dict],
     ) -> dict:
         """Get entries from cache and update if missing.
 
         Important: Don't forget the `flush()` method. Without using it the
         cache will never remove old data and eat up more and more memory.
 
-        :param keys: Keys to retrieve from cache.
-        :param fetch: Function that fetches missing key values.
-        :return: Dictionary where the keys match given keys.
+        Args:
+            keys (List[str]): Keys to retrieve from cache.
+            fetch (Callable[[List[str]], List[str]]): Function that fetches
+                missing key values.
+
+        Returns:
+            dict: Dictionary where the keys match given keys.
         """
 
         self.last_hits = 0
@@ -134,9 +133,12 @@ class SlidingCache:
         Important: Don't forget the `flush()` method. Without using it the
         cache will never remove old data and eat up more and more memory.
 
-        :param key: Key to retrieve from cache.
-        :param fetch: Function that fetches and returns missing.
-        :return: Dictionary representing key value.
+        Args:
+            key (str): Key to retrieve from cache.
+            fetch (Callable[[str], dict]): Function that fetches and returns missing.
+
+        Returns:
+            dict: Dictionary representing key value.
         """
 
         self.last_hits = 0
@@ -162,7 +164,7 @@ class SlidingCache:
         return result
 
     def flush(self):
-        """Slides the window making the next slot the current one."""
+        """Slide the window making the next slot the current one."""
 
         logger.bind(
             hits=self.total_hits,

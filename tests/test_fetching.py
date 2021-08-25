@@ -7,7 +7,7 @@ import json
 import os
 from dataclasses import dataclass
 from timeit import default_timer
-from typing import Any, Type
+from typing import Any, Generator, Type
 
 import boto3
 import pytest
@@ -28,7 +28,7 @@ class Boto:
 
 
 @pytest.fixture(scope="function")
-def aws_credentials() -> object:
+def aws_credentials() -> None:
     os.environ["AWS_ACCESS_KEY_ID"] = "testing"
     os.environ["AWS_SECRET_ACCESS_KEY"] = "testing"
     os.environ["AWS_SECURITY_TOKEN"] = "testing"
@@ -36,13 +36,13 @@ def aws_credentials() -> object:
 
 
 @pytest.fixture(scope="function")
-def ecs(aws_credentials) -> Type[Boto]:
+def ecs(aws_credentials) -> Generator:
     with mock_ecs():
         yield Boto(client=boto3.client("ecs", region_name="us-east-1"), resource=None)
 
 
 @pytest.fixture(scope="function")
-def ec2(aws_credentials) -> Type[Boto]:
+def ec2(aws_credentials) -> Generator:
     with mock_ec2():
         yield Boto(
             client=boto3.client("ec2", region_name="us-east-1"),
@@ -51,7 +51,7 @@ def ec2(aws_credentials) -> Type[Boto]:
 
 
 @pytest.fixture(scope="function")
-def fetcher(ecs: Type[Boto], ec2: Type[Boto]) -> Type[CachedFetcher]:
+def fetcher(ecs: Type[Boto], ec2: Boto) -> CachedFetcher:
     return CachedFetcher(ecs.client, ec2.client)
 
 

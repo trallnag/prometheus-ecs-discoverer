@@ -103,7 +103,7 @@ list_tasks_response = {
 
 describe_tasks_parameters = {
     "cluster": list_clusters_response["clusterArns"][0],
-    "tasks": list_tasks_response["taskArns"]
+    "tasks": list_tasks_response["taskArns"],
 }
 describe_tasks_response = {
     "tasks": [
@@ -1387,9 +1387,7 @@ describe_task_definition_responses = [
                     ],
                     "mountPoints": [],
                     "volumesFrom": [],
-                    "secrets": [
-                
-                    ],
+                    "secrets": [],
                     "logConfiguration": {
                         "logDriver": "awslogs",
                         "options": {

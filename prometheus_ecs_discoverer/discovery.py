@@ -1,20 +1,17 @@
+"""
+Contains most of the business logic of the Prometheus ECS discoverer.
+
+Queries the AWS API / cache and tries to build up a collection of target
+objects that represent targets for Prometheus.
+"""
+
 from dataclasses import dataclass
-from typing import Dict, List, Type
+from typing import Dict, List, Optional, Union
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import s, telemetry, toolbox
 from prometheus_ecs_discoverer.fetching import CachedFetcher
-
-# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
-# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
-"""Contains most of the business logic of the Prometheus ECS discoverer.
-
-Queries the AWS API / cache and tries to build up a collection of target 
-objects that represent targets for Prometheus.
-"""
-
 
 # ==============================================================================
 # Telemetry
@@ -45,13 +42,13 @@ class Target:
     port: str
     p_instance: str
     task_name: str
-    metrics_path: str = None
-    cluster_name: str = None
-    task_version: int = None
-    task_id: str = None
-    container_id: str = None
-    instance_id: str = None
-    custom_labels: Dict[str, str] = None
+    metrics_path: Optional[str] = None
+    cluster_name: Optional[str] = None
+    task_version: Optional[int] = None
+    task_id: Optional[str] = None
+    container_id: Optional[str] = None
+    instance_id: Optional[str] = None
+    custom_labels: Optional[Dict[str, str]] = None
 
 
 @dataclass
@@ -60,8 +57,8 @@ class TaskInfo:
 
     task: dict
     task_definition: dict
-    container_instance: dict = None
-    ec2_instance: dict = None
+    container_instance: Optional[dict] = None
+    ec2_instance: Optional[dict] = None
 
 
 class PrometheusEcsDiscoverer:
@@ -72,7 +69,7 @@ class PrometheusEcsDiscoverer:
     them.
     """
 
-    def __init__(self, fetcher: Type[CachedFetcher]):
+    def __init__(self, fetcher: CachedFetcher):
         """
         Args:
             fetcher: Fetcher to use.
@@ -84,19 +81,19 @@ class PrometheusEcsDiscoverer:
         self.targets_marked_counter = 0
         """Instrumentation.
 
-        Counts the number of containers which have been marked in their 
+        Counts the number of containers which have been marked in their
         container definitions as prometheus targets.
         """
 
         self.targets_marked_rejected_counter = 0
         """Instrumentation.
-        
-        Counts the number of containers which have been marked in their 
-        container definitions as prometheus targets but have been rejected, 
+
+        Counts the number of containers which have been marked in their
+        container definitions as prometheus targets but have been rejected,
         meaning they could not have been turned into target objects.
         """
 
-    def discover(self) -> List[Type[Target]]:
+    def discover(self) -> List[Target]:
         targets = []
 
         task_infos = []
@@ -122,10 +119,10 @@ class PrometheusEcsDiscoverer:
         self.fetcher.flush_caches()
         return targets
 
-    def _discover_task_infos(self, cluster_arn: str) -> List[Type[TaskInfo]]:
+    def _discover_task_infos(self, cluster_arn: str) -> List[TaskInfo]:
         """Discovers tasks in a cluster and extracts necessary raw data."""
 
-        task_infos = []  # type: List[Type[TaskInfo]]
+        task_infos: List[TaskInfo] = []
 
         task_arns = self.fetcher.get_task_arns(cluster_arn)
 
@@ -169,9 +166,7 @@ class PrometheusEcsDiscoverer:
 
         return task_infos
 
-    def _build_target(
-        self, container: dict, data: Type[TaskInfo]
-    ) -> Type[Target] or None:
+    def _build_target(self, container: dict, data: TaskInfo) -> Optional[Target]:
         """Builds target if conditions are met.
 
         :param container: Container from task. Not the continer definition.
@@ -198,7 +193,7 @@ class PrometheusEcsDiscoverer:
             _logger.debug("Prometheus marker true. Build target.")
         else:
             _logger.debug("Prometheus marker not found / not 'true'. Reject.")
-            return
+            return None
 
         metrics_path = toolbox.extract_env_var(
             container_definition, "PROMETHEUS_ENDPOINT"
@@ -221,7 +216,7 @@ class PrometheusEcsDiscoverer:
             self.fetcher.task_cache.current.pop(task_arn, None)
             self.fetcher.task_cache.next.pop(task_arn, None)
             self.targets_marked_rejected_counter += 1
-            return
+            return None
 
         port = _extract_port(
             network_mode,
@@ -233,7 +228,7 @@ class PrometheusEcsDiscoverer:
         if port is None:
             _logger.warning("Does not expose port matching PROMETHEUS_CONTAINER_PORT.")
             self.targets_marked_rejected_counter += 1
-            return
+            return None
 
         ip = _extract_ip(network_mode, network_interfaces, data.ec2_instance)
 
@@ -264,7 +259,7 @@ class PrometheusEcsDiscoverer:
         if "FARGATE" in data.task_definition.get("requiresCompatibilities", ""):
             instance_id = container_id = None
         else:
-            instance_id = data.container_instance["ec2InstanceId"]
+            instance_id = data.container_instance["ec2InstanceId"]  # type: ignore
             container_id = container["containerArn"].split(":")[5].split("/")[-1]
 
         _logger.debug("Build target successfully from discovered task info.")
@@ -321,11 +316,11 @@ def _is_marked_as_target(
 
 def _extract_port(
     network_mode: str,
-    prom_port,
-    prom_container_port,
+    prom_port: Optional[str],
+    prom_container_port: Optional[str],
     port_mappings: list,
     network_bindings: list,
-) -> str or None:
+) -> Optional[str]:
     if prom_port:
         return prom_port
 
@@ -347,18 +342,21 @@ def _extract_port(
     return str(network_bindings[0]["hostPort"])
 
 
-def _extract_ip(network_mode: str, network_interfaces: list, ec2_instance: dict) -> str:
+# TODO: This needs to be cleaned up. The optional part.
+def _extract_ip(
+    network_mode: str, network_interfaces: list, ec2_instance: Optional[dict]
+) -> str:
     if network_mode == "awsvpc":
-        return network_interfaces[0]["privateIpv4Address"]
+        return network_interfaces[0]["privateIpv4Address"]  # type: ignore
     else:
-        return ec2_instance["PrivateIpAddress"]
+        return ec2_instance["PrivateIpAddress"]  # type: ignore
 
 
 def _has_proper_network(
     network_bindings: list,
     network_interfaces: list,
     network_mode: str,
-    prom_port: str or None,
+    prom_port: Optional[str],
     port_mappings: list,
     scoped_logger,
 ) -> bool:
@@ -379,7 +377,7 @@ def _has_proper_network(
     return False
 
 
-def _extract_custom_labels(env: List[Dict[str, str]] or List) -> Dict[str, str]:
+def _extract_custom_labels(env: Union[List[Dict[str, str]], List]) -> Dict[str, str]:
     labels = {}
     for envvar in env:
         name = envvar["name"]
@@ -401,11 +399,11 @@ def _extract_custom_labels_from_dockerlabels(
     if list_of_labels:
         elements = list_of_labels.split(separator)
         for element in elements:
-            key, value = element.split(equalizer)
-            labels[key.strip()] = value.strip()
+            k, v = element.split(equalizer)
+            labels[k.strip()] = v.strip()
 
     for label in with_docker_labels:
-        value = docker_labels.get(label, None)
+        value: Optional[str] = docker_labels.get(label, None)
         if value:
             labels[label.replace(".", "_").replace("-", "_")] = value
 

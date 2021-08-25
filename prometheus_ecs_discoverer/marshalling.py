@@ -1,29 +1,26 @@
+"""
+Contains functions that work on `Target` objects and are responsible for
+turning these into JSON files that can be consumed by Prometheus file service
+discovery.
+"""
+
 import json
 import os
 import re
-from typing import Dict, List, Type
+from typing import Dict, List, Optional, Type
 
 from loguru import logger
 
 from prometheus_ecs_discoverer import s
 from prometheus_ecs_discoverer.discovery import Target
 
-# Copyright 2018, 2019 Signal Media Ltd. Licensed under the Apache License 2.0
-# Modifications Copyright 2020 Tim Schwenke. Licensed under the Apache License 2.0
-
-"""
-Contains functions that work on `Target` objects and are responsible for 
-turning these into JSON files that can be consued by Prometheus file service 
-discover.
-"""
-
 
 def extract_path_interval_pairs(
     metrics_path: str = None,
-) -> Dict[str, str or None]:
-    """Extracts path intervals from given metrics path.
+) -> Dict[str, Optional[str]]:
+    """Extract path intervals from given metrics path.
 
-    Transforms a string like this `30s:/mymetrics1,/mymetrics2` into:
+    Transform a string like this `30s:/mymetrics1,/mymetrics2` into:
 
     ```
     {
@@ -36,7 +33,7 @@ def extract_path_interval_pairs(
     if not metrics_path:
         return {s.FALLBACK_METRICS_ENDPOINT: None}
 
-    path_interval = {}
+    path_interval: Dict[str, Optional[str]] = {}
 
     for entry in metrics_path.split(","):
         if ":" in entry:
@@ -56,16 +53,16 @@ def extract_path_interval_pairs(
 
 
 def get_filename(
-    interval: str or None = None,
+    interval: Optional[str] = None,
     filename_15s: str = s.FILENAME_15S,
     filename_30s: str = s.FILENAME_30S,
     filename_1m: str = s.FILENAME_1M,
     filename_5m: str = s.FILENAME_5M,
     filename_generic: str = s.FILENAME_GENERIC,
 ) -> str:
-    """Gets the filename for given interval.
+    """Get the filename for given interval.
 
-    Exists to allow custom file names.
+    This function exists to allow custom file names.
 
     Returns:
         str: File name to use.
@@ -96,7 +93,7 @@ def marshall_targets(
     labelname_containerid: str = s.LABELNAME_CONTAINERID,
     labelname_instanceid: str = s.LABELNAME_INSTANCEID,
 ) -> Dict[str, List[Dict]]:
-    """Marshalls given targets into JSON compatible structure.
+    """Marshall given targets into JSON compatible structure.
 
     ```
     {
@@ -129,18 +126,18 @@ def marshall_targets(
     ```
     """
 
-    result = {
-        s.FILENAME_GENERIC: [],
-        s.FILENAME_15S: [],
-        s.FILENAME_30S: [],
-        s.FILENAME_1M: [],
-        s.FILENAME_5M: [],
+    result: Dict[str, list] = {
+        filename_generic: [],
+        filename_15s: [],
+        filename_30s: [],
+        filename_1m: [],
+        filename_5m: [],
     }
 
     for target in targets:
         path_interval_pairs = extract_path_interval_pairs(target.metrics_path)
         for path, interval in path_interval_pairs.items():
-            labels = {}
+            labels: Dict[str, str] = {}
 
             if target.custom_labels:
                 labels.update(target.custom_labels)
@@ -152,7 +149,7 @@ def marshall_targets(
             if target.cluster_name:
                 labels[labelname_cluster] = target.cluster_name
             if target.task_version:
-                labels[labelname_taskversion] = target.task_version
+                labels[labelname_taskversion] = str(target.task_version)
             if target.task_id:
                 labels[labelname_taskid] = target.task_id
             if target.container_id:
@@ -170,7 +167,7 @@ def marshall_targets(
 
 
 def write_targets_to_file(targets: List[Type[Target]], output_directory: str) -> None:
-    """Writes targets to files.
+    """Write targets to files.
 
     Args:
         targets: List of target objects.
