@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 as well as the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
 specification.
 
+## [3.3.5](https://github.com/trallnag/prometheus-ecs-discoverer/compare/v3.3.4...v3.3.5) (2021-08-27)
+
+
+### Bug Fixes
+
+* Only consider RUNNING tasks ([94e9993](https://github.com/trallnag/prometheus-ecs-discoverer/commit/94e9993e9e628a2453e3571f44e4ef1830b3954b))
+
 ## [3.3.4](https://github.com/trallnag/prometheus-ecs-discoverer/compare/v3.3.3...v3.3.4) (2021-08-27)
 
 
