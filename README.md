@@ -32,6 +32,26 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 * Extensive testing with high coverage ensures functionality.
 * More configuration options. For example structured logs.
 
+## Project Status
+
+Still active, but no new features.
+
+As of 2021-09 I'm not using PromED anywhere. Everything related to containers is
+now running on Kubernetes for me. One system (I'm not responsible for anymore) at
+my job is still using PromED and it has been chucking along just fine for
+several months now.
+
+Looking at alternative approaches I would now go with AWS Cloud Map instead of
+PromED with is specific to ECS. It would be possible to refactor PromED to use
+AWS Cloud Map, but it makes more sense to just recreate a new tool that
+completely focuses on Cloud Map. Something like this for example:
+
+* <https://github.com/awslabs/aws-cloudmap-prometheus-sd>
+
+One big advantage of AWS Cloud Map is that it takes care of providing the
+correct IP. PromED does this by querying the ECS and EC2 API and has to cover
+a bunch of corner cases. AWS Cloud Map would simplify this.
+
 ## Setup
 
 As this project is based on
