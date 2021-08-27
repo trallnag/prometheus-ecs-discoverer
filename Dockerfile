@@ -1,7 +1,17 @@
 FROM bitnami/python:3.9-prod
 
-ARG PYPI_VERSION
+ENV POETRY_VERSION=1.1.8
 
-RUN until pip install --no-cache-dir "prometheus_ecs_discoverer==${PYPI_VERSION}"; do sleep 15; done
+WORKDIR /app
 
-CMD [ "python", "-m", "prometheus_ecs_discoverer.main" ]
+RUN pip install poetry==$POETRY_VERSION
+
+COPY poetry.lock pyproject.toml .
+
+RUN poetry install --no-root --no-dev --no-ansi
+
+COPY prometheus_ecs_discoverer .
+
+RUN poetry install --no-dev --no-ansi
+
+CMD ["poetry", "run", "python", "-m", "prometheus_ecs_discoverer.main"]

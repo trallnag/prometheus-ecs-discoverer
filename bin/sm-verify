@@ -1,0 +1,40 @@
+#!/bin/sh
+
+usage() {
+    cat <<EOF
+Verify that packages can be pushed to PyPI.
+
+Step belonging to <https://github.com/semantic-release/exec>.
+EOF
+}
+
+case $1 in -h|--help) usage && exit ;; esac
+
+# Get source dir of script. <https://stackoverflow.com/a/29835459/7391331>.
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+project_dir="$(dirname "$script_dir")"
+
+. "$script_dir/log.sh"
+. "$script_dir/main.sh"
+
+# ==============================================================================
+
+set -eu
+
+pypi_token="$PYPI_TOKEN"
+
+response_status_code=$(
+    curl -X POST -s -o /dev/null \
+        -F ':action=file_upload' \
+        -u __token__:$pypi_token \
+        -w "%{http_code}" \
+        https://upload.pypi.org/legacy/
+)
+
+if [ "403" != "$response_status_code" ]; then
+    logsuccess "Valid token."
+    exit 0
+else
+    logerror "Authentication error. Please check the PYPI_TOKEN environment variable."
+    exit 1
+fi

@@ -1,7 +1,5 @@
 # Development
 
-This document describes everything necessary to get started with developing.
-
 ## Pre-Commit
 
 Used for maintaining pre-commit hooks.

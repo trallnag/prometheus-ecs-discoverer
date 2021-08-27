@@ -1,0 +1,22 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+			"@semantic-release/changelog",
+			{
+				"changelogTitle": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)\nas well as the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)\nspecification."
+			}
+		],
+    [
+			"@semantic-release/exec",
+			{
+				"verifyConditionsCmd": "./bin/sm-verify",
+				"prepareCmd": "poetry version ${nextRelease.version}",
+				"publishCmd": "poetry config repositories.repo https://upload.pypi.org/legacy/ && poetry publish --build --repository repo --username __token__ --password $PYPI_TOKEN --no-interaction -vvv"
+			}
+		],
+    "@semantic-release/github",
+    "@semantic-release/git"
+  ]
+}

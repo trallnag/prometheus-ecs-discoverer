@@ -1,7 +1,7 @@
 # Chart
 
-Project specific Shell scripts. All of them can be used locally. Some are used
-in CI/CD pipelines. Others just serve as "documentation as code".
+Project specific Shell scripts. Some of them can be used locally. Some are used
+in CI/CD pipelines. Others just are "documentation as code".
 
 ## Content
 
@@ -12,3 +12,4 @@ in CI/CD pipelines. Others just serve as "documentation as code".
 | [`pdoc`](pdoc)                 | Generate code docs with pdoc.                     |
 | [`test`](test)                 | Run Pytests.                                      |
 | [`update-logsh`](update-logsh) | Add or update logsh library.                      |
+| [`sm-verify`](sm-verify)       | @semantic-release/exec verify step.               |
