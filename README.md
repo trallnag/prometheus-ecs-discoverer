@@ -1,14 +1,9 @@
 # Prometheus ECS Discoverer
 
-[![PyPI version](https://badge.fury.io/py/prometheus-ecs-discoverer.svg)](https://pypi.python.org/pypi/prometheus-ecs-discoverer/)
-[![Maintenance](https://img.shields.io/badge/maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
-[![downloads](https://img.shields.io/pypi/dm/prometheus-ecs-discoverer)](https://pypi.org/project/prometheus-ecs-discoverer/)
-[![docs](https://img.shields.io/badge/docs-here-blue)](https://trallnag.github.io/prometheus-ecs-discoverer/)
-
-![release](https://github.com/trallnag/prometheus-ecs-discoverer/workflows/release/badge.svg)
-![test branches](https://github.com/trallnag/prometheus-ecs-discoverer/workflows/test%20branches/badge.svg)
-[![codecov](https://codecov.io/gh/trallnag/prometheus-ecs-discoverer/branch/master/graph/badge.svg)](https://codecov.io/gh/trallnag/prometheus-ecs-discoverer)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![pypi](https://img.shields.io/pypi/v/prometheus_ecs_discoverer?color=green)](https://pypi.python.org/pypi/prometheus-ecs-discoverer/)
+[![downloads](https://img.shields.io/pypi/dm/prometheus-ecs-discoverer?color=green)](https://pypi.org/project/prometheus-ecs-discoverer/)
+[![docker](https://img.shields.io/docker/v/trallnag/prometheus_ecs_discoverer?label=docker&color=blue)](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer)
+[![pulls](https://img.shields.io/docker/pulls/trallnag/prometheus_ecs_discoverer?label=pulls&color=blue)](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer)
 
 Based on [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd),
 this project enables your Prometheus to **dynamically scrape targets** deployed
@@ -187,7 +182,7 @@ PromED in ECS, this should look like in [aws-iam-ecs-role.json](https://github.c
 If you want all your targets to be scraped in the same interval, the following
 job is enough.
 
-```txt
+```yaml
 - job_name: 'ecs'
   file_sd_configs:
     - files:
@@ -201,7 +196,7 @@ job is enough.
 
 By default, PromED exposes an `/metrics` endpoint.
 
-```txt
+```yaml
 - job_name: discovery
   static_configs:
     - targets: ["discovery:8080"]
@@ -231,14 +226,8 @@ A second dashboard contains panels with Grafana Alerts enabled.
 
 ![dashboard-screenshot](https://raw.githubusercontent.com/trallnag/prometheus-ecs-discoverer/master/documents/screenshot-dashboard-PromED-Alerting.png)
 
-## Prerequesites
+## Links
 
-See [pyproject.toml](https://github.com/trallnag/prometheus-ecs-discoverer/blob/master/pyproject.toml).
-
-## Development
-
-Developing and building this package on a local machine requires
-[Python Poetry](https://python-poetry.org/). I recommend to run Poetry in
-tandem with [Pyenv](https://github.com/pyenv/pyenv). Once the repository is
-cloned, run `poetry install` and `poetry shell`. From here you may start the
-IDE of your choice.
+* [Docker Hub](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer)
+* [GitHub](https://github.com/trallnag/prometheus-ecs-discoverer)
+* [PyPI](https://pypi.org/project/prometheus-ecs-discoverer/)
