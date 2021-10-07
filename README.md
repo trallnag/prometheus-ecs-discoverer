@@ -5,6 +5,9 @@
 [![docker](https://img.shields.io/docker/v/trallnag/prometheus_ecs_discoverer?label=docker&color=blue)](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer)
 [![pulls](https://img.shields.io/docker/pulls/trallnag/prometheus_ecs_discoverer?label=pulls&color=blue)](https://hub.docker.com/repository/docker/trallnag/prometheus_ecs_discoverer)
 
+> **IMPORTANT: Please read [this](https://github.com/trallnag/prometheus-ecs-discoverer#project-status)**
+> **to learn about the status of this project and alternatives to it**.
+
 Based on [prometheus-ecs-sd](https://github.com/signal-ai/prometheus-ecs-sd),
 this project enables your Prometheus to **dynamically scrape targets** deployed
 in AWS ECS. The discoverer is perfect if you don't have
@@ -34,7 +37,8 @@ What are the advantages of using this project over [prometheus-ecs-sd](https://g
 
 ## Project Status
 
-Still active, but no new features.
+Still active, but no new features. I recommend using
+[teralytics/prometheus-ecs-discovery](https://github.com/teralytics/prometheus-ecs-discovery).
 
 As of 2021-09 I'm not using PromED anywhere. Everything related to containers is
 now running on Kubernetes for me. One system (I'm not responsible for anymore) at
