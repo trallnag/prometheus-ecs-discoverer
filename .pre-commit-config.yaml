@@ -56,17 +56,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: pdoc
-        name: pdoc
-        language: script
-        types: [python]
-        pass_filenames: false
-        require_serial: true
-        exclude: ^tests/
-        entry: bin/pdoc
-
-  - repo: local
-    hooks:
       - id: requirements
         name: requirements
         language: system
@@ -82,7 +71,6 @@ repos:
 
 exclude: |
   (?x)(
-    ^docs/|
     ^coverage.xml$|
     ^poetry.lock$|
     ^CHANGELOG.md$|
