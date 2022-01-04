@@ -1,16 +1,16 @@
 FROM bitnami/python:3.9-prod
 
-ENV POETRY_VERSION=1.1.8
+ENV POETRY_VERSION=1.1.12
 
 WORKDIR /app
 
 RUN pip install poetry==$POETRY_VERSION
 
-COPY poetry.lock pyproject.toml .
+COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --no-root --no-dev --no-ansi
 
-COPY prometheus_ecs_discoverer .
+COPY prometheus_ecs_discoverer ./
 
 RUN poetry install --no-dev --no-ansi
 
