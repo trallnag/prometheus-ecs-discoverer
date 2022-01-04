@@ -1,13 +1,10 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
-
 repos:
 
-  # ============================================================================
+  # ----------------------------------------------------------------------------
   # Remote
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.0.1"
+    rev: "v4.1.0"
     hooks:
       - id: check-ast
       - id: check-executables-have-shebangs
@@ -16,14 +13,23 @@ repos:
       - id: check-shebang-scripts-are-executable
       - id: check-toml
       - id: check-xml
-      - id: check-yaml
-        args:
-          - --allow-multiple-documents
       - id: end-of-file-fixer
       - id: fix-byte-order-marker
       - id: trailing-whitespace
 
-  # ============================================================================
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.26.3
+    hooks:
+      - id: yamllint
+
+  - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
+    rev: v6.0.0
+    hooks:
+      - id: commitlint
+        stages: [commit-msg]
+        additional_dependencies: ['@commitlint/config-conventional']
+
+  # ----------------------------------------------------------------------------
   # Local
 
   - repo: local
@@ -67,12 +73,12 @@ repos:
           --output "requirements.txt"
           --without-hashes
 
-  # ============================================================================
+  # ----------------------------------------------------------------------------
 
 exclude: |
   (?x)(
+    ^CHANGELOG.md$|
     ^coverage.xml$|
     ^poetry.lock$|
-    ^CHANGELOG.md$|
     ^requirements.txt$
   )
